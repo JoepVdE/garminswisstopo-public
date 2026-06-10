@@ -1263,7 +1263,14 @@
         </div>`;
         return;
       }
-      progEl.innerHTML = `<div class="stat-box warn">⚠ Build refused: ${resp.status} ${body.error || ""}</div>`;
+      let msg = `⚠ Build refused: ${resp.status} ${body.error || ""}`;
+      if (resp.status >= 500) {
+        msg = `⚠ The build service is temporarily unavailable (${resp.status}).
+               This usually means the GitHub Actions dispatch failed. Try again
+               in a few minutes. If it keeps failing, the maintainer needs to
+               check the worker token. ${body.error || ""}`;
+      }
+      progEl.innerHTML = `<div class="stat-box warn">${msg}</div>`;
       return;
     }
     const job = await resp.json();

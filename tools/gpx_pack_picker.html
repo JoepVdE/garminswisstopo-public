@@ -300,9 +300,10 @@
   <div class="topbar-inner">
     <a class="brand" href="index.html">
       <svg class="brand-mark" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-        <polygon points="12,2.5 22.5,21.5 1.5,21.5" fill="#d4351c"/>
-        <rect x="8" y="13" width="8" height="2.5" fill="#fff" rx="0.3"/>
-        <rect x="10.75" y="10.25" width="2.5" height="8" fill="#fff" rx="0.3"/>
+        <polygon points="12,4.4 20.6,19.7 3.4,19.7" fill="#d4351c"
+                 stroke="#d4351c" stroke-width="3.6" stroke-linejoin="round"/>
+        <rect x="8" y="13" width="8" height="2.5" fill="#fff" rx="0.4"/>
+        <rect x="10.75" y="10.25" width="2.5" height="8" fill="#fff" rx="0.4"/>
       </svg>
       <span data-i18n="brand">Swisstopo for Garmin</span>
     </a>
@@ -397,7 +398,9 @@
       "result.step1": "Step 1",
       "result.dl_title": "Download these files",
       "result.dl_all": "Download all {n} files",
-      "result.dl_tip": "Tip: most browsers will save them straight to your Downloads folder. Then copy the lot to GARMIN/Garmin/CustomMaps/ on your watch.",
+      "result.dl_all_progress": "Downloading",
+      "result.dl_all_done": "Done — check your Downloads folder",
+      "result.dl_tip": "If your browser asks 'Allow this site to download multiple files?' click Allow. Then copy them all to GARMIN/Garmin/CustomMaps/ on your watch.",
       "result.dl_body_1": "Your route is fully covered by",
       "result.dl_zone": "zone",
       "result.dl_zones": "zones",
@@ -452,7 +455,9 @@
       "result.step1": "Schritt 1",
       "result.dl_title": "Diese Dateien herunterladen",
       "result.dl_all": "Alle {n} Dateien herunterladen",
-      "result.dl_tip": "Tipp: die meisten Browser legen die Dateien direkt in deinen Downloads-Ordner. Danach kopierst du sie alle nach GARMIN/Garmin/CustomMaps/ auf der Uhr.",
+      "result.dl_all_progress": "Lädt herunter",
+      "result.dl_all_done": "Fertig, schau in deinen Downloads-Ordner",
+      "result.dl_tip": "Wenn dein Browser fragt „Dieser Seite erlauben, mehrere Dateien herunterzuladen?\" klick auf Erlauben. Danach kopierst du sie alle nach GARMIN/Garmin/CustomMaps/ auf der Uhr.",
       "result.dl_body_1": "Deine Route ist vollständig abgedeckt durch",
       "result.dl_zone": "Region",
       "result.dl_zones": "Regionen",
@@ -507,7 +512,9 @@
       "result.step1": "Étape 1",
       "result.dl_title": "Télécharge ces fichiers",
       "result.dl_all": "Tout télécharger ({n} fichiers)",
-      "result.dl_tip": "Astuce : la plupart des navigateurs les enregistrent direct dans ton dossier Téléchargements. Copie ensuite l'ensemble dans GARMIN/Garmin/CustomMaps/ sur la montre.",
+      "result.dl_all_progress": "Téléchargement",
+      "result.dl_all_done": "Terminé, regarde dans ton dossier Téléchargements",
+      "result.dl_tip": "Si ton navigateur demande « Autoriser ce site à télécharger plusieurs fichiers ? » clique sur Autoriser. Copie ensuite l'ensemble dans GARMIN/Garmin/CustomMaps/ sur la montre.",
       "result.dl_body_1": "Ta sortie est entièrement couverte par",
       "result.dl_zone": "région",
       "result.dl_zones": "régions",
@@ -562,7 +569,9 @@
       "result.step1": "Passo 1",
       "result.dl_title": "Scarica questi file",
       "result.dl_all": "Scarica tutti i {n} file",
-      "result.dl_tip": "Suggerimento: la maggior parte dei browser li salva direttamente nella cartella Download. Poi copia tutto in GARMIN/Garmin/CustomMaps/ sull'orologio.",
+      "result.dl_all_progress": "Sto scaricando",
+      "result.dl_all_done": "Fatto, controlla la cartella Download",
+      "result.dl_tip": "Se il browser chiede «Consentire a questo sito di scaricare più file?» clicca su Consenti. Poi copia tutto in GARMIN/Garmin/CustomMaps/ sull'orologio.",
       "result.dl_body_1": "Il tuo giro è interamente coperto da",
       "result.dl_zone": "regione",
       "result.dl_zones": "regioni",
@@ -960,18 +969,31 @@
     }
     el.innerHTML = html;
 
-    // Wire "Download all" so a single click triggers every individual download.
+    // Wire "Download all". Chrome blocks programmatic batch downloads from
+    // the same origin and prompts the user once with "Allow site to download
+    // multiple files"; with too-fast triggers it just drops the rest. Stagger
+    // generously and use a hidden iframe per file (anchor.click() is more
+    // likely to be deduped by some browsers).
     const dlAll = document.getElementById('dlAllBtn');
     if (dlAll && LAST_DL_FILES.length) {
       dlAll.addEventListener('click', () => {
+        dlAll.textContent = T("result.dl_all_progress") + " (0/" + LAST_DL_FILES.length + ")";
+        dlAll.disabled = true;
         LAST_DL_FILES.forEach((f, i) => {
-          // Stagger by ~150ms so Firefox doesn't squash sibling downloads.
           setTimeout(() => {
-            const a = document.createElement('a');
-            a.href = f.url; a.download = f.name; a.rel = 'noopener';
-            document.body.appendChild(a); a.click();
-            document.body.removeChild(a);
-          }, i * 180);
+            const ifr = document.createElement('iframe');
+            ifr.style.display = 'none';
+            ifr.src = f.url;
+            document.body.appendChild(ifr);
+            setTimeout(() => { try { document.body.removeChild(ifr); } catch (_) {} }, 10000);
+            dlAll.textContent = T("result.dl_all_progress") + " (" + (i + 1) + "/" + LAST_DL_FILES.length + ")";
+            if (i === LAST_DL_FILES.length - 1) {
+              setTimeout(() => {
+                dlAll.textContent = T("result.dl_all_done");
+                dlAll.disabled = false;
+              }, 1500);
+            }
+          }, i * 1400);
         });
       });
     }
