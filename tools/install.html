@@ -5,65 +5,116 @@
 <title>Install Swisstopo maps on your Garmin watch</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
-  body {
-    font-family: system-ui, -apple-system, sans-serif;
-    max-width: 760px; margin: 2rem auto; padding: 0 1rem;
-    line-height: 1.55; color: #222;
+  :root {
+    --bg: #faf8f3;
+    --surface: #ffffff;
+    --ink: #1a1d21;
+    --muted: #5b6470;
+    --line: #e7e3d8;
+    --accent: #d4351c;
+    --accent-dark: #a82a16;
   }
-  h1 { font-size: 1.8rem; margin-top: 0; }
-  h2 { margin-top: 2rem; border-bottom: 2px solid #eee; padding-bottom: 0.3rem; }
+  * { box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, system-ui, sans-serif;
+    max-width: 760px; margin: 0 auto; padding: 0 1rem 3rem;
+    line-height: 1.6; color: var(--ink); background: var(--bg);
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: var(--accent-dark); }
+  h1 { font-size: clamp(1.7rem, 3.5vw, 2.1rem); margin: 1.5rem 0 0.5rem; letter-spacing: -0.015em; }
+  h2 { margin-top: 2.2rem; border-bottom: 2px solid var(--line); padding-bottom: 0.3rem; font-size: 1.25rem; }
   h3 { margin-top: 1.5rem; }
-  code, pre { background: #f4f4f4; padding: 0.1em 0.3em; border-radius: 3px; font-size: 0.9em; }
-  pre { padding: 0.6rem 0.8rem; overflow-x: auto; line-height: 1.4; }
-  .warn  { background: #fef5e7; border-left: 4px solid #f39c12; padding: 0.7rem 1rem; margin: 1rem 0; border-radius: 4px; }
-  .danger{ background: #fadbd8; border-left: 4px solid #c0392b; padding: 0.7rem 1rem; margin: 1rem 0; border-radius: 4px; }
-  .good  { background: #d4edda; border-left: 4px solid #27ae60; padding: 0.7rem 1rem; margin: 1rem 0; border-radius: 4px; }
-  .nav { margin-bottom: 1.5rem; font-size: 0.9rem; color: #666; }
-  .nav a { color: #2c3e50; }
+  code, pre { background: #f1efe7; padding: 0.1em 0.35em; border-radius: 3px; font-size: 0.92em; }
+  pre { padding: 0.7rem 0.9rem; overflow-x: auto; line-height: 1.45; border: 1px solid var(--line); }
+  .callout {
+    border-left: 4px solid; padding: 0.75rem 1rem;
+    margin: 1rem 0; border-radius: 4px;
+  }
+  .warn   { background: #fef5e7; border-color: #f39c12; }
+  .info   { background: #e8f0fb; border-color: #3870b6; }
+  .good   { background: #e6f3ea; border-color: #27ae60; }
+  .danger { background: #fbe8e6; border-color: #c0392b; }
   ol li, ul li { margin: 0.3rem 0; }
+
+  /* Top bar + language toggle */
+  .topbar {
+    border-bottom: 1px solid var(--line);
+    position: sticky; top: 0; z-index: 10;
+    backdrop-filter: saturate(160%) blur(8px);
+    background: rgba(250,248,243,0.88);
+    margin: 0 -1rem 1.6rem;
+    padding: 0 1rem;
+  }
+  .topbar-inner {
+    max-width: 760px; margin: 0 auto;
+    display: flex; align-items: center; justify-content: space-between;
+    height: 50px;
+  }
+  .nav-back {
+    font-size: 0.9rem; color: var(--muted); text-decoration: none;
+  }
+  .nav-back:hover { color: var(--ink); }
+  .langs { display: flex; gap: 0.25rem; }
+  .langs button {
+    appearance: none; border: 1px solid var(--line); background: transparent;
+    color: var(--muted); font: inherit; font-size: 0.78rem; font-weight: 600;
+    padding: 0.25rem 0.55rem; border-radius: 999px; cursor: pointer;
+    letter-spacing: 0.04em;
+    transition: background 0.15s, color 0.15s, border-color 0.15s;
+  }
+  .langs button:hover { background: #f1efe7; color: var(--ink); }
+  .langs button[aria-pressed="true"] {
+    background: var(--ink); color: #fff; border-color: var(--ink);
+  }
 </style>
 </head>
 <body>
-<div class="nav">← <a href="index.html">Back to tools</a></div>
 
-<h1>Install Swisstopo maps on your Garmin watch</h1>
+<header class="topbar">
+  <div class="topbar-inner">
+    <a class="nav-back" href="index.html">← <span data-i18n="nav.back">Back to tools</span></a>
+    <nav class="langs" aria-label="Language">
+      <button type="button" data-lang="en" aria-pressed="false">EN</button>
+      <button type="button" data-lang="de" aria-pressed="false">DE</button>
+      <button type="button" data-lang="fr" aria-pressed="false">FR</button>
+      <button type="button" data-lang="it" aria-pressed="false">IT</button>
+    </nav>
+  </div>
+</header>
 
-<p>Works on <strong>Epix 2</strong> and <strong>Fenix 7 Pro</strong>.
-Read the section at the bottom if you have a Fenix 6.
-No special software needed — we just copy files.</p>
+<h1 data-i18n="title">Install Swisstopo maps on your Garmin watch</h1>
 
-<h2>Step 1 — Pick which maps you want</h2>
+<p data-i18n="intro">Works on <strong>Epix 2 / Epix Pro / Fenix 7 Pro / Fenix 8</strong>. There's a note for Fenix 6 at the bottom. No special software needed — we just copy files.</p>
+
+<h2 data-i18n="step1.heading">Step 1 — Pick which maps you want</h2>
 <ul>
-  <li><strong><a href="gpx_pack_picker.html">GPX picker</a></strong> — drop a GPX of your tour and get direct download links for the right zone.</li>
-  <li><strong><a href="tile_picker.html">Tile picker</a></strong> — paint your own area and have a custom pack built (5–15 min).</li>
+  <li data-i18n="step1.gpx"><strong><a href="gpx_pack_picker.html">GPX picker</a></strong> — drop a GPX of your tour and get direct download links for the right regional pack.</li>
+  <li data-i18n="step1.tile"><strong><a href="tile_picker.html">Custom builder</a></strong> — paint your own area and have a tailor-made pack built (typically within an hour).</li>
 </ul>
-<p>Always also download <code>00_overview_ch.kmz</code> (the all-CH background). The GPX picker links to it automatically.</p>
+<p data-i18n="step1.always">Always also download <code>00_overview_ch.kmz</code> (the all-Switzerland background). The GPX picker links to it automatically.</p>
 
-<h2>Step 2 — Plug the watch into your computer</h2>
-<p>Use the USB cable that came with the watch. It appears as a USB drive
-named <strong>GARMIN</strong>. If nothing shows up, try a different USB port —
-many phone-charging cables don't carry data.</p>
+<h2 data-i18n="step2.heading">Step 2 — Plug the watch into your computer</h2>
+<p data-i18n="step2.body">Use the USB cable that came with the watch. It appears as a USB drive called <strong>GARMIN</strong>. If nothing shows up, try a different USB port — many phone-charging cables don't carry data.</p>
 
-<h2>Step 3 — Open the <code>Garmin/CustomMaps/</code> folder</h2>
-<p>On the GARMIN drive, navigate to:</p>
+<h2 data-i18n="step3.heading">Step 3 — Open the <code>Garmin/CustomMaps/</code> folder</h2>
+<p data-i18n="step3.intro">On the GARMIN drive, go to:</p>
 <pre>GARMIN/Garmin/CustomMaps/</pre>
-<p>(Yes, the word <em>Garmin</em> appears twice.) If <code>CustomMaps/</code>
-doesn't exist, create it. The name must be exactly <code>CustomMaps</code>
-(capital C, capital M, no space).</p>
+<p data-i18n="step3.note">(Yes, the word <em>Garmin</em> appears twice.) If <code>CustomMaps/</code> doesn't exist, create it. The name must be exactly <code>CustomMaps</code> — capital C, capital M, no space.</p>
 
-<h2>Step 4 — Clean out old <code>.kmz</code> files</h2>
-<div class="good"><strong>✅ DELETE</strong> every file inside <code>CustomMaps/</code> that ends in <code>.kmz</code>. Those are old maps. They steal your tile budget.</div>
-<div class="danger"><strong>❌ DO NOT DELETE</strong> any <code>.img</code> file, anywhere on the GARMIN drive. Those are your built-in maps (TopoActive, basemap). Deleting them breaks the watch and you'll need a factory reset.</div>
-<p>Folders to leave completely alone, even if they look empty:</p>
+<h2 data-i18n="step4.heading">Step 4 — Clean out old <code>.kmz</code> files</h2>
+<div class="callout good"><strong data-i18n="step4.delete_ok_label">✅ DELETE:</strong> <span data-i18n="step4.delete_ok_body">every file inside <code>CustomMaps/</code> that ends in <code>.kmz</code>. Those are old maps. They take up your tile budget.</span></div>
+<div class="callout danger"><strong data-i18n="step4.delete_warn_label">❌ DON'T DELETE:</strong> <span data-i18n="step4.delete_warn_body">any <code>.img</code> file, anywhere on the GARMIN drive. Those are the standard maps that came with your watch (Garmin TopoActive, the basemap). The watch keeps working without them, but you'll lose the default map background — and getting it back means re-downloading it through <a href="https://www.garmin.com/en-US/software/express/">Garmin Express</a>.</span></div>
+<p data-i18n="step4.leave_alone">Folders to leave alone, even if they look empty:</p>
 <ul>
   <li><code>Garmin/Maps/</code></li>
   <li><code>Garmin/Maps/MapInstall/</code></li>
-  <li>anything containing <code>.img</code>, <code>.gma</code>, <code>.unl</code>, or <code>.jnx</code></li>
+  <li data-i18n="step4.other_ext">anything containing <code>.img</code>, <code>.gma</code>, <code>.unl</code>, or <code>.jnx</code></li>
 </ul>
-<p>Rule of thumb: <strong>only delete files ending in <code>.kmz</code></strong>, and <strong>only inside <code>Garmin/CustomMaps/</code></strong>.</p>
+<p data-i18n="step4.rule">Rule of thumb: <strong>only delete files ending in <code>.kmz</code></strong>, and <strong>only inside <code>Garmin/CustomMaps/</code></strong>.</p>
 
-<h2>Step 5 — Copy the new <code>.kmz</code> files in</h2>
-<p>Drag every <code>.kmz</code> you downloaded into <code>Garmin/CustomMaps/</code>. Overview + regional all go in the same folder.</p>
+<h2 data-i18n="step5.heading">Step 5 — Copy the new <code>.kmz</code> files in</h2>
+<p data-i18n="step5.intro">Drag every <code>.kmz</code> you downloaded into <code>Garmin/CustomMaps/</code>. The Switzerland overview and your regional pack go in the same folder.</p>
 <pre>GARMIN/
 └── Garmin/
     └── CustomMaps/
@@ -72,71 +123,327 @@ doesn't exist, create it. The name must be exactly <code>CustomMaps</code>
         ├── 02_wallis_west_part_002.kmz
         ├── 02_wallis_west_part_003.kmz
         └── 02_wallis_west_part_004.kmz</pre>
-<div class="warn"><strong>Don't mix zones.</strong> The watch caps at ~500 tiles across all KMZs combined. One overview + one regional zone uses almost the whole budget. Extra zones get silently dropped.</div>
+<div class="callout warn"><strong data-i18n="step5.warn_label">Copy one region at a time.</strong> <span data-i18n="step5.warn_body">Your watch has a limit on how many map pieces it can show at once. The Switzerland overview plus one regional pack already uses almost the whole budget. If you copy more, the watch will quietly leave some out — and you don't get to choose which.</span></div>
 
-<h2>Step 6 — Safely eject</h2>
+<h2 data-i18n="step6.heading">Step 6 — Safely eject</h2>
 <ul>
-  <li>Windows: right-click GARMIN in <em>This PC</em> → <em>Eject</em>.</li>
-  <li>Mac: drag the drive to the Trash.</li>
-  <li>Linux: right-click → <em>Eject</em>.</li>
+  <li data-i18n="step6.windows">Windows: right-click GARMIN in <em>This PC</em> → <em>Eject</em>.</li>
+  <li data-i18n="step6.mac">Mac: drag the drive to the Trash.</li>
+  <li data-i18n="step6.linux">Linux: right-click → <em>Eject</em>.</li>
 </ul>
 
-<h2>Step 7 — Reboot the watch and enable Custom Maps</h2>
+<h2 data-i18n="step7.heading">Step 7 — Reboot the watch and enable Custom Maps</h2>
 <ol>
-  <li>Hold the <em>Light</em> button (top-left) for ~15 seconds until the watch powers off, then press it again to power back on.</li>
-  <li>Hold the back button → <strong>Map → Map Settings → Map Layers</strong>
-    (sometimes labelled "Configure Map" or "Configure Maps").</li>
-  <li>Make sure <strong>Custom Maps</strong> is <strong>On</strong>.</li>
+  <li data-i18n="step7.reboot">Hold the <em>Light</em> button (top-left) for ~15 seconds until the watch powers off, then press it again to power back on.</li>
+  <li data-i18n="step7.menu">Hold the back button → <strong>Map → Map Settings → Map Layers</strong> (sometimes labelled "Configure Map" or "Configure Maps").</li>
+  <li data-i18n="step7.enable">Make sure <strong>Custom Maps</strong> is set to <strong>On</strong>.</li>
 </ol>
-<p>Done. Open the map screen — the LK25 raster with slope shading and ski-tour routes is there.</p>
-<div class="warn">⚠ Individual KMZs do <strong>not</strong> appear in Map Manager. Map Manager only lists built-in <code>.img</code> map families. KMZs render as one combined layer with one toggle. Swap regions by moving files via USB.</div>
+<p data-i18n="step7.done">Done. Open the map screen — the LK25 raster with slope shading and routes is there.</p>
+<div class="callout warn" data-i18n="step7.note">⚠ Individual KMZs do <strong>not</strong> appear in Map Manager. Map Manager only lists built-in <code>.img</code> map families. KMZs render as one combined layer with one toggle. Swap regions by moving files via USB.</div>
 
-<h2>Switching regions later</h2>
+<h2 data-i18n="switch.heading">Switching regions later</h2>
 <ol>
-  <li>Plug in, open <code>Garmin/CustomMaps/</code>.</li>
-  <li>Delete the old regional <code>.kmz</code> (keep <code>00_overview_ch.kmz</code>).</li>
-  <li>Copy the new region's <code>.kmz</code> in.</li>
-  <li>Eject, reboot.</li>
+  <li data-i18n="switch.s1">Plug in, open <code>Garmin/CustomMaps/</code>.</li>
+  <li data-i18n="switch.s2">Delete the old regional <code>.kmz</code> files (keep <code>00_overview_ch.kmz</code>).</li>
+  <li data-i18n="switch.s3">Copy the new region's <code>.kmz</code> in.</li>
+  <li data-i18n="switch.s4">Eject, reboot.</li>
 </ol>
 
-<h2>Troubleshooting</h2>
-<p><strong>Map looks blank.</strong> Did you reboot? Did you enable Map Layers → Custom Maps? Are the <code>.kmz</code> in <code>Garmin/CustomMaps/</code> and not <code>Garmin/Maps/</code>?</p>
-<p><strong>Only part of the region renders.</strong> Over the 500-tile cap — keep only one regional pack at a time.</p>
-<p><strong>Watch can't show maps at all.</strong> An <code>.img</code> was probably deleted. Reinstall the basemap via Garmin Express.</p>
-<p><strong>Watch hangs on boot.</strong> Unplug, hold <em>Light</em> 30 s, retry. If persistent, remove the most recently added <code>.kmz</code>.</p>
+<h2 data-i18n="trouble.heading">Troubleshooting</h2>
+<p><strong data-i18n="trouble.blank_q">Map looks blank.</strong> <span data-i18n="trouble.blank_a">Did you reboot? Did you enable Map Layers → Custom Maps? Are the <code>.kmz</code> files in <code>Garmin/CustomMaps/</code> and not <code>Garmin/Maps/</code>?</span></p>
+<p><strong data-i18n="trouble.partial_q">Only part of the region renders.</strong> <span data-i18n="trouble.partial_a">Over the tile limit — keep only one regional pack at a time, alongside the overview.</span></p>
+<p><strong data-i18n="trouble.nomap_q">No standard Garmin map (TopoActive) any more.</strong> <span data-i18n="trouble.nomap_a">An <code>.img</code> file was deleted. Plug the watch in and reinstall the basemap via <a href="https://www.garmin.com/en-US/software/express/">Garmin Express</a>.</span></p>
+<p><strong data-i18n="trouble.hang_q">Watch hangs on boot.</strong> <span data-i18n="trouble.hang_a">Unplug, hold <em>Light</em> for 30 seconds, retry. If it persists, remove the most recently added <code>.kmz</code>.</span></p>
 
-<h2>Fenix 6 / 6 Pro / 6X Pro</h2>
-<p>The current packs <strong>don't fit</strong> on the Fenix 6 family — those watches cap at <strong>100 tiles total</strong> (vs 500 on Epix 2 / Fenix 7 Pro) and 3 MB per KMZ. A coarser Fenix 6 build is planned but not yet shipped. Until then, the GPX picker still works for orientation; for the actual map on the watch you'd fall back to Garmin TOPO Schweiz v2 PRO.</p>
+<h2 data-i18n="fenix6.heading">Fenix 6 / 6 Pro / 6X Pro</h2>
+<p data-i18n="fenix6.body">The standard packs <strong>don't fit</strong> on the Fenix 6 family — those watches cap at <strong>100 tiles total</strong> (compared to roughly 500 on Epix 2 / Fenix 7 Pro) and 3 MB per KMZ. A coarser Fenix 6 build is in progress but not yet shipped. Until then, the GPX picker still works for trip planning; for the on-watch map, you'd fall back to Garmin TOPO Schweiz v2 PRO.</p>
 
-<h2 id="slope-disclaimer">Slope-shading disclaimer ⚠</h2>
+<h2 id="slope-disclaimer" data-i18n="slope.heading">Slope-shading disclaimer ⚠</h2>
 
-<p><strong>Read this before using the slope overlay for avalanche-relevant
-decisions.</strong></p>
+<p data-i18n="slope.before"><strong>Read this before using the slope overlay for avalanche-relevant decisions.</strong></p>
 
-<p style="font-style: italic">Die in dieser Karte dargestellten Hangneigungsklassen sind aus dem
-swissALTI3D-Höhenmodell (10 m) abgeleitet und können lokal von der Realität
-abweichen. Sie ersetzen weder das aktuelle Lawinenbulletin des SLF noch eine
-fundierte Tourenplanung mit aktuellen Verhältnissen vor Ort. Nutzung auf
-eigene Verantwortung.</p>
+<p style="font-style: italic" data-i18n="slope.localized">Slope-angle classes (30° / 35° / 40° / 45°+) shown on this map are derived from the swissALTI3D 10 m digital elevation model (swisstopo) and may locally differ from reality. They do not replace the current SLF avalanche bulletin or proper, conditions-aware tour planning on the ground. Use at your own risk.</p>
 
-<p>Slope-angle classes (30° / 35° / 40° / 45°+) shown on this map are derived
-from the swissALTI3D 10 m DEM published by swisstopo. Class boundaries are
-calibrated against the official <code>ch.swisstopo.hangneigung-ueber_30</code>
-SLF product, but <strong>no warranty</strong> is given that any individual
-pixel matches the official Swisstopo / SLF classification.</p>
+<p data-i18n="slope.calibration">Class boundaries are calibrated against the official <code>ch.swisstopo.hangneigung-ueber_30</code> SLF product, but <strong>no warranty</strong> is given that any individual pixel matches the official Swisstopo / SLF classification.</p>
 
-<p>Slope angle is one of many factors in avalanche risk. This map does
-<strong>not</strong> incorporate snowpack stability, weather, aspect-specific
-danger, terrain traps, or the daily SLF
-<a href="https://www.slf.ch">Lawinenbulletin</a> — all of which must be
-consulted independently before any winter backcountry travel.</p>
+<p data-i18n="slope.factors">Slope angle is one of many factors in avalanche risk. This map does <strong>not</strong> incorporate snowpack stability, weather, aspect-specific danger, terrain traps, or the daily SLF <a href="https://www.slf.ch">avalanche bulletin</a> — all of which must be consulted independently before any winter backcountry travel.</p>
 
-<p>The authors, contributors, and any redistributor accept no liability for
-injury, loss, or damage arising from use of this map. Backcountry skiing and
-ski touring are activities with inherent risks including death; users assume
-all such risks. By using this map you acknowledge you are a competent
-independent decision-maker and not relying on this tool as a primary safety
-input.</p>
+<p data-i18n="slope.liability">The authors, contributors, and any redistributor accept no liability for injury, loss, or damage arising from use of this map. Backcountry skiing and ski touring are activities with inherent risks including death; users assume all such risks. By using this map you acknowledge that you are a competent independent decision-maker and not relying on this tool as a primary safety input.</p>
+
+<script>
+(function () {
+  const I18N = {
+    en: {
+      "nav.back": "Back to tools",
+      "title": "Install Swisstopo maps on your Garmin watch",
+      "intro": "Works on Epix 2 / Epix Pro / Fenix 7 Pro / Fenix 8. There's a note for Fenix 6 at the bottom. No special software needed — we just copy files.",
+      "step1.heading": "Step 1 — Pick which maps you want",
+      "step1.gpx": "GPX picker — drop a GPX of your tour and get direct download links for the right regional pack.",
+      "step1.tile": "Custom builder — paint your own area and have a tailor-made pack built (typically within an hour).",
+      "step1.always": "Always also download 00_overview_ch.kmz (the all-Switzerland background). The GPX picker links to it automatically.",
+      "step2.heading": "Step 2 — Plug the watch into your computer",
+      "step2.body": "Use the USB cable that came with the watch. It appears as a USB drive called GARMIN. If nothing shows up, try a different USB port — many phone-charging cables don't carry data.",
+      "step3.heading": "Step 3 — Open the Garmin/CustomMaps/ folder",
+      "step3.intro": "On the GARMIN drive, go to:",
+      "step3.note": "(Yes, the word Garmin appears twice.) If CustomMaps/ doesn't exist, create it. The name must be exactly CustomMaps — capital C, capital M, no space.",
+      "step4.heading": "Step 4 — Clean out old .kmz files",
+      "step4.delete_ok_label": "✅ DELETE:",
+      "step4.delete_ok_body": "every file inside CustomMaps/ that ends in .kmz. Those are old maps. They take up your tile budget.",
+      "step4.delete_warn_label": "❌ DON'T DELETE:",
+      "step4.delete_warn_body": "any .img file, anywhere on the GARMIN drive. Those are the standard maps that came with your watch (Garmin TopoActive, the basemap). The watch keeps working without them, but you'll lose the default map background — and getting it back means re-downloading it through Garmin Express.",
+      "step4.leave_alone": "Folders to leave alone, even if they look empty:",
+      "step4.other_ext": "anything containing .img, .gma, .unl, or .jnx",
+      "step4.rule": "Rule of thumb: only delete files ending in .kmz, and only inside Garmin/CustomMaps/.",
+      "step5.heading": "Step 5 — Copy the new .kmz files in",
+      "step5.intro": "Drag every .kmz you downloaded into Garmin/CustomMaps/. The Switzerland overview and your regional pack go in the same folder.",
+      "step5.warn_label": "Copy one region at a time.",
+      "step5.warn_body": "Your watch has a limit on how many map pieces it can show at once. The Switzerland overview plus one regional pack already uses almost the whole budget. If you copy more, the watch will quietly leave some out — and you don't get to choose which.",
+      "step6.heading": "Step 6 — Safely eject",
+      "step6.windows": "Windows: right-click GARMIN in This PC → Eject.",
+      "step6.mac": "Mac: drag the drive to the Trash.",
+      "step6.linux": "Linux: right-click → Eject.",
+      "step7.heading": "Step 7 — Reboot the watch and enable Custom Maps",
+      "step7.reboot": "Hold the Light button (top-left) for ~15 seconds until the watch powers off, then press it again to power back on.",
+      "step7.menu": "Hold the back button → Map → Map Settings → Map Layers (sometimes labelled \"Configure Map\" or \"Configure Maps\").",
+      "step7.enable": "Make sure Custom Maps is set to On.",
+      "step7.done": "Done. Open the map screen — the LK25 raster with slope shading and routes is there.",
+      "step7.note": "⚠ Individual KMZs do not appear in Map Manager. Map Manager only lists built-in .img map families. KMZs render as one combined layer with one toggle. Swap regions by moving files via USB.",
+      "switch.heading": "Switching regions later",
+      "switch.s1": "Plug in, open Garmin/CustomMaps/.",
+      "switch.s2": "Delete the old regional .kmz files (keep 00_overview_ch.kmz).",
+      "switch.s3": "Copy the new region's .kmz in.",
+      "switch.s4": "Eject, reboot.",
+      "trouble.heading": "Troubleshooting",
+      "trouble.blank_q": "Map looks blank.",
+      "trouble.blank_a": "Did you reboot? Did you enable Map Layers → Custom Maps? Are the .kmz files in Garmin/CustomMaps/ and not Garmin/Maps/?",
+      "trouble.partial_q": "Only part of the region renders.",
+      "trouble.partial_a": "Over the tile limit — keep only one regional pack at a time, alongside the overview.",
+      "trouble.nomap_q": "No standard Garmin map (TopoActive) any more.",
+      "trouble.nomap_a": "An .img file was deleted. Plug the watch in and reinstall the basemap via Garmin Express.",
+      "trouble.hang_q": "Watch hangs on boot.",
+      "trouble.hang_a": "Unplug, hold Light for 30 seconds, retry. If it persists, remove the most recently added .kmz.",
+      "fenix6.heading": "Fenix 6 / 6 Pro / 6X Pro",
+      "fenix6.body": "The standard packs don't fit on the Fenix 6 family — those watches cap at 100 tiles total (compared to roughly 500 on Epix 2 / Fenix 7 Pro) and 3 MB per KMZ. A coarser Fenix 6 build is in progress but not yet shipped. Until then, the GPX picker still works for trip planning; for the on-watch map, you'd fall back to Garmin TOPO Schweiz v2 PRO.",
+      "slope.heading": "Slope-shading disclaimer ⚠",
+      "slope.before": "Read this before using the slope overlay for avalanche-relevant decisions.",
+      "slope.localized": "Slope-angle classes (30° / 35° / 40° / 45°+) shown on this map are derived from the swissALTI3D 10 m digital elevation model (swisstopo) and may locally differ from reality. They do not replace the current SLF avalanche bulletin or proper, conditions-aware tour planning on the ground. Use at your own risk.",
+      "slope.calibration": "Class boundaries are calibrated against the official ch.swisstopo.hangneigung-ueber_30 SLF product, but no warranty is given that any individual pixel matches the official Swisstopo / SLF classification.",
+      "slope.factors": "Slope angle is one of many factors in avalanche risk. This map does not incorporate snowpack stability, weather, aspect-specific danger, terrain traps, or the daily SLF avalanche bulletin — all of which must be consulted independently before any winter backcountry travel.",
+      "slope.liability": "The authors, contributors, and any redistributor accept no liability for injury, loss, or damage arising from use of this map. Backcountry skiing and ski touring are activities with inherent risks including death; users assume all such risks. By using this map you acknowledge that you are a competent independent decision-maker and not relying on this tool as a primary safety input."
+    },
+    de: {
+      "nav.back": "Zurück zu den Tools",
+      "title": "Swisstopo-Karten auf deiner Garmin-Uhr installieren",
+      "intro": "Funktioniert auf Epix 2 / Epix Pro / Fenix 7 Pro / Fenix 8. Hinweis zur Fenix 6 ganz unten. Du brauchst keine spezielle Software — wir kopieren nur Dateien.",
+      "step1.heading": "Schritt 1 — Wähle deine Karten",
+      "step1.gpx": "GPX-Auswahl — GPX deiner Tour einlegen und direkte Download-Links zum passenden Regionalpaket erhalten.",
+      "step1.tile": "Eigener Build — eigenes Gebiet zeichnen und ein massgeschneidertes Paket bauen lassen (meist innerhalb einer Stunde).",
+      "step1.always": "Lade immer auch 00_overview_ch.kmz herunter (die Schweiz-Übersicht). Die GPX-Auswahl verlinkt automatisch darauf.",
+      "step2.heading": "Schritt 2 — Uhr an den Computer anschliessen",
+      "step2.body": "Nimm das USB-Kabel, das mit der Uhr geliefert wurde. Die Uhr erscheint als USB-Laufwerk namens GARMIN. Wenn nichts auftaucht, probier einen anderen USB-Port — viele Handy-Ladekabel übertragen keine Daten.",
+      "step3.heading": "Schritt 3 — Den Ordner Garmin/CustomMaps/ öffnen",
+      "step3.intro": "Auf dem GARMIN-Laufwerk gehst du zu:",
+      "step3.note": "(Ja, das Wort Garmin kommt zweimal vor.) Falls CustomMaps/ nicht existiert, leg den Ordner an. Der Name muss exakt CustomMaps lauten — grosses C, grosses M, kein Leerzeichen.",
+      "step4.heading": "Schritt 4 — Alte .kmz-Dateien aufräumen",
+      "step4.delete_ok_label": "✅ LÖSCHEN:",
+      "step4.delete_ok_body": "jede Datei in CustomMaps/, die auf .kmz endet. Das sind alte Karten. Sie belegen dein Kachelbudget.",
+      "step4.delete_warn_label": "❌ NICHT LÖSCHEN:",
+      "step4.delete_warn_body": "keine .img-Datei, nirgendwo auf dem GARMIN-Laufwerk. Das sind die Standardkarten, die mit deiner Uhr geliefert wurden (Garmin TopoActive, die Basiskarte). Die Uhr funktioniert auch ohne sie weiter, aber du verlierst die Standard-Karte als Hintergrund — und um sie zurückzubekommen, müsstest du sie über Garmin Express neu herunterladen.",
+      "step4.leave_alone": "Diese Ordner lässt du in Ruhe, auch wenn sie leer wirken:",
+      "step4.other_ext": "alles mit .img, .gma, .unl oder .jnx",
+      "step4.rule": "Faustregel: nur Dateien löschen, die auf .kmz enden, und nur innerhalb von Garmin/CustomMaps/.",
+      "step5.heading": "Schritt 5 — Neue .kmz-Dateien hineinkopieren",
+      "step5.intro": "Zieh jede heruntergeladene .kmz nach Garmin/CustomMaps/. Die Schweiz-Übersicht und dein Regionalpaket kommen in den gleichen Ordner.",
+      "step5.warn_label": "Immer nur eine Region aufs Mal kopieren.",
+      "step5.warn_body": "Deine Uhr hat eine Grenze, wie viele Kartenstücke sie gleichzeitig anzeigen kann. Die Schweiz-Übersicht plus ein Regionalpaket füllt das Budget fast komplett. Wenn du mehr kopierst, lässt die Uhr stillschweigend einige weg — und du kannst nicht beeinflussen, welche.",
+      "step6.heading": "Schritt 6 — Sicher auswerfen",
+      "step6.windows": "Windows: rechtsklick auf GARMIN in Dieser PC → Auswerfen.",
+      "step6.mac": "Mac: Laufwerk in den Papierkorb ziehen.",
+      "step6.linux": "Linux: rechtsklick → Auswerfen.",
+      "step7.heading": "Schritt 7 — Uhr neu starten und Custom Maps aktivieren",
+      "step7.reboot": "Halt die Light-Taste (oben links) ca. 15 Sekunden, bis die Uhr ausgeht. Danach kurz drücken zum Einschalten.",
+      "step7.menu": "Zurück-Taste halten → Karte → Karteneinstellungen → Kartenebenen (manchmal als \"Karte konfigurieren\" beschriftet).",
+      "step7.enable": "Stell sicher, dass Custom Maps auf Ein steht.",
+      "step7.done": "Fertig. Auf den Kartenbildschirm wechseln — die LK25-Rasterkarte mit Hangneigung und Routen ist da.",
+      "step7.note": "⚠ Einzelne KMZs erscheinen nicht im Karten-Manager. Der Karten-Manager listet nur eingebaute .img-Karten. KMZs werden als eine kombinierte Ebene mit einem Schalter angezeigt. Region wechselt man per USB durch Dateiverschieben.",
+      "switch.heading": "Später die Region wechseln",
+      "switch.s1": "Anstecken, Garmin/CustomMaps/ öffnen.",
+      "switch.s2": "Die alten Regional-.kmz löschen (00_overview_ch.kmz behalten).",
+      "switch.s3": "Die .kmz der neuen Region hineinkopieren.",
+      "switch.s4": "Auswerfen, neu starten.",
+      "trouble.heading": "Fehlersuche",
+      "trouble.blank_q": "Karte bleibt leer.",
+      "trouble.blank_a": "Hast du neu gestartet? Kartenebenen → Custom Maps aktiviert? Liegen die .kmz in Garmin/CustomMaps/ und nicht in Garmin/Maps/?",
+      "trouble.partial_q": "Nur ein Teil der Region wird angezeigt.",
+      "trouble.partial_a": "Du bist über dem Kachel-Limit — halt nur eine Region aufs Mal drauf, plus die Übersicht.",
+      "trouble.nomap_q": "Die Standard-Garmin-Karte (TopoActive) fehlt.",
+      "trouble.nomap_a": "Eine .img wurde gelöscht. Uhr anstecken und Basiskarte über Garmin Express neu installieren.",
+      "trouble.hang_q": "Die Uhr hängt beim Start.",
+      "trouble.hang_a": "Trennen, Light 30 Sekunden halten, nochmal probieren. Wenn es bleibt, die zuletzt hinzugefügte .kmz entfernen.",
+      "fenix6.heading": "Fenix 6 / 6 Pro / 6X Pro",
+      "fenix6.body": "Die Standard-Pakete passen nicht auf die Fenix-6-Familie — diese Uhren sind auf 100 Kacheln total begrenzt (vs. rund 500 bei Epix 2 / Fenix 7 Pro) und 3 MB pro KMZ. Ein gröberer Fenix-6-Build ist in Arbeit, aber noch nicht ausgeliefert. Bis dahin nützt dir die GPX-Auswahl zur Planung; für die Karte auf der Uhr selbst nimmst du am besten Garmin TOPO Schweiz v2 PRO.",
+      "slope.heading": "Haftungsausschluss Hangneigung ⚠",
+      "slope.before": "Lies das, bevor du das Hangneigungs-Overlay für lawinenrelevante Entscheidungen nutzt.",
+      "slope.localized": "Die in dieser Karte dargestellten Hangneigungsklassen (30° / 35° / 40° / 45°+) sind aus dem swissALTI3D-Höhenmodell (10 m) abgeleitet und können lokal von der Realität abweichen. Sie ersetzen weder das aktuelle Lawinenbulletin des SLF noch eine fundierte Tourenplanung mit aktuellen Verhältnissen vor Ort. Nutzung auf eigene Verantwortung.",
+      "slope.calibration": "Die Klassengrenzen sind an das offizielle Produkt ch.swisstopo.hangneigung-ueber_30 (SLF) kalibriert. Es wird aber keine Gewähr dafür übernommen, dass ein einzelner Pixel mit der offiziellen Swisstopo-/SLF-Klassifikation übereinstimmt.",
+      "slope.factors": "Hangneigung ist nur einer von vielen Faktoren beim Lawinenrisiko. Diese Karte berücksichtigt weder Schneedeckenstabilität, Wetter, expositionsabhängige Gefährdung, Geländefallen, noch das tägliche SLF-Lawinenbulletin — alles muss vor jedem Wintertourengang unabhängig konsultiert werden.",
+      "slope.liability": "Die Autoren, Mitwirkenden und Weiterverbreiter übernehmen keine Haftung für Verletzungen, Verluste oder Schäden, die aus der Nutzung dieser Karte entstehen. Skitouren und Variantenfahren sind Aktivitäten mit inhärenten Risiken, einschliesslich Tod. Mit der Nutzung dieser Karte bestätigst du, eigenständig kompetent zu entscheiden und dieses Werkzeug nicht als primäre Sicherheitsquelle zu verwenden."
+    },
+    fr: {
+      "nav.back": "Retour aux outils",
+      "title": "Installer les cartes Swisstopo sur ta montre Garmin",
+      "intro": "Fonctionne sur Epix 2 / Epix Pro / Fenix 7 Pro / Fenix 8. Note pour la Fenix 6 en bas de page. Pas besoin de logiciel particulier — on copie simplement des fichiers.",
+      "step1.heading": "Étape 1 — Choisis les cartes",
+      "step1.gpx": "Sélecteur GPX — dépose le GPX de ta sortie et obtiens des liens directs vers le pack régional adapté.",
+      "step1.tile": "Build sur mesure — dessine ta zone et fais construire un pack personnalisé (généralement en moins d'une heure).",
+      "step1.always": "Télécharge toujours aussi 00_overview_ch.kmz (l'aperçu de toute la Suisse). Le sélecteur GPX y renvoie automatiquement.",
+      "step2.heading": "Étape 2 — Branche la montre à l'ordinateur",
+      "step2.body": "Utilise le câble USB livré avec la montre. Elle apparaît comme un disque USB nommé GARMIN. Si rien ne s'affiche, essaie un autre port — beaucoup de câbles de recharge téléphone ne transmettent pas les données.",
+      "step3.heading": "Étape 3 — Ouvre le dossier Garmin/CustomMaps/",
+      "step3.intro": "Sur le disque GARMIN, va dans :",
+      "step3.note": "(Oui, le mot Garmin apparaît deux fois.) Si CustomMaps/ n'existe pas, crée-le. Le nom doit être exactement CustomMaps — C majuscule, M majuscule, pas d'espace.",
+      "step4.heading": "Étape 4 — Nettoyer les anciens .kmz",
+      "step4.delete_ok_label": "✅ À SUPPRIMER :",
+      "step4.delete_ok_body": "tous les fichiers .kmz dans CustomMaps/. Ce sont les anciennes cartes. Elles consomment ton budget de tuiles.",
+      "step4.delete_warn_label": "❌ À NE PAS SUPPRIMER :",
+      "step4.delete_warn_body": "aucun fichier .img, où que ce soit sur le disque GARMIN. Ce sont les cartes standard livrées avec ta montre (Garmin TopoActive, le fond de carte). La montre continue de fonctionner sans elles, mais tu perds le fond de carte par défaut — et pour le récupérer, il faut le retélécharger via Garmin Express.",
+      "step4.leave_alone": "Dossiers à laisser tranquilles, même s'ils semblent vides :",
+      "step4.other_ext": "tout ce qui contient .img, .gma, .unl ou .jnx",
+      "step4.rule": "Règle : ne supprime que les fichiers .kmz, et uniquement dans Garmin/CustomMaps/.",
+      "step5.heading": "Étape 5 — Copier les nouveaux .kmz",
+      "step5.intro": "Glisse tous les .kmz téléchargés dans Garmin/CustomMaps/. L'aperçu suisse et ton pack régional vont dans le même dossier.",
+      "step5.warn_label": "Une seule région à la fois.",
+      "step5.warn_body": "Ta montre a une limite sur le nombre de morceaux de carte qu'elle peut afficher en même temps. L'aperçu suisse plus un pack régional remplit déjà presque tout le budget. Si tu en copies davantage, la montre en laissera silencieusement de côté — et tu ne choisis pas lesquels.",
+      "step6.heading": "Étape 6 — Éjecter proprement",
+      "step6.windows": "Windows : clic droit sur GARMIN dans Ce PC → Éjecter.",
+      "step6.mac": "Mac : glisser le disque dans la corbeille.",
+      "step6.linux": "Linux : clic droit → Éjecter.",
+      "step7.heading": "Étape 7 — Redémarrer la montre et activer les Custom Maps",
+      "step7.reboot": "Maintiens le bouton Light (en haut à gauche) ~15 secondes jusqu'à l'extinction, puis rappuie pour rallumer.",
+      "step7.menu": "Maintiens le bouton retour → Carte → Paramètres de la carte → Couches de la carte (parfois \"Configurer la carte\").",
+      "step7.enable": "Vérifie que Custom Maps est sur On.",
+      "step7.done": "Terminé. Ouvre l'écran carte — le raster LK25 avec ombrage et itinéraires est là.",
+      "step7.note": "⚠ Les KMZ individuels n'apparaissent pas dans le Map Manager. Le Map Manager ne liste que les cartes .img intégrées. Les KMZ s'affichent comme une seule couche avec un seul interrupteur. Pour changer de région, déplace les fichiers via USB.",
+      "switch.heading": "Changer de région plus tard",
+      "switch.s1": "Branche la montre, ouvre Garmin/CustomMaps/.",
+      "switch.s2": "Supprime les anciens .kmz régionaux (garde 00_overview_ch.kmz).",
+      "switch.s3": "Copie les .kmz de la nouvelle région.",
+      "switch.s4": "Éjecte, redémarre.",
+      "trouble.heading": "Dépannage",
+      "trouble.blank_q": "La carte est vide.",
+      "trouble.blank_a": "As-tu redémarré ? As-tu activé Couches de la carte → Custom Maps ? Les .kmz sont-ils dans Garmin/CustomMaps/ et pas Garmin/Maps/ ?",
+      "trouble.partial_q": "Seule une partie de la région s'affiche.",
+      "trouble.partial_a": "Tu dépasses la limite de tuiles — ne garde qu'un seul pack régional à la fois, plus l'aperçu.",
+      "trouble.nomap_q": "Plus de carte Garmin standard (TopoActive).",
+      "trouble.nomap_a": "Un fichier .img a été supprimé. Branche la montre et réinstalle le fond de carte via Garmin Express.",
+      "trouble.hang_q": "La montre plante au démarrage.",
+      "trouble.hang_a": "Débranche, maintiens Light 30 secondes, réessaie. Si ça persiste, retire le .kmz ajouté en dernier.",
+      "fenix6.heading": "Fenix 6 / 6 Pro / 6X Pro",
+      "fenix6.body": "Les packs standard ne passent pas sur la famille Fenix 6 — ces montres sont limitées à 100 tuiles au total (contre environ 500 sur Epix 2 / Fenix 7 Pro) et 3 Mo par KMZ. Un build Fenix 6 plus grossier est en cours, pas encore disponible. En attendant, le sélecteur GPX reste utile pour planifier ; pour la carte sur la montre, replie-toi sur Garmin TOPO Schweiz v2 PRO.",
+      "slope.heading": "Avertissement ombrage des pentes ⚠",
+      "slope.before": "À lire avant d'utiliser l'ombrage pour des décisions liées aux avalanches.",
+      "slope.localized": "Les classes d'inclinaison (30° / 35° / 40° / 45°+) affichées sur cette carte sont dérivées du modèle altimétrique numérique swissALTI3D 10 m (swisstopo) et peuvent localement différer de la réalité. Elles ne remplacent pas le bulletin d'avalanches SLF du jour ni une planification adaptée aux conditions sur le terrain. Utilisation à tes propres risques.",
+      "slope.calibration": "Les limites de classes sont calibrées sur le produit officiel ch.swisstopo.hangneigung-ueber_30 (SLF), mais aucune garantie n'est donnée qu'un pixel individuel corresponde à la classification officielle Swisstopo / SLF.",
+      "slope.factors": "L'inclinaison de la pente n'est qu'un facteur parmi d'autres dans le risque d'avalanche. Cette carte n'intègre pas la stabilité du manteau neigeux, la météo, le danger selon l'orientation, les pièges du terrain, ni le bulletin SLF du jour — tout cela doit être consulté indépendamment avant toute sortie en hors-piste hivernal.",
+      "slope.liability": "Les auteurs, contributeurs et redistributeurs n'acceptent aucune responsabilité pour blessures, pertes ou dommages liés à l'utilisation de cette carte. Le ski hors-piste et le ski de randonnée comportent des risques inhérents, dont la mort ; l'utilisateur en assume l'intégralité. En utilisant cette carte, tu reconnais être un décideur indépendant compétent et ne pas t'appuyer sur cet outil comme source principale de sécurité."
+    },
+    it: {
+      "nav.back": "Torna agli strumenti",
+      "title": "Installare le mappe Swisstopo sull'orologio Garmin",
+      "intro": "Funziona su Epix 2 / Epix Pro / Fenix 7 Pro / Fenix 8. Nota per la Fenix 6 in fondo. Non serve software speciale — copiamo solo file.",
+      "step1.heading": "Passo 1 — Scegli le mappe",
+      "step1.gpx": "Selettore GPX — trascina il GPX del tuo giro e ottieni link diretti al pacchetto regionale giusto.",
+      "step1.tile": "Build personalizzato — disegna la tua zona e fai costruire un pacchetto su misura (di solito entro un'ora).",
+      "step1.always": "Scarica sempre anche 00_overview_ch.kmz (la panoramica nazionale). Il selettore GPX rimanda automaticamente.",
+      "step2.heading": "Passo 2 — Collega l'orologio al computer",
+      "step2.body": "Usa il cavo USB fornito con l'orologio. Compare come unità USB chiamata GARMIN. Se non appare nulla, prova un'altra porta USB — molti cavi da ricarica per telefoni non trasmettono dati.",
+      "step3.heading": "Passo 3 — Apri la cartella Garmin/CustomMaps/",
+      "step3.intro": "Sull'unità GARMIN vai in:",
+      "step3.note": "(Sì, la parola Garmin appare due volte.) Se CustomMaps/ non esiste, crealo. Il nome deve essere esattamente CustomMaps — C maiuscola, M maiuscola, senza spazio.",
+      "step4.heading": "Passo 4 — Pulire i vecchi .kmz",
+      "step4.delete_ok_label": "✅ DA ELIMINARE:",
+      "step4.delete_ok_body": "tutti i file .kmz dentro CustomMaps/. Sono le vecchie mappe. Occupano il budget di tile.",
+      "step4.delete_warn_label": "❌ DA NON ELIMINARE:",
+      "step4.delete_warn_body": "nessun file .img, da nessuna parte sull'unità GARMIN. Sono le mappe standard fornite con l'orologio (Garmin TopoActive, la mappa di base). L'orologio continua a funzionare senza, ma perdi lo sfondo cartografico predefinito — per recuperarlo bisogna riscaricarlo tramite Garmin Express.",
+      "step4.leave_alone": "Cartelle da non toccare, anche se sembrano vuote:",
+      "step4.other_ext": "qualsiasi cosa contenga .img, .gma, .unl o .jnx",
+      "step4.rule": "Regola: elimina solo i file che finiscono in .kmz, e solo dentro Garmin/CustomMaps/.",
+      "step5.heading": "Passo 5 — Copia i nuovi .kmz",
+      "step5.intro": "Trascina tutti i .kmz scaricati in Garmin/CustomMaps/. La panoramica nazionale e il pacchetto regionale vanno nella stessa cartella.",
+      "step5.warn_label": "Copia una sola regione alla volta.",
+      "step5.warn_body": "Il tuo orologio ha un limite su quanti pezzi di mappa può mostrare contemporaneamente. La panoramica nazionale più un pacchetto regionale riempiono già quasi tutto il budget. Se copi di più, l'orologio ne lascia fuori alcuni in silenzio — e non puoi scegliere quali.",
+      "step6.heading": "Passo 6 — Espelli in sicurezza",
+      "step6.windows": "Windows: tasto destro su GARMIN in Questo PC → Espelli.",
+      "step6.mac": "Mac: trascina l'unità nel Cestino.",
+      "step6.linux": "Linux: tasto destro → Espelli.",
+      "step7.heading": "Passo 7 — Riavvia l'orologio e attiva Custom Maps",
+      "step7.reboot": "Tieni premuto il pulsante Light (in alto a sinistra) per ~15 secondi finché l'orologio si spegne, poi premilo di nuovo per riaccendere.",
+      "step7.menu": "Tieni premuto il tasto indietro → Mappa → Impostazioni mappa → Livelli mappa (a volte \"Configura mappa\").",
+      "step7.enable": "Assicurati che Custom Maps sia impostato su On.",
+      "step7.done": "Fatto. Apri la schermata mappa — il raster LK25 con ombreggiatura delle pendenze e itinerari è lì.",
+      "step7.note": "⚠ I singoli KMZ non compaiono nel Map Manager. Il Map Manager elenca solo le mappe .img integrate. I KMZ vengono mostrati come un unico strato con un solo interruttore. Per cambiare regione, sposta i file via USB.",
+      "switch.heading": "Cambiare regione in seguito",
+      "switch.s1": "Collega l'orologio, apri Garmin/CustomMaps/.",
+      "switch.s2": "Elimina i vecchi .kmz regionali (tieni 00_overview_ch.kmz).",
+      "switch.s3": "Copia i .kmz della nuova regione.",
+      "switch.s4": "Espelli, riavvia.",
+      "trouble.heading": "Risoluzione problemi",
+      "trouble.blank_q": "La mappa è vuota.",
+      "trouble.blank_a": "Hai riavviato? Hai attivato Livelli mappa → Custom Maps? I .kmz sono in Garmin/CustomMaps/ e non in Garmin/Maps/?",
+      "trouble.partial_q": "Si vede solo una parte della regione.",
+      "trouble.partial_a": "Sei oltre il limite di tile — tieni un solo pacchetto regionale alla volta, insieme alla panoramica.",
+      "trouble.nomap_q": "La mappa Garmin standard (TopoActive) non c'è più.",
+      "trouble.nomap_a": "È stato eliminato un file .img. Collega l'orologio e reinstalla la mappa di base tramite Garmin Express.",
+      "trouble.hang_q": "L'orologio si blocca all'avvio.",
+      "trouble.hang_a": "Scollega, tieni premuto Light per 30 secondi, riprova. Se persiste, rimuovi l'ultimo .kmz aggiunto.",
+      "fenix6.heading": "Fenix 6 / 6 Pro / 6X Pro",
+      "fenix6.body": "I pacchetti standard non entrano nella famiglia Fenix 6 — questi orologi sono limitati a 100 tile totali (contro ~500 su Epix 2 / Fenix 7 Pro) e 3 MB per KMZ. Un build Fenix 6 più grezzo è in lavorazione ma non ancora disponibile. Nel frattempo, il selettore GPX rimane utile per la pianificazione; per la mappa sull'orologio, ripiega su Garmin TOPO Schweiz v2 PRO.",
+      "slope.heading": "Avvertenza ombreggiatura pendenze ⚠",
+      "slope.before": "Leggi prima di usare l'ombreggiatura per decisioni rilevanti per le valanghe.",
+      "slope.localized": "Le classi di pendenza (30° / 35° / 40° / 45°+) mostrate su questa mappa sono derivate dal modello altimetrico digitale swissALTI3D 10 m (swisstopo) e possono localmente differire dalla realtà. Non sostituiscono il bollettino valanghe SLF attuale né una pianificazione adeguata alle condizioni sul posto. Uso a proprio rischio.",
+      "slope.calibration": "I limiti delle classi sono calibrati sul prodotto ufficiale ch.swisstopo.hangneigung-ueber_30 (SLF), ma non si garantisce che ogni singolo pixel corrisponda alla classificazione ufficiale Swisstopo / SLF.",
+      "slope.factors": "La pendenza è solo uno dei tanti fattori del rischio valanghe. Questa mappa non considera la stabilità del manto nevoso, il meteo, il pericolo per esposizione, le trappole del terreno né il bollettino SLF del giorno — tutti elementi da consultare in modo indipendente prima di qualsiasi uscita in fuoripista invernale.",
+      "slope.liability": "Autori, contributori e redistributori non si assumono alcuna responsabilità per lesioni, perdite o danni derivanti dall'uso di questa mappa. Sci fuoripista e scialpinismo sono attività con rischi intrinseci, inclusa la morte; chi le pratica ne accetta integralmente i rischi. Usando questa mappa, riconosci di essere un decisore indipendente competente e di non fare affidamento su questo strumento come fonte primaria di sicurezza."
+    }
+  };
+
+  const LANGS = ["en", "de", "fr", "it"];
+
+  function detectLang() {
+    let stored = null;
+    try { stored = localStorage.getItem("lang"); } catch (e) {}
+    if (stored && LANGS.indexOf(stored) >= 0) return stored;
+    const nav = (navigator.languages && navigator.languages[0]) || navigator.language || "en";
+    const code = String(nav).toLowerCase().slice(0, 2);
+    if (LANGS.indexOf(code) >= 0) return code;
+    return "en";
+  }
+
+  function applyLang(lang) {
+    if (LANGS.indexOf(lang) < 0) lang = "en";
+    document.documentElement.lang = lang;
+    const dict = I18N[lang] || I18N.en;
+    // Use textContent: simple strings only. Elements with inline <code>/<strong>
+    // are wrapped so that their *outer* span gets the text and inline markup
+    // is dropped in translated form — the dict strings re-introduce code/path
+    // hints in plain text where useful.
+    document.querySelectorAll("[data-i18n]").forEach(function (el) {
+      const key = el.getAttribute("data-i18n");
+      if (dict[key] != null) el.textContent = dict[key];
+    });
+    document.querySelectorAll(".langs button").forEach(function (btn) {
+      btn.setAttribute("aria-pressed", btn.dataset.lang === lang ? "true" : "false");
+    });
+    try { localStorage.setItem("lang", lang); } catch (e) {}
+  }
+
+  document.querySelectorAll(".langs button").forEach(function (btn) {
+    btn.addEventListener("click", function () { applyLang(btn.dataset.lang); });
+  });
+
+  applyLang(detectLang());
+})();
+</script>
 
 </body>
 </html>
