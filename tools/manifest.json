@@ -43,7 +43,7 @@
         },
         {
           "name": "01_waadtlaender_alpen_part_003.kmz",
-          "size_mb": 38.5
+          "size_mb": 38.6
         },
         {
           "name": "01_waadtlaender_alpen_part_004.kmz",
@@ -61,7 +61,7 @@
         },
         {
           "name": "01_waadtlaender_alpen_part_003.kmz",
-          "size_mb": 38.5
+          "size_mb": 38.6
         },
         {
           "name": "01_waadtlaender_alpen_part_004.kmz",
@@ -86,8 +86,8 @@
           "size_mb": 21.3
         }
       ],
-      "total_size_mb": 139.5,
-      "winter_size_mb": 139.5,
+      "total_size_mb": 139.6,
+      "winter_size_mb": 139.6,
       "summer_size_mb": 146.8,
       "total_tiles_est": 250,
       "seasons": [
@@ -315,7 +315,7 @@
       "files": [
         {
           "name": "05_goms_aletsch_part_001.kmz",
-          "size_mb": 48.7
+          "size_mb": 48.8
         },
         {
           "name": "05_goms_aletsch_part_002.kmz",
@@ -329,7 +329,7 @@
       "winter_files": [
         {
           "name": "05_goms_aletsch_part_001.kmz",
-          "size_mb": 48.7
+          "size_mb": 48.8
         },
         {
           "name": "05_goms_aletsch_part_002.kmz",
@@ -354,8 +354,8 @@
           "size_mb": 31.8
         }
       ],
-      "total_size_mb": 126.6,
-      "winter_size_mb": 126.6,
+      "total_size_mb": 126.7,
+      "winter_size_mb": 126.7,
       "summer_size_mb": 136.6,
       "total_tiles_est": 180,
       "seasons": [
@@ -441,7 +441,7 @@
         },
         {
           "name": "07_jungfrau_region_part_002.kmz",
-          "size_mb": 49.7
+          "size_mb": 49.6
         },
         {
           "name": "07_jungfrau_region_part_003.kmz",
@@ -455,7 +455,7 @@
         },
         {
           "name": "07_jungfrau_region_part_002.kmz",
-          "size_mb": 49.7
+          "size_mb": 49.6
         },
         {
           "name": "07_jungfrau_region_part_003.kmz",
@@ -476,8 +476,8 @@
           "size_mb": 6.3
         }
       ],
-      "total_size_mb": 100.7,
-      "winter_size_mb": 100.7,
+      "total_size_mb": 100.6,
+      "winter_size_mb": 100.6,
       "summer_size_mb": 108.1,
       "total_tiles_est": 158,
       "seasons": [
@@ -502,7 +502,7 @@
         },
         {
           "name": "08_zentralschweiz_part_002.kmz",
-          "size_mb": 45.9
+          "size_mb": 45.8
         },
         {
           "name": "08_zentralschweiz_part_003.kmz",
@@ -516,7 +516,7 @@
         },
         {
           "name": "08_zentralschweiz_part_002.kmz",
-          "size_mb": 45.9
+          "size_mb": 45.8
         },
         {
           "name": "08_zentralschweiz_part_003.kmz",
@@ -537,8 +537,8 @@
           "size_mb": 33.8
         }
       ],
-      "total_size_mb": 117.8,
-      "winter_size_mb": 117.8,
+      "total_size_mb": 117.7,
+      "winter_size_mb": 117.7,
       "summer_size_mb": 126.7,
       "total_tiles_est": 180,
       "seasons": [
@@ -559,7 +559,7 @@
       "files": [
         {
           "name": "09_glarus_surselva_part_001.kmz",
-          "size_mb": 46.5
+          "size_mb": 46.4
         },
         {
           "name": "09_glarus_surselva_part_002.kmz",
@@ -573,7 +573,7 @@
       "winter_files": [
         {
           "name": "09_glarus_surselva_part_001.kmz",
-          "size_mb": 46.5
+          "size_mb": 46.4
         },
         {
           "name": "09_glarus_surselva_part_002.kmz",
@@ -598,8 +598,8 @@
           "size_mb": 29.1
         }
       ],
-      "total_size_mb": 121.2,
-      "winter_size_mb": 121.2,
+      "total_size_mb": 121.1,
+      "winter_size_mb": 121.1,
       "summer_size_mb": 131.1,
       "total_tiles_est": 180,
       "seasons": [
