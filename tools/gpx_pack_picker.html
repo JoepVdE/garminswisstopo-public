@@ -2,148 +2,562 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>Swisstopo KMZ Pack Recommender</title>
+<title>Find maps for my tour</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
       integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
       crossorigin="">
 <style>
-  body { font-family: system-ui, -apple-system, sans-serif; margin: 0; padding: 0; height: 100vh; display: flex; flex-direction: column; }
-  header { padding: 0.75rem 1rem; background: #2c3e50; color: white; }
-  header h1 { margin: 0 0 0.25rem 0; font-size: 1.15rem; }
-  header p { margin: 0; opacity: 0.8; font-size: 0.85rem; }
-  main { flex: 1; display: flex; min-height: 0; }
-  #leftPanel { width: 380px; padding: 1rem; overflow-y: auto; border-right: 1px solid #ddd; background: #fafafa; }
-  #map { flex: 1; }
+  :root {
+    --bg: #faf8f3;
+    --surface: #ffffff;
+    --ink: #1a1d21;
+    --muted: #5b6470;
+    --line: #e7e3d8;
+    --accent: #d4351c;
+    --accent-dark: #a82a16;
+    --winter: #3870b6;
+    --winter-bg: #e6eef8;
+    --summer: #4a8a3c;
+    --summer-bg: #ebf2e6;
+    --good: #2f7a3d;
+    --good-bg: #eaf4ec;
+    --warn: #8a5a00;
+    --warn-bg: #fbf3df;
+    --shadow: 0 1px 2px rgba(0,0,0,0.04), 0 4px 14px rgba(0,0,0,0.06);
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; height: 100%; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, system-ui, sans-serif;
+    background: var(--bg); color: var(--ink); line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    display: flex; flex-direction: column;
+  }
+  a { color: var(--accent-dark); }
+
+  /* Top bar */
+  .topbar {
+    border-bottom: 1px solid var(--line);
+    background: rgba(250,248,243,0.95);
+    backdrop-filter: saturate(160%) blur(8px);
+    flex: 0 0 auto;
+  }
+  .topbar-inner {
+    max-width: 1280px; margin: 0 auto;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 1rem; height: 54px;
+  }
+  .brand {
+    display: flex; align-items: center; gap: 0.55rem;
+    font-weight: 600; color: var(--ink); text-decoration: none;
+    font-size: 0.98rem;
+  }
+  .brand-mark {
+    width: 22px; height: 22px; border-radius: 4px;
+    background: var(--accent);
+    display: inline-flex; align-items: center; justify-content: center;
+    color: #fff; font-weight: 700; font-size: 0.9rem;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.15);
+  }
+  .langs { display: flex; gap: 0.25rem; }
+  .langs button {
+    appearance: none; border: 1px solid var(--line); background: transparent;
+    color: var(--muted); font: inherit; font-size: 0.78rem; font-weight: 600;
+    padding: 0.28rem 0.55rem; border-radius: 999px; cursor: pointer;
+    letter-spacing: 0.04em;
+    transition: background 0.15s, color 0.15s, border-color 0.15s;
+  }
+  .langs button:hover { background: #f1efe7; color: var(--ink); }
+  .langs button[aria-pressed="true"] {
+    background: var(--ink); color: #fff; border-color: var(--ink);
+  }
+
+  /* Page title strip */
+  .page-title {
+    background: var(--surface); border-bottom: 1px solid var(--line);
+    padding: 0.85rem 1rem;
+  }
+  .page-title-inner {
+    max-width: 1280px; margin: 0 auto;
+    display: flex; align-items: baseline; gap: 0.6rem; flex-wrap: wrap;
+  }
+  .page-title h1 {
+    margin: 0; font-size: 1.15rem; letter-spacing: -0.01em;
+  }
+  .page-title p {
+    margin: 0; color: var(--muted); font-size: 0.9rem;
+  }
+
+  /* Main split */
+  main {
+    flex: 1; min-height: 0;
+    display: flex;
+  }
+  #leftPanel {
+    width: 380px; max-width: 40vw;
+    padding: 1.1rem 1.15rem;
+    overflow-y: auto;
+    border-right: 1px solid var(--line);
+    background: var(--bg);
+  }
+  #map { flex: 1; min-width: 0; background: #ddd; }
+
+  @media (max-width: 760px) {
+    main { flex-direction: column; }
+    #leftPanel { width: 100%; max-width: none; max-height: 55vh; border-right: 0; border-bottom: 1px solid var(--line); }
+    #map { min-height: 45vh; }
+  }
+
+  /* Drop zone */
   #dropzone {
-    border: 2px dashed #999; padding: 1.5rem 1rem; text-align: center;
-    cursor: pointer; border-radius: 6px; transition: all 0.15s;
-    background: white;
+    border: 2px dashed #b9b29c;
+    padding: 1.5rem 1rem; text-align: center;
+    cursor: pointer; border-radius: 10px;
+    background: var(--surface);
+    transition: border-color 0.15s, background 0.15s, transform 0.05s;
   }
-  #dropzone:hover { border-color: #2c3e50; background: #ecf0f1; }
-  #dropzone.over { border-color: #27ae60; background: #d5f4e6; }
-  .pack {
-    padding: 0.6rem 0.75rem; border: 1px solid #ddd; border-radius: 4px;
-    margin: 0.5rem 0; background: white; transition: all 0.15s;
+  #dropzone:hover { border-color: var(--accent); background: #fff; }
+  #dropzone.over { border-color: var(--good); background: var(--good-bg); transform: scale(1.01); }
+  #dropzone .dz-title { font-weight: 600; font-size: 1rem; color: var(--ink); }
+  #dropzone .dz-sub { color: var(--muted); font-size: 0.85rem; margin-top: 0.25rem; }
+
+  /* Section heading */
+  h3.sect {
+    margin: 1.3rem 0 0.55rem; font-size: 0.9rem; font-weight: 600;
+    color: var(--ink); letter-spacing: 0.01em; text-transform: uppercase;
+    font-size: 0.75rem;
   }
-  .pack.primary { border-color: #27ae60; background: #d5f4e6; border-width: 2px; }
-  .pack.secondary { border-color: #3498db; background: #d6eaf8; }
-  .pack.marginal { border-color: #f39c12; background: #fef5e7; }
-  .pack-name { font-weight: 600; }
-  .pack-stats { color: #555; font-size: 0.85rem; margin-top: 0.15rem; }
-  .pack-desc { color: #777; font-size: 0.8rem; margin-top: 0.15rem; }
-  pre {
-    background: #2c3e50; color: #ecf0f1; padding: 0.75rem; border-radius: 4px;
-    overflow-x: auto; font-size: 0.85rem; line-height: 1.4;
-  }
-  h3 { margin: 1rem 0 0.5rem 0; font-size: 0.95rem; color: #2c3e50; }
-  .empty-state { color: #888; padding: 1rem 0; text-align: center; font-size: 0.9rem; }
-  small { color: #888; }
-  .dl-list { margin-top: 0.5rem; padding-top: 0.5rem; border-top: 1px solid rgba(0,0,0,0.1); }
-  .dl-row {
-    display: flex; justify-content: space-between; align-items: center;
-    padding: 0.25rem 0; font-size: 0.85rem;
-  }
-  .dl-row a { color: #2c3e50; font-family: monospace; text-decoration: none; }
-  .dl-row a:hover { text-decoration: underline; }
-  .dl-meta { color: #888; font-size: 0.8rem; }
-  .next-steps {
-    background: #fff8dc; padding: 0.7rem 0.9rem; border-left: 3px solid #f39c12;
-    margin-top: 0.75rem; border-radius: 4px; font-size: 0.9rem;
-  }
-  .next-steps h3 { margin-top: 0; }
-  .next-steps ol { margin: 0.25rem 0 0 1.2rem; padding: 0; }
-  .tip {
-    background: #ecf0f1; padding: 0.5rem 0.7rem; border-radius: 4px;
-    margin-top: 0.5rem; font-size: 0.85rem;
-  }
-  .season-toggle { display: flex; gap: 0.4rem; }
+
+  /* Season toggle */
+  .season-toggle { display: flex; gap: 0.45rem; }
   .season-opt {
-    flex: 1; cursor: pointer; border: 2px solid #ddd; border-radius: 6px;
-    padding: 0.5rem 0.6rem; background: white; transition: all 0.15s;
+    flex: 1; cursor: pointer; border: 1.5px solid var(--line); border-radius: 8px;
+    padding: 0.55rem 0.7rem; background: var(--surface); transition: all 0.15s;
     display: block; position: relative;
   }
-  /* Visually hide the radio without removing it from the layout/event flow. */
   .season-opt input {
     position: absolute; opacity: 0; pointer-events: none;
     width: 1px; height: 1px; left: 0; top: 0;
   }
-  .season-opt:hover { border-color: #95a5a6; }
-  .season-opt:has(input:checked) { border-color: #27ae60; background: #d5f4e6; }
-  /* Fallback for browsers without :has() (older Firefox / Safari < 15.4): the
-     .checked class is added by JS to the label of the selected radio. */
-  .season-opt.checked { border-color: #27ae60; background: #d5f4e6; }
-  .season-lbl { font-weight: 600; font-size: 0.9rem; }
-  .season-lbl small { display: block; font-weight: 400; color: #666; margin-top: 0.15rem; font-size: 0.75rem; }
+  .season-opt:hover { border-color: #cfccc1; }
+  .season-opt:has(input:checked),
+  .season-opt.checked {
+    border-color: var(--ink); background: var(--surface);
+    box-shadow: inset 0 0 0 1px var(--ink);
+  }
+  .season-lbl { font-weight: 600; font-size: 0.92rem; color: var(--ink); }
+  .season-lbl small { display: block; font-weight: 400; color: var(--muted); margin-top: 0.15rem; font-size: 0.74rem; }
+
+  /* Slope warning */
+  .tip-slope {
+    background: var(--warn-bg);
+    border: 1px solid #ecdfb6;
+    border-radius: 8px;
+    padding: 0.6rem 0.75rem;
+    font-size: 0.82rem;
+    color: #6b4a00;
+    margin-top: 0.75rem;
+  }
+  .tip-slope a { color: #6b4a00; }
+
+  /* Result panel — packs */
+  .empty-state {
+    color: var(--muted); padding: 1.2rem 0; text-align: center; font-size: 0.92rem;
+  }
+  .recommend {
+    background: var(--good-bg); border: 1px solid #cfe4d3;
+    border-radius: 10px; padding: 0.85rem 1rem; margin-top: 0.4rem;
+  }
+  .recommend h3.r-title {
+    margin: 0 0 0.3rem; color: var(--good); font-size: 1rem; font-weight: 600;
+    text-transform: none; letter-spacing: 0;
+  }
+  .recommend p { margin: 0.25rem 0 0.5rem; font-size: 0.9rem; }
+  .pack {
+    padding: 0.55rem 0.7rem; border: 1px solid var(--line); border-radius: 6px;
+    margin: 0.4rem 0; background: var(--surface);
+  }
+  .pack.primary  { border-color: var(--good);    background: #f4faf5; }
+  .pack.secondary { border-color: var(--winter); background: #f3f7fc; }
+  .pack.marginal { border-color: #d8a657;        background: #fbf6ec; }
+  .pack-name { font-weight: 600; font-size: 0.92rem; }
+  .pack-stats { color: var(--muted); font-size: 0.82rem; margin-top: 0.1rem; }
+  .pack-desc { color: var(--muted); font-size: 0.78rem; margin-top: 0.1rem; }
+
+  .dl-row {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 0.2rem 0; font-size: 0.83rem;
+  }
+  .dl-row a {
+    color: var(--ink); text-decoration: none;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 0.82rem;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    max-width: 75%;
+  }
+  .dl-row a:hover { text-decoration: underline; color: var(--accent-dark); }
+  .dl-meta { color: var(--muted); font-size: 0.78rem; flex: 0 0 auto; margin-left: 0.4rem; }
+
+  .install-steps {
+    background: var(--warn-bg); border: 1px solid #ecdfb6;
+    border-radius: 8px; padding: 0.75rem 0.9rem;
+    margin-top: 0.9rem; font-size: 0.88rem;
+  }
+  .install-steps h3 {
+    margin: 0 0 0.4rem; font-size: 0.95rem; color: var(--warn);
+    text-transform: none; font-weight: 600; letter-spacing: 0;
+  }
+  .install-steps ol { margin: 0.2rem 0 0.4rem 1.1rem; padding: 0; }
+  .install-steps p { margin: 0.45rem 0 0; }
+
+  /* Leaflet legend */
   .legend {
-    background: rgba(255,255,255,0.95); padding: 0.4rem 0.6rem; border-radius: 4px;
-    font-size: 0.75rem; line-height: 1.4; box-shadow: 0 1px 4px rgba(0,0,0,0.15);
+    background: rgba(255,255,255,0.97); padding: 0.4rem 0.6rem; border-radius: 6px;
+    font-size: 0.75rem; line-height: 1.4;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.06), 0 6px 18px rgba(0,0,0,0.12);
+    border: 1px solid var(--line);
   }
   .legend .row { display: flex; align-items: center; gap: 0.4rem; padding: 0.1rem 0; }
   .legend .sw  { display: inline-block; width: 14px; height: 14px; border-radius: 2px; border: 1px solid rgba(0,0,0,0.2); }
+
+  /* Footer */
+  footer {
+    flex: 0 0 auto;
+    border-top: 1px solid var(--line);
+    background: var(--surface);
+    padding: 0.55rem 1rem;
+    font-size: 0.72rem; color: #888;
+    text-align: center;
+  }
+  footer a { color: #888; }
 </style>
 </head>
 <body>
-<header>
-  <h1>Swisstopo KMZ Pack Recommender</h1>
-  <p>Drop a GPX file → tells you which pack(s) to download for your Garmin watch (Epix 2 / Fenix 7 Pro).</p>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <a class="brand" href="index.html">
+      <span class="brand-mark">+</span>
+      <span data-i18n="brand">Swisstopo for Garmin</span>
+    </a>
+    <nav class="langs" aria-label="Language">
+      <button type="button" data-lang="en" aria-pressed="false">EN</button>
+      <button type="button" data-lang="de" aria-pressed="false">DE</button>
+      <button type="button" data-lang="fr" aria-pressed="false">FR</button>
+      <button type="button" data-lang="it" aria-pressed="false">IT</button>
+    </nav>
+  </div>
 </header>
+
+<div class="page-title">
+  <div class="page-title-inner">
+    <h1 data-i18n="page.title">Find maps for my tour</h1>
+    <p data-i18n="page.subtitle">Drop your GPX. We tell you which regional pack to download.</p>
+  </div>
+</div>
+
 <main>
   <div id="leftPanel">
     <div id="dropzone">
-      <strong>Drop GPX file here</strong><br>
-      <small>or click to browse</small>
+      <div class="dz-title" data-i18n="dz.title">Drop GPX file here</div>
+      <div class="dz-sub" data-i18n="dz.sub">or click to browse</div>
     </div>
     <input type="file" id="fileInput" accept=".gpx" style="display:none">
 
-    <h3 style="margin-top:0.8rem">Season — preview of what's on the watch</h3>
+    <h3 class="sect" data-i18n="season.heading">Season (preview on the map)</h3>
     <div class="season-toggle">
       <label class="season-opt"><input type="radio" name="season" value="winter" checked>
-        <span class="season-lbl">❄ Winter<br><small>LK25 winter + slope + SAC ski tours</small></span></label>
+        <span class="season-lbl">❄ <span data-i18n="season.winter_lbl">Winter</span>
+          <small data-i18n="season.winter_desc">LK25 winter + slope + SAC ski tours</small></span></label>
       <label class="season-opt"><input type="radio" name="season" value="summer">
-        <span class="season-lbl">☀ Summer<br><small>LK25 summer + slope + Wanderwege</small></span></label>
+        <span class="season-lbl">☀ <span data-i18n="season.summer_lbl">Summer</span>
+          <small data-i18n="season.summer_desc">LK25 summer + slope + Wanderwege</small></span></label>
     </div>
-    <p style="font-size:0.78rem; color:#666; margin:0.25rem 0">
-      The map below shows the same layers we bake into the KMZ files — so what
-      you see here is what your watch will render.
+    <p style="font-size:0.78rem; color: var(--muted); margin:0.4rem 0 0" data-i18n="season.preview_note">
+      The map below shows the same layers baked into the KMZ files. What you see here is what your watch will render.
     </p>
-    <div id="summerStatus" style="display:none"></div>
 
-    <div class="tip" style="background:#fef5e7; border-left:3px solid #f39c12; font-size:0.78rem; margin-top:0.5rem">
-      ⚠ The 4-class slope shading is derived from the swissALTI3D 10 m DEM.
-      <strong>Indicative only</strong> — does not replace the SLF avalanche
-      bulletin or on-site judgement. <a href="install.html#slope-disclaimer">Full disclaimer</a>.
+    <div class="tip-slope" data-i18n="slope.tip">
+      ⚠ The 4-class slope shading comes from the swissALTI3D 10 m elevation model. Indicative only. It does not replace the SLF avalanche bulletin or on-site judgement. See the full disclaimer in the install guide.
     </div>
 
-    <div id="result"><div class="empty-state">No file loaded yet.</div></div>
+    <h3 class="sect" data-i18n="result.heading">Recommendation</h3>
+    <div id="result"><div class="empty-state" data-i18n="result.empty">No file loaded yet.</div></div>
   </div>
   <div id="map"></div>
 </main>
+
+<footer>
+  <span data-i18n="footer.data">Map data © swisstopo.</span>
+  <span data-i18n="footer.legal">An independent community project. Not affiliated with Garmin Ltd. or swisstopo. "Garmin", "Epix" and "Fenix" are trademarks of Garmin Ltd.</span>
+</footer>
+
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
         integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
         crossorigin=""></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.10.0/proj4.js"></script>
 <script>
-  // EPSG:2056 (Swiss LV95) definition
+  // ───────────── i18n dictionary (EN / DE / FR / IT) ─────────────
+  const I18N = {
+    en: {
+      "brand": "Swisstopo for Garmin",
+      "page.title": "Find maps for my tour",
+      "page.subtitle": "Drop your GPX. We tell you which regional pack to download.",
+      "dz.title": "Drop GPX file here",
+      "dz.sub": "or click to browse",
+      "season.heading": "Season (preview on the map)",
+      "season.winter_lbl": "Winter",
+      "season.winter_desc": "LK25 winter + slope + SAC ski tours",
+      "season.summer_lbl": "Summer",
+      "season.summer_desc": "LK25 summer + slope + Wanderwege",
+      "season.preview_note": "The map below shows the same layers baked into the KMZ files. What you see here is what your watch will render.",
+      "slope.tip": "⚠ The 4-class slope shading comes from the swissALTI3D 10 m elevation model. Indicative only. It does not replace the SLF avalanche bulletin or on-site judgement. See the full disclaimer in the install guide.",
+      "result.heading": "Recommendation",
+      "result.empty": "No file loaded yet.",
+      "result.no_match": "No pack covers this route. It may be outside Switzerland, or in a region we don't ship a pack for yet. You can build a custom pack instead.",
+      "result.gpx_empty": "GPX has no trkpt / rtept / wpt points.",
+      "result.dl_title": "Download this",
+      "result.dl_body_1": "Your route is fully covered by",
+      "result.dl_zone": "zone",
+      "result.dl_zones": "zones",
+      "result.dl_plus": "plus the Switzerland overview. Total",
+      "result.why_heading": "Why these",
+      "result.why_lead": "Track points by zone. A zone shows here only if your route touches it.",
+      "result.zone_pct": "of route inside this zone",
+      "result.not_built": "not yet built",
+      "result.others_heading": "Other zones the route touches (skip these)",
+      "result.others_lead": "These zones overlap with the ones above. Your route's points in them are already covered. Downloading these too just wastes tile budget.",
+      "result.added_inside": "inside, but only",
+      "result.added_new": "new coverage",
+      "install.heading": "How to install",
+      "install.step1": "Download every file from the green \"Download this\" box above.",
+      "install.step2": "Plug the watch in via USB. Open GARMIN/Garmin/CustomMaps/.",
+      "install.step3": "Delete any old .kmz files there. Don't touch any .img files, those are the watch's built-in maps.",
+      "install.step4": "Copy the downloaded files in. Eject the watch and reboot it.",
+      "install.step5": "On the watch: Menu → Map → Configure Map → Map Layers → enable Custom Maps.",
+      "install.full_link": "Full step-by-step:",
+      "install.full_link_text": "install guide",
+      "legend.slope": "Slope (Neigung)",
+      "legend.skitouren": "SAC ski tours",
+      "legend.skitour_blue": "L / WS / WS+",
+      "legend.skitour_red": "ZS / ZS+",
+      "legend.skitour_black": "S / S+",
+      "legend.wanderwege": "Wanderwege",
+      "legend.ww_yellow": "Wanderweg (T1–T2)",
+      "legend.ww_red": "Bergwanderweg (T3)",
+      "legend.ww_blue": "Alpinwanderweg (T4+)",
+      "footer.data": "Map data © swisstopo.",
+      "footer.legal": "An independent community project. Not affiliated with Garmin Ltd. or swisstopo. \"Garmin\", \"Epix\" and \"Fenix\" are trademarks of Garmin Ltd."
+    },
+    de: {
+      "brand": "Swisstopo für Garmin",
+      "page.title": "Karten für meine Tour finden",
+      "page.subtitle": "Zieh deine GPX rein. Wir sagen dir, welches Regionalpaket du brauchst.",
+      "dz.title": "GPX-Datei hier ablegen",
+      "dz.sub": "oder klicken zum Auswählen",
+      "season.heading": "Saison (Vorschau auf der Karte)",
+      "season.winter_lbl": "Winter",
+      "season.winter_desc": "LK25 Winter + Hangneigung + SAC-Skitouren",
+      "season.summer_lbl": "Sommer",
+      "season.summer_desc": "LK25 Sommer + Hangneigung + Wanderwege",
+      "season.preview_note": "Die Karte unten zeigt die gleichen Ebenen, die in den KMZ-Dateien stecken. Was du hier siehst, rendert deine Uhr.",
+      "slope.tip": "⚠ Die 4-stufige Hangneigung stammt aus dem swissALTI3D-Höhenmodell (10 m). Nur indikativ. Sie ersetzt nicht das SLF-Lawinenbulletin oder das Urteil vor Ort. Vollständiger Haftungsausschluss in der Installationsanleitung.",
+      "result.heading": "Empfehlung",
+      "result.empty": "Noch keine Datei geladen.",
+      "result.no_match": "Kein Paket deckt diese Route ab. Sie liegt vielleicht ausserhalb der Schweiz oder in einer Region, für die wir noch kein Paket anbieten. Du kannst stattdessen ein eigenes Paket bauen.",
+      "result.gpx_empty": "Die GPX enthält keine trkpt / rtept / wpt Punkte.",
+      "result.dl_title": "Das hier herunterladen",
+      "result.dl_body_1": "Deine Route ist vollständig abgedeckt durch",
+      "result.dl_zone": "Region",
+      "result.dl_zones": "Regionen",
+      "result.dl_plus": "plus die Schweiz-Übersicht. Total",
+      "result.why_heading": "Warum diese",
+      "result.why_lead": "Track-Punkte pro Region. Eine Region erscheint hier nur, wenn deine Route sie berührt.",
+      "result.zone_pct": "der Route in dieser Region",
+      "result.not_built": "noch nicht gebaut",
+      "result.others_heading": "Weitere Regionen, die die Route berührt (überspringen)",
+      "result.others_lead": "Diese Regionen überlappen mit den oben genannten. Die Punkte deiner Route in ihnen sind bereits abgedeckt. Sie zusätzlich herunterzuladen, verschwendet nur Kachelbudget.",
+      "result.added_inside": "drin, aber nur",
+      "result.added_new": "neue Abdeckung",
+      "install.heading": "So installierst du",
+      "install.step1": "Lade alle Dateien aus der grünen Box „Das hier herunterladen\" oben.",
+      "install.step2": "Schliess die Uhr per USB an. Öffne GARMIN/Garmin/CustomMaps/.",
+      "install.step3": "Lösche alte .kmz-Dateien dort. Lass die .img-Dateien in Ruhe, das sind die eingebauten Karten der Uhr.",
+      "install.step4": "Kopier die heruntergeladenen Dateien rein. Wirf die Uhr aus und starte sie neu.",
+      "install.step5": "Auf der Uhr: Menü → Karte → Karte konfigurieren → Kartenebenen → Custom Maps aktivieren.",
+      "install.full_link": "Vollständige Anleitung:",
+      "install.full_link_text": "Installationsanleitung",
+      "legend.slope": "Hangneigung",
+      "legend.skitouren": "SAC-Skitouren",
+      "legend.skitour_blue": "L / WS / WS+",
+      "legend.skitour_red": "ZS / ZS+",
+      "legend.skitour_black": "S / S+",
+      "legend.wanderwege": "Wanderwege",
+      "legend.ww_yellow": "Wanderweg (T1–T2)",
+      "legend.ww_red": "Bergwanderweg (T3)",
+      "legend.ww_blue": "Alpinwanderweg (T4+)",
+      "footer.data": "Kartendaten © swisstopo.",
+      "footer.legal": "Ein unabhängiges Community-Projekt. Nicht von Garmin Ltd. oder swisstopo betrieben. „Garmin\", „Epix\" und „Fenix\" sind Marken von Garmin Ltd."
+    },
+    fr: {
+      "brand": "Swisstopo pour Garmin",
+      "page.title": "Trouver les cartes de ma sortie",
+      "page.subtitle": "Dépose ton GPX. On te dit quel pack régional télécharger.",
+      "dz.title": "Dépose ton fichier GPX ici",
+      "dz.sub": "ou clique pour parcourir",
+      "season.heading": "Saison (aperçu sur la carte)",
+      "season.winter_lbl": "Hiver",
+      "season.winter_desc": "LK25 hiver + pentes + itinéraires ski CAS",
+      "season.summer_lbl": "Été",
+      "season.summer_desc": "LK25 été + pentes + chemins de randonnée",
+      "season.preview_note": "La carte ci-dessous montre les mêmes couches que dans les fichiers KMZ. Ce que tu vois ici, ta montre l'affichera aussi.",
+      "slope.tip": "⚠ L'ombrage des pentes en 4 classes provient du modèle altimétrique swissALTI3D 10 m. À titre indicatif. Ne remplace ni le bulletin d'avalanches SLF ni le jugement sur le terrain. Voir la clause complète dans le guide d'installation.",
+      "result.heading": "Recommandation",
+      "result.empty": "Aucun fichier chargé.",
+      "result.no_match": "Aucun pack ne couvre ce parcours. Il est peut-être hors de Suisse, ou dans une région pour laquelle on ne propose pas encore de pack. Tu peux construire un pack sur mesure.",
+      "result.gpx_empty": "Le GPX ne contient aucun point trkpt / rtept / wpt.",
+      "result.dl_title": "À télécharger",
+      "result.dl_body_1": "Ta sortie est entièrement couverte par",
+      "result.dl_zone": "région",
+      "result.dl_zones": "régions",
+      "result.dl_plus": "plus l'aperçu national. Total",
+      "result.why_heading": "Pourquoi celles-ci",
+      "result.why_lead": "Points du tracé par région. Une région n'apparaît ici que si ton parcours la touche.",
+      "result.zone_pct": "du tracé dans cette région",
+      "result.not_built": "pas encore construit",
+      "result.others_heading": "Autres régions que le tracé traverse (à ignorer)",
+      "result.others_lead": "Ces régions chevauchent celles ci-dessus. Les points de ton tracé qui s'y trouvent sont déjà couverts. Les télécharger en plus ne fait que gaspiller du budget de tuiles.",
+      "result.added_inside": "à l'intérieur, mais seulement",
+      "result.added_new": "de nouvelle couverture",
+      "install.heading": "Comment installer",
+      "install.step1": "Télécharge tous les fichiers de l'encadré vert « À télécharger » ci-dessus.",
+      "install.step2": "Branche la montre en USB. Ouvre GARMIN/Garmin/CustomMaps/.",
+      "install.step3": "Supprime les anciens .kmz. Ne touche pas aux fichiers .img, ce sont les cartes intégrées de la montre.",
+      "install.step4": "Copie les fichiers téléchargés. Éjecte la montre et redémarre-la.",
+      "install.step5": "Sur la montre : Menu → Carte → Configurer la carte → Couches → activer Custom Maps.",
+      "install.full_link": "Guide complet :",
+      "install.full_link_text": "guide d'installation",
+      "legend.slope": "Pente",
+      "legend.skitouren": "Itinéraires ski CAS",
+      "legend.skitour_blue": "F / PD / PD+",
+      "legend.skitour_red": "AD / AD+",
+      "legend.skitour_black": "D / D+",
+      "legend.wanderwege": "Chemins de randonnée",
+      "legend.ww_yellow": "Chemin de rando (T1–T2)",
+      "legend.ww_red": "Chemin de montagne (T3)",
+      "legend.ww_blue": "Chemin alpin (T4+)",
+      "footer.data": "Données cartographiques © swisstopo.",
+      "footer.legal": "Projet indépendant de la communauté. Non affilié à Garmin Ltd. ou swisstopo. « Garmin », « Epix » et « Fenix » sont des marques de Garmin Ltd."
+    },
+    it: {
+      "brand": "Swisstopo per Garmin",
+      "page.title": "Trova le mappe per il mio giro",
+      "page.subtitle": "Trascina il tuo GPX. Ti diciamo quale pacchetto regionale scaricare.",
+      "dz.title": "Trascina qui il file GPX",
+      "dz.sub": "o clicca per scegliere",
+      "season.heading": "Stagione (anteprima sulla mappa)",
+      "season.winter_lbl": "Inverno",
+      "season.winter_desc": "LK25 inverno + pendenze + itinerari sci CAS",
+      "season.summer_lbl": "Estate",
+      "season.summer_desc": "LK25 estate + pendenze + sentieri",
+      "season.preview_note": "La mappa qui sotto mostra gli stessi livelli inseriti nei file KMZ. Quello che vedi qui è ciò che il tuo orologio mostrerà.",
+      "slope.tip": "⚠ L'ombreggiatura in 4 classi viene dal modello altimetrico swissALTI3D 10 m. Solo indicativa. Non sostituisce il bollettino valanghe SLF né il giudizio sul posto. Avvertenza completa nella guida all'installazione.",
+      "result.heading": "Raccomandazione",
+      "result.empty": "Nessun file caricato.",
+      "result.no_match": "Nessun pacchetto copre questo giro. Forse è fuori dalla Svizzera o in una regione per cui non offriamo ancora un pacchetto. Puoi costruire un pacchetto personalizzato.",
+      "result.gpx_empty": "Il GPX non contiene punti trkpt / rtept / wpt.",
+      "result.dl_title": "Da scaricare",
+      "result.dl_body_1": "Il tuo giro è interamente coperto da",
+      "result.dl_zone": "regione",
+      "result.dl_zones": "regioni",
+      "result.dl_plus": "più la panoramica nazionale. Totale",
+      "result.why_heading": "Perché queste",
+      "result.why_lead": "Punti del tracciato per regione. Una regione appare qui solo se il tuo giro la tocca.",
+      "result.zone_pct": "del tracciato in questa regione",
+      "result.not_built": "non ancora costruito",
+      "result.others_heading": "Altre regioni che il tracciato attraversa (saltare)",
+      "result.others_lead": "Queste regioni si sovrappongono a quelle sopra. I punti del tuo tracciato al loro interno sono già coperti. Scaricarle in più spreca solo budget di tile.",
+      "result.added_inside": "dentro, ma solo",
+      "result.added_new": "di nuova copertura",
+      "install.heading": "Come installare",
+      "install.step1": "Scarica tutti i file dal riquadro verde \"Da scaricare\" sopra.",
+      "install.step2": "Collega l'orologio via USB. Apri GARMIN/Garmin/CustomMaps/.",
+      "install.step3": "Elimina i vecchi .kmz lì dentro. Non toccare i file .img, sono le mappe integrate dell'orologio.",
+      "install.step4": "Copia i file scaricati. Espelli l'orologio e riavvialo.",
+      "install.step5": "Sull'orologio: Menu → Mappa → Configura mappa → Livelli → attiva Custom Maps.",
+      "install.full_link": "Guida completa:",
+      "install.full_link_text": "guida all'installazione",
+      "legend.slope": "Pendenza",
+      "legend.skitouren": "Itinerari sci CAS",
+      "legend.skitour_blue": "F / PD / PD+",
+      "legend.skitour_red": "AD / AD+",
+      "legend.skitour_black": "D / D+",
+      "legend.wanderwege": "Sentieri",
+      "legend.ww_yellow": "Sentiero (T1–T2)",
+      "legend.ww_red": "Sentiero di montagna (T3)",
+      "legend.ww_blue": "Sentiero alpino (T4+)",
+      "footer.data": "Dati cartografici © swisstopo.",
+      "footer.legal": "Progetto indipendente della community. Non affiliato a Garmin Ltd. o swisstopo. «Garmin», «Epix» e «Fenix» sono marchi di Garmin Ltd."
+    }
+  };
+
+  const LANGS = ["en", "de", "fr", "it"];
+  let CURRENT_LANG = "en";
+  function T(key) {
+    const d = I18N[CURRENT_LANG] || I18N.en;
+    return d[key] != null ? d[key] : (I18N.en[key] != null ? I18N.en[key] : key);
+  }
+  function detectLang() {
+    let stored = null;
+    try { stored = localStorage.getItem("lang"); } catch (e) {}
+    if (stored && LANGS.indexOf(stored) >= 0) return stored;
+    const nav = (navigator.languages && navigator.languages[0]) || navigator.language || "en";
+    const code = String(nav).toLowerCase().slice(0, 2);
+    if (LANGS.indexOf(code) >= 0) return code;
+    return "en";
+  }
+  function applyStaticI18n() {
+    document.documentElement.lang = CURRENT_LANG;
+    document.querySelectorAll("[data-i18n]").forEach(function (el) {
+      const v = T(el.getAttribute("data-i18n"));
+      if (v != null) el.textContent = v;
+    });
+    document.querySelectorAll(".langs button").forEach(function (btn) {
+      btn.setAttribute("aria-pressed", btn.dataset.lang === CURRENT_LANG ? "true" : "false");
+    });
+  }
+  function setLang(lang) {
+    if (LANGS.indexOf(lang) < 0) lang = "en";
+    CURRENT_LANG = lang;
+    try { localStorage.setItem("lang", lang); } catch (e) {}
+    applyStaticI18n();
+    renderLegend();
+    // If a recommendation is on screen, re-render it.
+    if (LAST_PICKER_STATE) {
+      renderResult(LAST_PICKER_STATE.points, LAST_PICKER_STATE.scores);
+    }
+  }
+  document.querySelectorAll(".langs button").forEach(function (btn) {
+    btn.addEventListener("click", function () { setLang(btn.dataset.lang); });
+  });
+  CURRENT_LANG = detectLang();
+
+  // ───────────── Leaflet + project logic ─────────────
   proj4.defs("EPSG:2056",
     "+proj=somerc +lat_0=46.95240555555556 +lon_0=7.439583333333333 " +
     "+k_0=1 +x_0=2600000 +y_0=1200000 +ellps=bessel " +
     "+towgs84=674.374,15.056,405.346,0,0,0,0 +units=m +no_defs");
 
-  // Zones, files, and download URLs come from manifest.json (generated by
-  // tools/build_manifest.py from build_kmz_packs.ps1's $Zones array).
   let MANIFEST = null;
   let ZONES = [];
+  let LAST_PICKER_STATE = null;  // {points, scores}
 
   function fileDownloadUrl(filename) {
-    // Replace {name} in the asset URL template with the KMZ filename.
     return MANIFEST.asset_url_template.replace("{name}", encodeURIComponent(filename));
   }
-
-  // LV95 bbox → Leaflet LatLngBounds (axis-aligned to lat/lon, slight skew acceptable)
   function lv95BboxToBounds(bbox) {
     const [emin, nmin, emax, nmax] = bbox;
-    // Sample 4 corners + midpoints to capture the somerc distortion
     const corners = [[emin,nmin],[emax,nmin],[emax,nmax],[emin,nmax]];
     let latMin = 90, latMax = -90, lonMin = 180, lonMax = -180;
     for (const [e, n] of corners) {
@@ -154,29 +568,13 @@
     return [[latMin, lonMin], [latMax, lonMax]];
   }
 
-  // ---------------------------------------------------------------------
-  // On-watch preview: base raster + slope overlay + season-specific routes,
-  // all from Swisstopo WMTS. These are the SAME layers we bake into the KMZ
-  // pipeline, so the screen here is what the watch will render.
-  //
-  // Winter:  pixelkarte-farbe-winter  +  hangneigung-ueber_30  +  skitouren
-  // Summer:  pixelkarte-farbe         +  hangneigung-ueber_30  +  wanderwege
-  // ---------------------------------------------------------------------
-  // Swisstopo WMTS URL templates. Two patterns are needed:
-  // - JPEG base layers: time-segment is `current`.
-  // - PNG overlays: many overlays serve from a dated time-segment (e.g. `2023`),
-  //   but `current` resolves to the latest for all the layers we use.
-  // Leaflet substitutes any {token} that matches an options key, so we drop
-  // `layer` and `ext` into options.
   const WMTS_URL = 'https://wmts{s}.geo.admin.ch/1.0.0/{layer}/default/current/3857/{z}/{x}/{y}.{ext}';
   function _wmts(layer, extraOpts) {
     const l = L.tileLayer(WMTS_URL, {
       attribution: '© <a href="https://www.swisstopo.admin.ch">swisstopo</a>',
       subdomains: ['10','11','12','13','14'],
-      maxZoom: 18, minZoom: 6,
-      layer, ...extraOpts,
+      maxZoom: 18, minZoom: 6, layer, ...extraOpts,
     });
-    // Log the first tile error per layer so a broken layer name is visible.
     let logged = false;
     l.on('tileerror', (e) => {
       if (logged) return;
@@ -189,10 +587,6 @@
   const wmtsOvly = (layer, opacity = 0.55, ext = 'png') => _wmts(layer, { ext, opacity });
 
   const map = L.map('map').setView([46.8, 8.2], 8);
-
-  // Layer names confirmed against swisstopo's WMTS GetCapabilities. The slope
-  // overlay and the Wanderwege serve as PNG with transparency; the LK25 raster
-  // layers serve as JPEG.
   const layers = {
     winter: {
       base:   wmtsBase('ch.swisstopo.pixelkarte-farbe-winter'),
@@ -210,34 +604,26 @@
   function setSeason(season) {
     if (!layers[season]) { console.warn("unknown season:", season); return; }
     if (season === activeSeason) return;
-    console.log("[gpx-picker] switching to", season);
-
-    // Remove every layer from every season so we never accumulate.
     Object.values(layers).forEach(set => {
       Object.values(set).forEach(l => { if (map.hasLayer(l)) map.removeLayer(l); });
     });
-    // Add in z-order: base, slope, routes.
     layers[season].base.addTo(map);
     layers[season].slope.addTo(map);
     layers[season].routes.addTo(map);
     activeSeason = season;
-
-    // Sync UI: radio + label highlight + summer warning banner.
     document.querySelectorAll('input[name="season"]').forEach(r => {
       r.checked = (r.value === season);
       const lbl = r.closest('.season-opt');
       if (lbl) lbl.classList.toggle('checked', r.checked);
     });
-    const summerStatus = document.getElementById('summerStatus');
-    if (summerStatus) summerStatus.style.display = (season === 'summer') ? 'block' : 'none';
     renderLegend();
     if (ZONES.length) drawZoneRects();
+    if (LAST_PICKER_STATE) {
+      LAST_PICKER_STATE.scores = scoreZones(LAST_PICKER_STATE.points);
+      renderResult(LAST_PICKER_STATE.points, LAST_PICKER_STATE.scores);
+      highlightZones(LAST_PICKER_STATE.scores);
+    }
   }
-
-  // Wire BOTH the radio change event and a click handler on the wrapping label.
-  // In some browsers (Firefox on Linux particularly) a styled label with an
-  // absolutely-positioned hidden input can swallow the change event; the click
-  // handler is a belt-and-braces fallback.
   document.querySelectorAll('input[name="season"]').forEach(r =>
     r.addEventListener('change', e => setSeason(e.target.value)));
   document.querySelectorAll('label.season-opt').forEach(lbl =>
@@ -246,13 +632,7 @@
       if (input) setSeason(input.value);
     }));
 
-  // ---------------------------------------------------------------------
-  // Legend (bottom-right) — must be set up BEFORE setSeason('winter') so the
-  // first renderLegend() call doesn't crash on `legendDiv` being in the
-  // temporal dead zone of its `let` declaration. (That used to silently kill
-  // the script and prevent the drop-handler wiring at the bottom from
-  // registering.)
-  // ---------------------------------------------------------------------
+  // Legend (bottom-right)
   const legendCtl = L.control({ position: 'bottomright' });
   let legendDiv = null;
   legendCtl.onAdd = () => {
@@ -261,41 +641,45 @@
   };
   legendCtl.addTo(map);
 
-  setSeason('winter');
-
   function renderLegend() {
     if (!legendDiv) return;
     const slope = `
-      <div><strong>Slope (Neigung)</strong></div>
+      <div><strong>${T("legend.slope")}</strong></div>
       <div class="row"><span class="sw" style="background:#FFFF00"></span>30°</div>
       <div class="row"><span class="sw" style="background:#FFA500"></span>35°</div>
       <div class="row"><span class="sw" style="background:#FF0000"></span>40°</div>
       <div class="row"><span class="sw" style="background:#A020F0"></span>45°+</div>
     `;
     const routes = activeSeason === 'winter'
-      ? `<div style="margin-top:0.3rem"><strong>SAC ski tours</strong></div>
-         <div class="row"><span class="sw" style="background:#1E5AA0"></span>L / WS / WS+</div>
-         <div class="row"><span class="sw" style="background:#C80000"></span>ZS / ZS+</div>
-         <div class="row"><span class="sw" style="background:#202020"></span>S / S+</div>`
-      : `<div style="margin-top:0.3rem"><strong>Wanderwege</strong></div>
-         <div class="row"><span class="sw" style="background:#FFCC00"></span>Wanderweg (T1–T2)</div>
-         <div class="row"><span class="sw" style="background:#C80000"></span>Bergwanderweg (T3)</div>
-         <div class="row"><span class="sw" style="background:#1E5AA0"></span>Alpinwanderweg (T4+)</div>`;
+      ? `<div style="margin-top:0.3rem"><strong>${T("legend.skitouren")}</strong></div>
+         <div class="row"><span class="sw" style="background:#1E5AA0"></span>${T("legend.skitour_blue")}</div>
+         <div class="row"><span class="sw" style="background:#C80000"></span>${T("legend.skitour_red")}</div>
+         <div class="row"><span class="sw" style="background:#202020"></span>${T("legend.skitour_black")}</div>`
+      : `<div style="margin-top:0.3rem"><strong>${T("legend.wanderwege")}</strong></div>
+         <div class="row"><span class="sw" style="background:#FFCC00"></span>${T("legend.ww_yellow")}</div>
+         <div class="row"><span class="sw" style="background:#C80000"></span>${T("legend.ww_red")}</div>
+         <div class="row"><span class="sw" style="background:#1E5AA0"></span>${T("legend.ww_blue")}</div>`;
     legendDiv.innerHTML = slope + routes;
   }
-  renderLegend();
+  setSeason('winter');
 
   let zoneRects = [];
-  let drawnZones = [];   // ZONES filtered to the active season; aligns 1:1 with zoneRects.
+  let drawnZones = [];
   let routeLayer = null;
 
-  // Zones with a pack for the active season. Winter ships 21 alpine zones;
-  // summer ships those plus 5 Mittelland zones (22–26). Drawing all 26 in
-  // winter would mislead users — there's no winter download for those.
+  function filesForSeason(zone, season) {
+    if (season === 'summer') return zone.summer_files || [];
+    return zone.winter_files || zone.files || [];
+  }
+  function overviewFilesForSeason(season) {
+    const o = MANIFEST && MANIFEST.overview;
+    if (!o) return [];
+    if (season === 'summer') return o.summer_files || [];
+    return o.winter_files || o.files || [];
+  }
   function zonesForSeason(season) {
     return ZONES.filter(z => filesForSeason(z, season).length > 0);
   }
-
   function drawZoneRects() {
     for (const r of zoneRects) map.removeLayer(r);
     drawnZones = zonesForSeason(activeSeason);
@@ -310,18 +694,14 @@
     });
   }
 
-  // Manifest load — failures degrade gracefully (no downloads, just a notice).
   fetch('manifest.json')
     .then(r => { if (!r.ok) throw new Error(`manifest ${r.status}`); return r.json(); })
     .then(m => { MANIFEST = m; ZONES = m.zones; drawZoneRects(); })
     .catch(err => {
       document.getElementById('result').innerHTML =
-        `<div class="empty-state">⚠ Could not load manifest.json (${err.message}).<br>
-         Are you opening this file directly? Serve via a local web server
-         (or use the GitHub Pages site).</div>`;
+        `<div class="empty-state">⚠ Could not load manifest.json (${err.message}).</div>`;
     });
 
-  // GPX → array of [lat, lon] points
   function parseGpx(text) {
     const doc = new DOMParser().parseFromString(text, 'application/xml');
     if (doc.querySelector('parsererror')) throw new Error("invalid XML");
@@ -334,10 +714,6 @@
     return points;
   }
 
-  // Score each zone by how many route points fall inside its LV95 bbox.
-  // Only consider zones that have a pack for the active season — otherwise a
-  // summer Mittelland trip would (correctly) match zone 24 in summer mode but
-  // incorrectly suggest the same zone in winter mode where it ships nothing.
   function scoreZones(points) {
     const scores = zonesForSeason(activeSeason).map(z => ({ zone: z, hits: 0 }));
     for (const [lat, lon] of points) {
@@ -359,33 +735,19 @@
     return 'marginal';
   }
 
-  // Render a pack card with download links. `recommended` puts the primary
-  // zone at the top with the overview pre-grouped so the user can grab both
-  // in one click.
-  function filesForSeason(zone, season) {
-    // Prefer the season-specific list; fall back to legacy `files` (winter).
-    if (season === 'summer') return zone.summer_files || [];
-    return zone.winter_files || zone.files || [];
-  }
-
-  function overviewFilesForSeason(season) {
-    const o = MANIFEST && MANIFEST.overview;
-    if (!o) return [];
-    if (season === 'summer') return o.summer_files || [];
-    return o.winter_files || o.files || [];
-  }
-
-  function renderDownloads(zone, includeOverview) {
+  function renderDownloadsForZones(zones, includeOverview) {
     const files = [];
     if (includeOverview) {
       overviewFilesForSeason(activeSeason).forEach(f => files.push({
-        ...f, label: "overview (all-CH)", url: fileDownloadUrl(f.name),
+        ...f, url: fileDownloadUrl(f.name),
       }));
     }
-    filesForSeason(zone, activeSeason).forEach(f => files.push({
-      ...f, label: zone.name, url: fileDownloadUrl(f.name),
-    }));
-    if (files.length === 0) return "";
+    for (const z of zones) {
+      filesForSeason(z, activeSeason).forEach(f => files.push({
+        ...f, url: fileDownloadUrl(f.name),
+      }));
+    }
+    if (files.length === 0) return "<em>" + T("result.not_built") + "</em>";
     return files.map(f =>
       `<div class="dl-row">
          <a href="${f.url}" download>${f.name}</a>
@@ -396,23 +758,13 @@
 
   function renderResult(points, scores) {
     const el = document.getElementById('result');
-    if (scores.length === 0) {
-      el.innerHTML = `<div class="empty-state">⚠ No pack covers this route.<br>
-        It may be outside Switzerland, or in a region we don't ship a pack for.<br>
-        You can <a href="tile_picker.html">build a custom pack</a> for that area.</div>`;
+    if (!scores || scores.length === 0) {
+      el.innerHTML = `<div class="empty-state">⚠ ${T("result.no_match")}
+        <br><br><a href="tile_picker.html">${T("install.full_link_text")}</a></div>`;
       return;
     }
     const summer = activeSeason === 'summer';
 
-    // Pick the recommended download set. Goal: tell the user the *minimum*
-    // they need. Walk zones highest-coverage-first; add a zone only if it
-    // covers points the already-picked zones miss (>=5% new). Stop once the
-    // cumulative covered fraction is >=95%.
-    //
-    // This handles overlapping-zones cases (e.g. Bernese Oberland +
-    // Waadtländer Alpen both touching the same Haute Route segment): zone A
-    // covers 100%, zone B adds <1% new -> picker says "you only need A;
-    // zone B overlaps".
     const finalRecommended = [];
     const finalOthers = [];
     {
@@ -443,88 +795,56 @@
     }, 0);
     const overviewFiles = overviewFilesForSeason(activeSeason);
     const overviewMb = overviewFiles.reduce((a, f) => a + (f.size_mb || 0), 0);
+    const zoneWord = finalRecommended.length === 1 ? T("result.dl_zone") : T("result.dl_zones");
 
     let html = `
-      <div class="next-steps" style="background:#eaf4ec; border-left-color:#2f7a3d; margin-top:0">
-        <h3 style="color:#2f7a3d; margin-top:0">Download this</h3>
-        <p style="margin:0.2rem 0 0.5rem">
-          Your route is fully covered by <strong>${finalRecommended.length} zone${finalRecommended.length === 1 ? "" : "s"}</strong>
-          + the all-CH overview. Total <strong>${(totalRecMb + overviewMb).toFixed(0)} MB</strong>.
-        </p>
+      <div class="recommend">
+        <h3 class="r-title">${T("result.dl_title")}</h3>
+        <p>${T("result.dl_body_1")} <strong>${finalRecommended.length} ${zoneWord}</strong> ${T("result.dl_plus")} <strong>${(totalRecMb + overviewMb).toFixed(0)} MB</strong>.</p>
         ${renderDownloadsForZones(finalRecommended.map(r => r.zone), true)}
       </div>`;
 
-    html += `<h3 style="margin-top:1.2rem">Why these</h3>`;
-    html += `<p style="font-size:0.85rem; color:#5b6470; margin:0.3rem 0 0.6rem">
-      Track points by zone (a zone shows here only if your route touches it):
-    </p>`;
+    html += `<h3 class="sect">${T("result.why_heading")}</h3>`;
+    html += `<p style="font-size:0.83rem; color:var(--muted); margin:0.2rem 0 0.5rem">${T("result.why_lead")}</p>`;
     for (const r of finalRecommended) {
       const z = r.zone;
       const files = filesForSeason(z, activeSeason);
       const sizeMb = files.reduce((a, f) => a + (f.size_mb || 0), 0).toFixed(0);
-      const sizeStr = files.length ? `${sizeMb} MB` : "not yet built";
-      html += `<div class="pack ${classify(r.frac)}" style="border-color:#2f7a3d">
+      const sizeStr = files.length ? `${sizeMb} MB` : T("result.not_built");
+      html += `<div class="pack ${classify(r.frac)}">
         <div class="pack-name">✓ #${String(z.n).padStart(2,'0')} ${z.name}${summer ? " (summer)" : ""}</div>
-        <div class="pack-stats">${(r.frac*100).toFixed(0)}% of route inside this zone — ${sizeStr}</div>
-        <div class="pack-desc">${z.desc}</div>
+        <div class="pack-stats">${(r.frac*100).toFixed(0)}% ${T("result.zone_pct")}, ${sizeStr}</div>
+        <div class="pack-desc">${z.desc || ""}</div>
       </div>`;
     }
     if (finalOthers.length) {
-      html += `<h3 style="margin-top:1.2rem">Other zones the route touches (skip these)</h3>`;
-      html += `<p style="font-size:0.85rem; color:#5b6470; margin:0.3rem 0 0.6rem">
-        These zones overlap with the ones above — your route's points in them
-        are already covered. Downloading these too just wastes tile budget.
-      </p>`;
+      html += `<h3 class="sect" style="margin-top:1rem">${T("result.others_heading")}</h3>`;
+      html += `<p style="font-size:0.83rem; color:var(--muted); margin:0.2rem 0 0.5rem">${T("result.others_lead")}</p>`;
       for (const r of finalOthers) {
         const z = r.zone;
-        html += `<div class="pack" style="opacity:0.6">
+        html += `<div class="pack" style="opacity:0.65">
           <div class="pack-name">#${String(z.n).padStart(2,'0')} ${z.name}${summer ? " (summer)" : ""}</div>
-          <div class="pack-stats">${(r.frac*100).toFixed(0)}% inside — but only ${(r.addedFrac*100).toFixed(0)}% new coverage</div>
-          <div class="pack-desc">${z.desc}</div>
+          <div class="pack-stats">${(r.frac*100).toFixed(0)}% ${T("result.added_inside")} ${(r.addedFrac*100).toFixed(0)}% ${T("result.added_new")}</div>
+          <div class="pack-desc">${z.desc || ""}</div>
         </div>`;
       }
     }
 
     const anyBuilt = finalRecommended.some(r => filesForSeason(r.zone, activeSeason).length > 0);
     if (anyBuilt) {
-      html += `<div class="next-steps">
-         <h3>How to install</h3>
+      html += `<div class="install-steps">
+         <h3>${T("install.heading")}</h3>
          <ol>
-           <li>Download every file from the green "Download this" box above.</li>
-           <li>Plug the watch in via USB. Open <code>GARMIN/Garmin/CustomMaps/</code>.</li>
-           <li>Delete any old <code>.kmz</code> files there.
-             <strong>Don't touch any <code>.img</code> files</strong> — those are the watch's built-in maps.</li>
-           <li>Copy the downloaded files in. Eject the watch and reboot it.</li>
-           <li>On the watch: Menu → Map → Configure Map → Map Layers → enable <strong>Custom Maps</strong>.</li>
+           <li>${T("install.step1")}</li>
+           <li>${T("install.step2")}</li>
+           <li>${T("install.step3")}</li>
+           <li>${T("install.step4")}</li>
+           <li>${T("install.step5")}</li>
          </ol>
-         <p style="margin:0.5rem 0 0">
-           Full step-by-step: <a href="install.html">install guide</a>.
-         </p>
+         <p>${T("install.full_link")} <a href="install.html">${T("install.full_link_text")}</a>.</p>
        </div>`;
     }
     el.innerHTML = html;
-  }
-
-  function renderDownloadsForZones(zones, includeOverview) {
-    const files = [];
-    if (includeOverview) {
-      overviewFilesForSeason(activeSeason).forEach(f => files.push({
-        ...f, label: "overview (all of CH)",
-        url: fileDownloadUrl(f.name),
-      }));
-    }
-    for (const z of zones) {
-      filesForSeason(z, activeSeason).forEach(f => files.push({
-        ...f, label: z.name, url: fileDownloadUrl(f.name),
-      }));
-    }
-    if (files.length === 0) return "<em>No files published for this season yet.</em>";
-    return files.map(f =>
-      `<div class="dl-row">
-         <a href="${f.url}" download>${f.name}</a>
-         <span class="dl-meta">${f.size_mb} MB</span>
-       </div>`
-    ).join("");
   }
 
   function highlightZones(matched) {
@@ -548,15 +868,14 @@
         const points = parseGpx(ev.target.result);
         if (points.length === 0) {
           document.getElementById('result').innerHTML =
-            `<div class="empty-state">⚠ GPX has no trkpt/rtept/wpt points.</div>`;
+            `<div class="empty-state">⚠ ${T("result.gpx_empty")}</div>`;
           return;
         }
-        // Plot route
         if (routeLayer) map.removeLayer(routeLayer);
-        routeLayer = L.polyline(points, { color: '#e74c3c', weight: 4, opacity: 0.85 }).addTo(map);
+        routeLayer = L.polyline(points, { color: '#d4351c', weight: 4, opacity: 0.85 }).addTo(map);
         map.fitBounds(routeLayer.getBounds().pad(0.15));
-        // Recommendations
         const scores = scoreZones(points);
+        LAST_PICKER_STATE = { points, scores };
         renderResult(points, scores);
         highlightZones(scores);
       } catch (err) {
@@ -582,6 +901,8 @@
     e.preventDefault();
     if (e.dataTransfer.files[0]) loadGpx(e.dataTransfer.files[0]);
   });
+
+  applyStaticI18n();
 </script>
 </body>
 </html>
