@@ -134,6 +134,13 @@ def main() -> None:
     summer_zones = parse_zones(PS1_SUMMER) if PS1_SUMMER.exists() else []
     merged = merge_zones(winter_zones, summer_zones)
 
+    zips_dir = PACKS / "zips"
+    def zip_for(name: str) -> dict | None:
+        p = zips_dir / name
+        if p.exists():
+            return {"name": name, "size_mb": round(p.stat().st_size / 1_048_576, 1)}
+        return None
+
     zones_out = []
     for z in merged:
         prefix = f"{z['n']:02d}_{z['name']}"
@@ -141,6 +148,8 @@ def main() -> None:
         summer_files = kmz_files_for(prefix, suffix="_summer")
         if z["n"] in PRIVATE_WINTER_ZONES:
             winter_files = []   # keep summer, drop the winter publish
+        winter_zip = zip_for(f"{z['n']:02d}_{z['name']}.zip") if winter_files else None
+        summer_zip = zip_for(f"{z['n']:02d}_{z['name']}_summer.zip") if summer_files else None
         seasons = []
         if winter_files: seasons.append("winter")
         if summer_files: seasons.append("summer")
@@ -149,6 +158,8 @@ def main() -> None:
             "files":          winter_files,                  # backwards-compat
             "winter_files":   winter_files,
             "summer_files":   summer_files,
+            "winter_zip":     winter_zip,
+            "summer_zip":     summer_zip,
             "total_size_mb":  sum_mb(winter_files),          # backwards-compat
             "winter_size_mb": sum_mb(winter_files),
             "summer_size_mb": sum_mb(summer_files),
