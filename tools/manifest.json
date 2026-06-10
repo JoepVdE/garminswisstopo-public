@@ -1264,50 +1264,8 @@
         1273000
       ],
       "desc": "Zuerich, ETH/Uni, Uetliberg, Sihlwald + Tuerlersee + full Albis ridge, Pfannenstiel, Greifensee, Limmattal (Baden, Wettingen, Brugg), Aaretal (Aarau), Villigen/PSI, Buelach, Doettingen",
-      "files": [
-        {
-          "name": "21_zuerich_villigen_part_001.kmz",
-          "size_mb": 39.4
-        },
-        {
-          "name": "21_zuerich_villigen_part_002.kmz",
-          "size_mb": 42.9
-        },
-        {
-          "name": "21_zuerich_villigen_part_003.kmz",
-          "size_mb": 44.1
-        },
-        {
-          "name": "21_zuerich_villigen_part_004.kmz",
-          "size_mb": 39.7
-        },
-        {
-          "name": "21_zuerich_villigen_part_005.kmz",
-          "size_mb": 15.4
-        }
-      ],
-      "winter_files": [
-        {
-          "name": "21_zuerich_villigen_part_001.kmz",
-          "size_mb": 39.4
-        },
-        {
-          "name": "21_zuerich_villigen_part_002.kmz",
-          "size_mb": 42.9
-        },
-        {
-          "name": "21_zuerich_villigen_part_003.kmz",
-          "size_mb": 44.1
-        },
-        {
-          "name": "21_zuerich_villigen_part_004.kmz",
-          "size_mb": 39.7
-        },
-        {
-          "name": "21_zuerich_villigen_part_005.kmz",
-          "size_mb": 15.4
-        }
-      ],
+      "files": [],
+      "winter_files": [],
       "summer_files": [
         {
           "name": "21_zuerich_villigen_summer_part_001.kmz",
@@ -1330,12 +1288,11 @@
           "size_mb": 16.1
         }
       ],
-      "total_size_mb": 181.5,
-      "winter_size_mb": 181.5,
+      "total_size_mb": 0,
+      "winter_size_mb": 0,
       "summer_size_mb": 188.0,
       "total_tiles_est": 336,
       "seasons": [
-        "winter",
         "summer"
       ]
     },

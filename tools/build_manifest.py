@@ -123,6 +123,11 @@ def main() -> None:
     ap.add_argument("--out", default=str(REPO / "tools" / "manifest.json"))
     args = ap.parse_args()
 
+    # Zones we still build locally for personal use but don't publish as winter.
+    # Their winter KMZs land in out/packs/ but the public manifest only exposes
+    # them as summer. See conversation 2026-06-10.
+    PRIVATE_WINTER_ZONES = {21}
+
     url_tmpl = f"https://github.com/{args.repo_slug}/releases/download/{args.release_tag}/{{name}}"
 
     winter_zones = parse_zones(PS1_WINTER)
@@ -134,6 +139,8 @@ def main() -> None:
         prefix = f"{z['n']:02d}_{z['name']}"
         winter_files = kmz_files_for(prefix)
         summer_files = kmz_files_for(prefix, suffix="_summer")
+        if z["n"] in PRIVATE_WINTER_ZONES:
+            winter_files = []   # keep summer, drop the winter publish
         seasons = []
         if winter_files: seasons.append("winter")
         if summer_files: seasons.append("summer")
