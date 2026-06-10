@@ -107,10 +107,7 @@
       The map below shows the same layers we bake into the KMZ files — so what
       you see here is what your watch will render.
     </p>
-    <div id="summerStatus" style="display:none; font-size:0.78rem; color:#7d6000; background:#fff3cd; border-left:3px solid #f0ad4e; padding:0.4rem 0.6rem; border-radius:3px; margin:0.3rem 0">
-      Summer packs are not yet built — see <a href="https://github.com/JoepVdE/garminswisstopo/blob/main/docs/summer_plan.md">summer plan</a>.
-      Preview here works; downloadable KMZs will land in v2.
-    </div>
+    <div id="summerStatus" style="display:none"></div>
 
     <div class="tip" style="background:#fef5e7; border-left:3px solid #f39c12; font-size:0.78rem; margin-top:0.5rem">
       ⚠ The 4-class slope shading is derived from the swissALTI3D 10 m DEM.
@@ -400,7 +397,7 @@
         <div class="pack-stats">${(s.frac*100).toFixed(1)}% of route — ${s.hits} pts, ${sizeStr}</div>
         <div class="pack-desc">${z.desc}</div>
         ${isPrimary && files.length ? `<div class="dl-list"><strong>Download:</strong>${renderDownloads(z, true)}</div>` : ""}
-        ${isPrimary && !files.length && summer ? `<div class="dl-list"><em>Summer KMZ for this zone is not yet built.</em> The preview above uses live Swisstopo WMTS — same layers the KMZ pipeline bakes in. Progress: <a href="https://github.com/JoepVdE/garminswisstopo/blob/main/docs/summer_plan.md">summer_plan.md</a>.</div>` : ""}
+        ${isPrimary && !files.length ? `<div class="dl-list"><em>This zone hasn't been published yet for this season. The preview above uses live Swisstopo WMTS.</em></div>` : ""}
       </div>`;
     }
     const anyBuilt = scores.some(s => filesForSeason(s.zone, activeSeason).length > 0);
