@@ -54,11 +54,8 @@
     font-size: 0.98rem;
   }
   .brand-mark {
-    width: 22px; height: 22px; border-radius: 4px;
-    background: var(--accent);
-    display: inline-flex; align-items: center; justify-content: center;
-    color: #fff; font-weight: 700; font-size: 0.9rem;
-    box-shadow: 0 1px 2px rgba(0,0,0,0.15);
+    width: 24px; height: 24px; display: block;
+    filter: drop-shadow(0 1px 1px rgba(0,0,0,0.18));
   }
   .langs { display: flex; gap: 0.25rem; }
   .langs button {
@@ -122,6 +119,43 @@
   #dropzone .dz-title { font-weight: 600; font-size: 1rem; color: var(--ink); }
   #dropzone .dz-sub { color: var(--muted); font-size: 0.85rem; margin-top: 0.25rem; }
 
+  /* OR divider */
+  .or-divider {
+    display: flex; align-items: center; gap: 0.6rem;
+    color: var(--muted); font-size: 0.72rem; font-weight: 600;
+    letter-spacing: 0.08em; text-transform: uppercase;
+    margin: 0.9rem 0 0.6rem;
+  }
+  .or-divider::before, .or-divider::after {
+    content: ""; flex: 1; height: 1px; background: var(--line);
+  }
+
+  /* Town search */
+  .town-search { position: relative; }
+  .town-search input {
+    width: 100%; padding: 0.55rem 0.7rem;
+    border: 1px solid var(--line); border-radius: 8px;
+    background: var(--surface); color: var(--ink);
+    font: inherit; font-size: 0.92rem;
+    transition: border-color 0.15s;
+  }
+  .town-search input:focus { outline: none; border-color: var(--accent); }
+  .town-suggest {
+    position: absolute; left: 0; right: 0; top: calc(100% + 4px);
+    background: var(--surface);
+    border: 1px solid var(--line); border-radius: 8px;
+    max-height: 220px; overflow-y: auto;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.06), 0 8px 24px rgba(0,0,0,0.08);
+    z-index: 20;
+  }
+  .town-suggest .suggest-row {
+    padding: 0.5rem 0.7rem; cursor: pointer; font-size: 0.88rem;
+    border-bottom: 1px solid #f5f1e3;
+    transition: background 0.1s;
+  }
+  .town-suggest .suggest-row:last-child { border-bottom: none; }
+  .town-suggest .suggest-row:hover { background: #f4efe2; }
+
   /* Section heading */
   h3.sect {
     margin: 1.3rem 0 0.55rem; font-size: 0.9rem; font-weight: 600;
@@ -166,14 +200,36 @@
     color: var(--muted); padding: 1.2rem 0; text-align: center; font-size: 0.92rem;
   }
   .recommend {
-    background: var(--good-bg); border: 1px solid #cfe4d3;
-    border-radius: 10px; padding: 0.85rem 1rem; margin-top: 0.4rem;
+    background: var(--surface);
+    border: 2px solid var(--good); border-radius: 12px;
+    padding: 0.85rem 1rem; margin-top: 0.4rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.04), 0 8px 24px rgba(47,122,61,0.10);
+  }
+  .recommend .step-label {
+    display: inline-block;
+    background: var(--good); color: #fff;
+    padding: 0.1rem 0.55rem; border-radius: 999px;
+    font-size: 0.7rem; font-weight: 700; letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-bottom: 0.4rem;
   }
   .recommend h3.r-title {
-    margin: 0 0 0.3rem; color: var(--good); font-size: 1rem; font-weight: 600;
-    text-transform: none; letter-spacing: 0;
+    margin: 0 0 0.3rem; color: var(--ink); font-size: 1.1rem; font-weight: 700;
+    text-transform: none; letter-spacing: -0.01em;
   }
-  .recommend p { margin: 0.25rem 0 0.5rem; font-size: 0.9rem; }
+  .recommend p { margin: 0.2rem 0 0.6rem; font-size: 0.9rem; color: var(--muted); }
+  .recommend .dl-list { margin-top: 0.4rem; }
+  .recommend .dl-all {
+    display: block; width: 100%; padding: 0.6rem 0.85rem;
+    background: var(--good); color: #fff; font-weight: 700;
+    border: none; border-radius: 8px; cursor: pointer;
+    font: inherit; font-size: 0.95rem;
+    margin-bottom: 0.5rem;
+    transition: background 0.15s, transform 0.05s;
+  }
+  .recommend .dl-all:hover { background: #266030; }
+  .recommend .dl-all:active { transform: translateY(1px); }
+  .recommend .dl-tip { font-size: 0.78rem; color: var(--muted); margin: 0.4rem 0 0; }
   .pack {
     padding: 0.55rem 0.7rem; border: 1px solid var(--line); border-radius: 6px;
     margin: 0.4rem 0; background: var(--surface);
@@ -187,16 +243,21 @@
 
   .dl-row {
     display: flex; justify-content: space-between; align-items: center;
-    padding: 0.2rem 0; font-size: 0.83rem;
+    padding: 0.45rem 0.6rem; font-size: 0.84rem;
+    border: 1px solid var(--line); border-radius: 6px;
+    background: var(--bg); margin: 0.25rem 0;
+    text-decoration: none; color: var(--ink);
+    transition: border-color 0.15s, background 0.15s;
   }
-  .dl-row a {
+  .dl-row:hover { border-color: var(--good); background: var(--good-bg); }
+  .dl-row .dl-name {
     color: var(--ink); text-decoration: none;
     font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
     font-size: 0.82rem;
     overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-    max-width: 75%;
+    flex: 1; margin-right: 0.6rem;
   }
-  .dl-row a:hover { text-decoration: underline; color: var(--accent-dark); }
+  .dl-row .dl-arrow { color: var(--good); font-weight: 700; flex: 0 0 auto; margin-left: 0.4rem; }
   .dl-meta { color: var(--muted); font-size: 0.78rem; flex: 0 0 auto; margin-left: 0.4rem; }
 
   .install-steps {
@@ -238,7 +299,11 @@
 <header class="topbar">
   <div class="topbar-inner">
     <a class="brand" href="index.html">
-      <span class="brand-mark">+</span>
+      <svg class="brand-mark" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <polygon points="12,2.5 22.5,21.5 1.5,21.5" fill="#d4351c"/>
+        <rect x="8" y="13" width="8" height="2.5" fill="#fff" rx="0.3"/>
+        <rect x="10.75" y="10.25" width="2.5" height="8" fill="#fff" rx="0.3"/>
+      </svg>
       <span data-i18n="brand">Swisstopo for Garmin</span>
     </a>
     <nav class="langs" aria-label="Language">
@@ -264,6 +329,16 @@
       <div class="dz-sub" data-i18n="dz.sub">or click to browse</div>
     </div>
     <input type="file" id="fileInput" accept=".gpx" style="display:none">
+
+    <div class="or-divider"><span data-i18n="or.label">OR</span></div>
+
+    <div class="town-search">
+      <input type="text" id="townInput"
+             data-i18n-placeholder="town.placeholder"
+             placeholder="Search a place: Zermatt, Verbier, Davos…"
+             autocomplete="off">
+      <div id="townSuggest" class="town-suggest" style="display:none"></div>
+    </div>
 
     <h3 class="sect" data-i18n="season.heading">Season (preview on the map)</h3>
     <div class="season-toggle">
@@ -306,6 +381,8 @@
       "page.subtitle": "Drop your GPX. We tell you which regional pack to download.",
       "dz.title": "Drop GPX file here",
       "dz.sub": "or click to browse",
+      "or.label": "OR",
+      "town.placeholder": "Search a place: Zermatt, Verbier, Davos…",
       "season.heading": "Season (preview on the map)",
       "season.winter_lbl": "Winter",
       "season.winter_desc": "LK25 winter + slope + SAC ski tours",
@@ -317,7 +394,10 @@
       "result.empty": "No file loaded yet.",
       "result.no_match": "No pack covers this route. It may be outside Switzerland, or in a region we don't ship a pack for yet. You can build a custom pack instead.",
       "result.gpx_empty": "GPX has no trkpt / rtept / wpt points.",
-      "result.dl_title": "Download this",
+      "result.step1": "Step 1",
+      "result.dl_title": "Download these files",
+      "result.dl_all": "Download all {n} files",
+      "result.dl_tip": "Tip: most browsers will save them straight to your Downloads folder. Then copy the lot to GARMIN/Garmin/CustomMaps/ on your watch.",
       "result.dl_body_1": "Your route is fully covered by",
       "result.dl_zone": "zone",
       "result.dl_zones": "zones",
@@ -356,6 +436,8 @@
       "page.subtitle": "Zieh deine GPX rein. Wir sagen dir, welches Regionalpaket du brauchst.",
       "dz.title": "GPX-Datei hier ablegen",
       "dz.sub": "oder klicken zum Auswählen",
+      "or.label": "ODER",
+      "town.placeholder": "Ort suchen: Zermatt, Verbier, Davos…",
       "season.heading": "Saison (Vorschau auf der Karte)",
       "season.winter_lbl": "Winter",
       "season.winter_desc": "LK25 Winter + Hangneigung + SAC-Skitouren",
@@ -367,7 +449,10 @@
       "result.empty": "Noch keine Datei geladen.",
       "result.no_match": "Kein Paket deckt diese Route ab. Sie liegt vielleicht ausserhalb der Schweiz oder in einer Region, für die wir noch kein Paket anbieten. Du kannst stattdessen ein eigenes Paket bauen.",
       "result.gpx_empty": "Die GPX enthält keine trkpt / rtept / wpt Punkte.",
-      "result.dl_title": "Das hier herunterladen",
+      "result.step1": "Schritt 1",
+      "result.dl_title": "Diese Dateien herunterladen",
+      "result.dl_all": "Alle {n} Dateien herunterladen",
+      "result.dl_tip": "Tipp: die meisten Browser legen die Dateien direkt in deinen Downloads-Ordner. Danach kopierst du sie alle nach GARMIN/Garmin/CustomMaps/ auf der Uhr.",
       "result.dl_body_1": "Deine Route ist vollständig abgedeckt durch",
       "result.dl_zone": "Region",
       "result.dl_zones": "Regionen",
@@ -406,6 +491,8 @@
       "page.subtitle": "Dépose ton GPX. On te dit quel pack régional télécharger.",
       "dz.title": "Dépose ton fichier GPX ici",
       "dz.sub": "ou clique pour parcourir",
+      "or.label": "OU",
+      "town.placeholder": "Cherche un lieu : Zermatt, Verbier, Davos…",
       "season.heading": "Saison (aperçu sur la carte)",
       "season.winter_lbl": "Hiver",
       "season.winter_desc": "LK25 hiver + pentes + itinéraires ski CAS",
@@ -417,7 +504,10 @@
       "result.empty": "Aucun fichier chargé.",
       "result.no_match": "Aucun pack ne couvre ce parcours. Il est peut-être hors de Suisse, ou dans une région pour laquelle on ne propose pas encore de pack. Tu peux construire un pack sur mesure.",
       "result.gpx_empty": "Le GPX ne contient aucun point trkpt / rtept / wpt.",
-      "result.dl_title": "À télécharger",
+      "result.step1": "Étape 1",
+      "result.dl_title": "Télécharge ces fichiers",
+      "result.dl_all": "Tout télécharger ({n} fichiers)",
+      "result.dl_tip": "Astuce : la plupart des navigateurs les enregistrent direct dans ton dossier Téléchargements. Copie ensuite l'ensemble dans GARMIN/Garmin/CustomMaps/ sur la montre.",
       "result.dl_body_1": "Ta sortie est entièrement couverte par",
       "result.dl_zone": "région",
       "result.dl_zones": "régions",
@@ -456,6 +546,8 @@
       "page.subtitle": "Trascina il tuo GPX. Ti diciamo quale pacchetto regionale scaricare.",
       "dz.title": "Trascina qui il file GPX",
       "dz.sub": "o clicca per scegliere",
+      "or.label": "OPPURE",
+      "town.placeholder": "Cerca un luogo: Zermatt, Verbier, Davos…",
       "season.heading": "Stagione (anteprima sulla mappa)",
       "season.winter_lbl": "Inverno",
       "season.winter_desc": "LK25 inverno + pendenze + itinerari sci CAS",
@@ -467,7 +559,10 @@
       "result.empty": "Nessun file caricato.",
       "result.no_match": "Nessun pacchetto copre questo giro. Forse è fuori dalla Svizzera o in una regione per cui non offriamo ancora un pacchetto. Puoi costruire un pacchetto personalizzato.",
       "result.gpx_empty": "Il GPX non contiene punti trkpt / rtept / wpt.",
-      "result.dl_title": "Da scaricare",
+      "result.step1": "Passo 1",
+      "result.dl_title": "Scarica questi file",
+      "result.dl_all": "Scarica tutti i {n} file",
+      "result.dl_tip": "Suggerimento: la maggior parte dei browser li salva direttamente nella cartella Download. Poi copia tutto in GARMIN/Garmin/CustomMaps/ sull'orologio.",
       "result.dl_body_1": "Il tuo giro è interamente coperto da",
       "result.dl_zone": "regione",
       "result.dl_zones": "regioni",
@@ -523,6 +618,10 @@
       const v = T(el.getAttribute("data-i18n"));
       if (v != null) el.textContent = v;
     });
+    document.querySelectorAll("[data-i18n-placeholder]").forEach(function (el) {
+      const v = T(el.getAttribute("data-i18n-placeholder"));
+      if (v != null) el.setAttribute("placeholder", v);
+    });
     document.querySelectorAll(".langs button").forEach(function (btn) {
       btn.setAttribute("aria-pressed", btn.dataset.lang === CURRENT_LANG ? "true" : "false");
     });
@@ -552,6 +651,7 @@
   let MANIFEST = null;
   let ZONES = [];
   let LAST_PICKER_STATE = null;  // {points, scores}
+  let LAST_DL_FILES = [];        // files for the "Download all" button
 
   function fileDownloadUrl(filename) {
     return MANIFEST.asset_url_template.replace("{name}", encodeURIComponent(filename));
@@ -735,7 +835,9 @@
     return 'marginal';
   }
 
-  function renderDownloadsForZones(zones, includeOverview) {
+  // Returns { html: string, files: array } so the caller can wire a
+  // single "Download all" trigger.
+  function buildDownloads(zones, includeOverview) {
     const files = [];
     if (includeOverview) {
       overviewFilesForSeason(activeSeason).forEach(f => files.push({
@@ -747,13 +849,19 @@
         ...f, url: fileDownloadUrl(f.name),
       }));
     }
-    if (files.length === 0) return "<em>" + T("result.not_built") + "</em>";
-    return files.map(f =>
-      `<div class="dl-row">
-         <a href="${f.url}" download>${f.name}</a>
+    if (files.length === 0) return { html: "<em>" + T("result.not_built") + "</em>", files: [] };
+    const html = files.map(f =>
+      `<a class="dl-row" href="${f.url}" download>
+         <span class="dl-name">${f.name}</span>
          <span class="dl-meta">${f.size_mb} MB</span>
-       </div>`
+         <span class="dl-arrow">↓</span>
+       </a>`
     ).join("");
+    return { html, files };
+  }
+  // Backwards-compat wrapper for any caller that still wants the HTML only.
+  function renderDownloadsForZones(zones, includeOverview) {
+    return buildDownloads(zones, includeOverview).html;
   }
 
   function renderResult(points, scores) {
@@ -797,12 +905,18 @@
     const overviewMb = overviewFiles.reduce((a, f) => a + (f.size_mb || 0), 0);
     const zoneWord = finalRecommended.length === 1 ? T("result.dl_zone") : T("result.dl_zones");
 
+    const dl = buildDownloads(finalRecommended.map(r => r.zone), true);
     let html = `
       <div class="recommend">
+        <span class="step-label">${T("result.step1")}</span>
         <h3 class="r-title">${T("result.dl_title")}</h3>
         <p>${T("result.dl_body_1")} <strong>${finalRecommended.length} ${zoneWord}</strong> ${T("result.dl_plus")} <strong>${(totalRecMb + overviewMb).toFixed(0)} MB</strong>.</p>
-        ${renderDownloadsForZones(finalRecommended.map(r => r.zone), true)}
+        ${dl.files.length > 1 ? `<button class="dl-all" id="dlAllBtn">⬇ ${T("result.dl_all").replace("{n}", dl.files.length)}</button>` : ""}
+        <div class="dl-list">${dl.html}</div>
+        <p class="dl-tip">${T("result.dl_tip")}</p>
       </div>`;
+    // Stash for the dl-all click handler.
+    LAST_DL_FILES = dl.files;
 
     html += `<h3 class="sect">${T("result.why_heading")}</h3>`;
     html += `<p style="font-size:0.83rem; color:var(--muted); margin:0.2rem 0 0.5rem">${T("result.why_lead")}</p>`;
@@ -845,6 +959,22 @@
        </div>`;
     }
     el.innerHTML = html;
+
+    // Wire "Download all" so a single click triggers every individual download.
+    const dlAll = document.getElementById('dlAllBtn');
+    if (dlAll && LAST_DL_FILES.length) {
+      dlAll.addEventListener('click', () => {
+        LAST_DL_FILES.forEach((f, i) => {
+          // Stagger by ~150ms so Firefox doesn't squash sibling downloads.
+          setTimeout(() => {
+            const a = document.createElement('a');
+            a.href = f.url; a.download = f.name; a.rel = 'noopener';
+            document.body.appendChild(a); a.click();
+            document.body.removeChild(a);
+          }, i * 180);
+        });
+      });
+    }
   }
 
   function highlightZones(matched) {
@@ -884,6 +1014,88 @@
       }
     };
     reader.readAsText(file);
+  }
+
+  // ───────────── Town search (Swisstopo SearchServer) ─────────────
+  // type=locations covers towns, hamlets, valleys, named landmarks. We project
+  // the result LV95 -> WGS84 once and feed a single-point "route" through the
+  // same scoring / rendering path the GPX flow uses.
+  const SWISSTOPO_SEARCH = "https://api3.geo.admin.ch/rest/services/api/SearchServer";
+  let townDebounce = null;
+  let townMarker = null;
+
+  function townSearch(query) {
+    const url = `${SWISSTOPO_SEARCH}?type=locations&sr=2056&searchText=${encodeURIComponent(query)}`;
+    return fetch(url).then(r => r.json()).then(j => (j.results || []).slice(0, 8).map(r => {
+      const label = (r.attrs.label || "").replace(/<\/?b>/g, "");
+      // SearchServer swaps: y = east (~2.6M), x = north (~1.2M).
+      return { label, e: r.attrs.y, n: r.attrs.x, lat: r.attrs.lat, lon: r.attrs.lon };
+    }));
+  }
+
+  function applyTown(t) {
+    document.getElementById('townInput').value = t.label;
+    document.getElementById('townSuggest').style.display = 'none';
+    if (routeLayer) { map.removeLayer(routeLayer); routeLayer = null; }
+    if (townMarker) map.removeLayer(townMarker);
+    townMarker = L.circleMarker([t.lat, t.lon], {
+      radius: 8, color: '#d4351c', weight: 3, fillColor: '#fff', fillOpacity: 1
+    }).addTo(map);
+    map.setView([t.lat, t.lon], 11);
+
+    // Single-point "route" for scoring.
+    const points = [[t.lat, t.lon]];
+    const scores = scoreZones(points);
+    LAST_PICKER_STATE = { points, scores };
+    renderResult(points, scores);
+    highlightZones(scores);
+  }
+
+  function showSuggestions(items) {
+    const el = document.getElementById('townSuggest');
+    if (!items.length) { el.style.display = 'none'; return; }
+    el.innerHTML = items.map((r, i) =>
+      `<div class="suggest-row" data-i="${i}">${r.label}</div>`
+    ).join("");
+    el.style.display = 'block';
+    el.querySelectorAll('.suggest-row').forEach(row => {
+      row.addEventListener('click', () => {
+        applyTown(items[parseInt(row.dataset.i, 10)]);
+      });
+    });
+  }
+
+  const townInput = document.getElementById('townInput');
+  if (townInput) {
+    townInput.addEventListener('input', e => {
+      const q = e.target.value.trim();
+      clearTimeout(townDebounce);
+      if (q.length < 2) {
+        document.getElementById('townSuggest').style.display = 'none';
+        return;
+      }
+      townDebounce = setTimeout(() => {
+        townSearch(q).then(showSuggestions).catch(err => {
+          console.warn("town search failed:", err);
+          document.getElementById('townSuggest').style.display = 'none';
+        });
+      }, 220);
+    });
+    townInput.addEventListener('keydown', e => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        const q = townInput.value.trim();
+        if (q.length < 2) return;
+        townSearch(q).then(results => {
+          if (results.length) applyTown(results[0]);
+        });
+      }
+    });
+    // Close suggestions on outside click.
+    document.addEventListener('click', e => {
+      if (e.target.closest('.town-search')) return;
+      document.getElementById('townSuggest').style.display = 'none';
+    });
   }
 
   // Drag-and-drop wiring

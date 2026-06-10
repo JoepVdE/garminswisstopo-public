@@ -53,11 +53,8 @@
     font-size: 0.98rem;
   }
   .brand-mark {
-    width: 22px; height: 22px; border-radius: 4px;
-    background: var(--accent);
-    display: inline-flex; align-items: center; justify-content: center;
-    color: #fff; font-weight: 700; font-size: 0.9rem;
-    box-shadow: 0 1px 2px rgba(0,0,0,0.15);
+    width: 24px; height: 24px; display: block;
+    filter: drop-shadow(0 1px 1px rgba(0,0,0,0.18));
   }
   .langs { display: flex; gap: 0.25rem; }
   .langs button {
@@ -144,26 +141,20 @@
   }
   .zone-svg-wrap {
     width: 100%;
-    background: #f3efe2;
-    background-image:
-      radial-gradient(ellipse at 30% 35%, rgba(255,255,255,0.6) 0%, transparent 60%),
-      radial-gradient(ellipse at 80% 65%, rgba(220,210,180,0.5) 0%, transparent 60%);
     border-radius: 10px;
     border: 1px solid #ddd6c1;
     padding: 0.4rem;
+    background: #f1ede1;
+    position: relative;
   }
   .zone-svg { width: 100%; height: auto; display: block; }
-  .zone-svg .ch-fill { fill: #fbfaf3; stroke: #b9b09a; stroke-width: 1.2; stroke-linejoin: round; }
-  .zone-svg .ch-outline-shadow {
-    fill: none; stroke: rgba(60,50,30,0.15); stroke-width: 4; stroke-linejoin: round;
-  }
   .zone-svg .zone-rect {
-    fill-opacity: 0.5;
+    fill-opacity: 0.32;
     stroke-width: 0.9;
     transition: fill-opacity 0.15s, stroke-width 0.15s;
     cursor: default;
   }
-  .zone-svg .zone-rect:hover { fill-opacity: 0.82; stroke-width: 1.5; }
+  .zone-svg .zone-rect:hover { fill-opacity: 0.7; stroke-width: 1.6; }
   .zone-svg .zone-label {
     font: 600 11px -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
     fill: #fff;
@@ -171,10 +162,26 @@
     text-anchor: middle;
     dominant-baseline: central;
     paint-order: stroke;
-    stroke: rgba(0,0,0,0.3);
-    stroke-width: 2.5;
+    stroke: rgba(0,0,0,0.55);
+    stroke-width: 2.6;
     stroke-linejoin: round;
   }
+  .zone-tooltip {
+    position: absolute; pointer-events: none;
+    background: #1a1d21; color: #fff;
+    padding: 0.3rem 0.55rem; border-radius: 6px;
+    font-size: 0.82rem; font-weight: 500;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.15), 0 8px 18px rgba(0,0,0,0.18);
+    transform: translate(-50%, calc(-100% - 8px));
+    opacity: 0; transition: opacity 0.1s;
+    white-space: nowrap; z-index: 5;
+  }
+  .zone-tooltip::after {
+    content: ""; position: absolute; left: 50%; bottom: -5px;
+    transform: translateX(-50%);
+    border: 5px solid transparent; border-top-color: #1a1d21; border-bottom: 0;
+  }
+  .zone-tooltip.visible { opacity: 1; }
   .legend {
     display: flex; flex-wrap: wrap; gap: 0.6rem 1.2rem;
     margin-top: 0.9rem; font-size: 0.88rem; color: var(--muted);
@@ -276,7 +283,11 @@
 <header class="topbar">
   <div class="wrap topbar-inner">
     <a class="brand" href="./">
-      <span class="brand-mark">+</span>
+      <svg class="brand-mark" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <polygon points="12,2.5 22.5,21.5 1.5,21.5" fill="#d4351c"/>
+        <rect x="8" y="13" width="8" height="2.5" fill="#fff" rx="0.3"/>
+        <rect x="10.75" y="10.25" width="2.5" height="8" fill="#fff" rx="0.3"/>
+      </svg>
       <span data-i18n="brand">Swisstopo for Garmin</span>
     </a>
     <nav class="langs" aria-label="Language">
@@ -303,7 +314,7 @@
       </div>
     </div>
     <figure class="hero-figure">
-      <img src="preview_map.jpg" alt="LK25 cartography with slope-shading overlay near Verbier" loading="eager" width="900" height="900">
+      <img src="preview_map.jpg" alt="LK25 cartography with slope-shading overlay and SAC ski tours, Mattertal" loading="eager" width="900" height="900">
       <figcaption data-i18n="hero.caption">LK25 with slope-shading overlay near Verbier / Bagnes</figcaption>
     </figure>
   </section>
@@ -327,10 +338,11 @@
     <h2 data-i18n="zones.heading">Switzerland is split into 26 regions</h2>
     <p class="section-lead" data-i18n="zones.lead">A Garmin watch can hold one regional pack at a time (plus the always-on Switzerland overview). Pick the region that covers your trips, copy it across, and use it as long as your trips fall inside it. Swap only when you move to a different region.</p>
     <div class="zone-card">
-      <div class="zone-svg-wrap">
-        <svg id="zonesSvg" class="zone-svg" viewBox="0 0 800 500" role="img" aria-labelledby="zonesTitle">
+      <div class="zone-svg-wrap" id="zoneMapWrap">
+        <svg id="zonesSvg" class="zone-svg" viewBox="0 0 800 500" preserveAspectRatio="xMidYMid meet" role="img" aria-labelledby="zonesTitle">
           <title id="zonesTitle" data-i18n="zones.svg_title">Map of Switzerland divided into 26 regional packs</title>
         </svg>
+        <div id="zoneTooltip" class="zone-tooltip" role="tooltip"></div>
       </div>
       <div class="legend">
         <span class="legend-item"><span class="legend-swatch winter"></span> <span data-i18n="zones.legend_winter">Winter and summer regions (1 to 21)</span></span>
@@ -416,7 +428,7 @@
       "hero.lead": "Pre-built map packs of Switzerland for Garmin watches. LK25 raster cartography with a slope-shading and ski/hiking route overlay, sized to fit your watch's tile limit.",
       "hero.cta_install": "How to install",
       "hero.cta_picker": "Find maps for my tour",
-      "hero.caption": "LK25 with slope-shading overlay near Verbier / Bagnes",
+      "hero.caption": "LK25 with slope-shading overlay and SAC ski tours (Mattertal area)",
       "what.heading": "What is this?",
       "what.lead": "A way to put Swiss topographic maps on your Garmin watch. Same LK25 cartography you'd see on a paper Swisstopo map or in SchweizMobil, with a slope-angle and route overlay on top. Not an app. Just files you copy to the watch over USB.",
       "what.winter_title": "Winter",
@@ -460,7 +472,7 @@
       "hero.lead": "Fertige Kartenpakete der Schweiz für Garmin-Uhren. LK25-Rasterkartografie mit einem Hangneigungs- und Routen-Overlay (Ski / Wandern), passend für die Kachelgrenze deiner Uhr.",
       "hero.cta_install": "Anleitung zur Installation",
       "hero.cta_picker": "Karten für meine Tour finden",
-      "hero.caption": "LK25 mit Hangneigungs-Overlay bei Verbier / Bagnes",
+      "hero.caption": "LK25 mit Hangneigung und SAC-Skitouren (Mattertal)",
       "what.heading": "Was ist das?",
       "what.lead": "Ein Weg, Schweizer Landeskarten auf eine Garmin-Uhr zu bringen. Gleiche LK25-Kartografie wie auf der Papier-Swisstopo oder in SchweizMobil, darauf ein Hangneigungs- und Routen-Overlay. Keine App. Nur Dateien, die du per USB auf die Uhr kopierst.",
       "what.winter_title": "Winter",
@@ -504,7 +516,7 @@
       "hero.lead": "Packs cartographiques de la Suisse, prêts à l'emploi, pour montres Garmin. Cartographie raster LK25 avec un overlay d'ombrage des pentes et d'itinéraires ski / rando, dimensionnés pour la limite de tuiles de ta montre.",
       "hero.cta_install": "Comment installer",
       "hero.cta_picker": "Trouver les cartes de ma sortie",
-      "hero.caption": "LK25 avec ombrage des pentes en overlay, secteur Verbier / Bagnes",
+      "hero.caption": "LK25 avec ombrage des pentes et itinéraires ski CAS (Mattertal)",
       "what.heading": "C'est quoi ?",
       "what.lead": "Une façon de mettre des cartes topographiques suisses sur une montre Garmin. Même cartographie LK25 que sur la carte papier Swisstopo ou dans SuisseMobile, avec un overlay d'inclinaison de pente et d'itinéraires par-dessus. Pas une appli. Juste des fichiers à copier sur la montre via USB.",
       "what.winter_title": "Hiver",
@@ -548,7 +560,7 @@
       "hero.lead": "Pacchetti cartografici della Svizzera già pronti per orologi Garmin. Cartografia raster LK25 con un overlay di ombreggiatura delle pendenze e di itinerari sci / escursionismo, dimensionati per il limite di tile dell'orologio.",
       "hero.cta_install": "Come installare",
       "hero.cta_picker": "Trova le mappe per il mio giro",
-      "hero.caption": "LK25 con overlay di ombreggiatura pendenze, zona Verbier / Bagnes",
+      "hero.caption": "LK25 con ombreggiatura pendenze e itinerari sci CAS (Mattertal)",
       "what.heading": "Che cos'è?",
       "what.lead": "Un modo per portare carte topografiche svizzere sul tuo orologio Garmin. Stessa cartografia LK25 della carta cartacea Swisstopo o di SvizzeraMobile, con un overlay di pendenza e itinerari sopra. Non è un'app. Solo file che copi sull'orologio tramite USB.",
       "what.winter_title": "Inverno",
@@ -587,27 +599,37 @@
     }
   };
 
-  // ───────────── Switzerland silhouette (LV95) ─────────────
-  // ~40 hand-picked vertices, clockwise from Geneva. Coarse but recognisable.
-  const CH_OUTLINE_LV95 = [
-    [2493000, 1118000], [2502000, 1126000], [2510000, 1145000],
-    [2517000, 1170000], [2535000, 1195000], [2557000, 1212000],
-    [2580000, 1235000], [2605000, 1255000], [2620000, 1268000],
-    [2643000, 1272000], [2665000, 1278000], [2685000, 1283000],
-    [2695000, 1295000], [2710000, 1294000], [2735000, 1280000],
-    [2755000, 1268000], [2770000, 1262000], [2770000, 1247000],
-    [2763000, 1235000], [2762000, 1218000], [2765000, 1207000],
-    [2772000, 1197000], [2785000, 1198000], [2812000, 1190000],
-    [2832000, 1175000], [2832000, 1167000], [2820000, 1150000],
-    [2802000, 1137000], [2784000, 1135000], [2762000, 1138000],
-    [2740000, 1135000], [2727000, 1122000], [2723000, 1095000],
-    [2722000, 1077000], [2705000, 1080000], [2683000, 1090000],
-    [2670000, 1097000], [2658000, 1093000], [2645000, 1095000],
-    [2628000, 1086000], [2615000, 1086000], [2600000, 1083000],
-    [2580000, 1080000], [2570000, 1082000], [2562000, 1098000],
-    [2557000, 1117000], [2555000, 1133000], [2525000, 1134000],
-    [2510000, 1130000]
-  ];
+  // ───────────── Backdrop image (swisstopo pixelkarte-farbe @ WMTS z=8) ─────
+  // Sized to match build/fetch_ch_overview.py's WGS84 bbox + output size.
+  // Linear lat/lon interpolation introduces a sub-pixel mercator error at
+  // this scale; not visible to the eye.
+  const BACKDROP = {
+    src: "ch_backdrop.jpg",
+    w: 865, h: 558,
+    lon_min: 5.85, lon_max: 10.60,
+    lat_min: 45.75, lat_max: 47.85,
+  };
+
+  // LV95 (EPSG:2056) → WGS84 lon/lat, swisstopo's approximate formula.
+  // Good to ~1 m, plenty for zone-overlay rendering.
+  function lv95ToLonLat(e, n) {
+    const y = (e - 2600000) / 1000000;
+    const x = (n - 1200000) / 1000000;
+    const lonNorm =
+      2.6779094 +
+      4.728982 * y +
+      0.791484 * y * x +
+      0.1306 * y * x * x -
+      0.0436 * y * y * y;
+    const latNorm =
+      16.9023892 +
+      3.238272 * x -
+      0.270978 * y * y -
+      0.002528 * x * x -
+      0.0447 * y * y * x -
+      0.0140 * x * x * x;
+    return [lonNorm * 100 / 36, latNorm * 100 / 36];
+  }
 
   // ───────────── 26-zone overview map ─────────────
   const ZONES = [
@@ -642,42 +664,32 @@
   function drawZones() {
     const svg = document.getElementById("zonesSvg");
     if (!svg) return;
-    const vbW = 800, vbH = 500, pad = 14;
-    // Use country outline bbox to keep CH centred even when zones don't
-    // quite reach the borders.
-    let eMin = Infinity, eMax = -Infinity, nMin = Infinity, nMax = -Infinity;
-    for (const [e, n] of CH_OUTLINE_LV95) {
-      if (e < eMin) eMin = e; if (e > eMax) eMax = e;
-      if (n < nMin) nMin = n; if (n > nMax) nMax = n;
-    }
-    const innerW = vbW - 2 * pad;
-    const innerH = vbH - 2 * pad;
-    const sx = innerW / (eMax - eMin);
-    const sy = innerH / (nMax - nMin);
-    const s = Math.min(sx, sy);
-    const projW = (eMax - eMin) * s;
-    const projH = (nMax - nMin) * s;
-    const offX = pad + (innerW - projW) / 2;
-    const offY = pad + (innerH - projH) / 2;
-    function toSvg(e, n) {
-      return [offX + (e - eMin) * s, offY + (nMax - n) * s];
-    }
+    const W = BACKDROP.w, H = BACKDROP.h;
+    svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
     const ns = "http://www.w3.org/2000/svg";
 
-    // 1. Country shadow (slight outer glow effect via thicker stroke).
-    const shadowPoints = CH_OUTLINE_LV95.map(p => toSvg(p[0], p[1]).map(v => v.toFixed(1)).join(",")).join(" ");
-    const shadow = document.createElementNS(ns, "polygon");
-    shadow.setAttribute("class", "ch-outline-shadow");
-    shadow.setAttribute("points", shadowPoints);
-    svg.appendChild(shadow);
+    // Backdrop image first so it stays under zone overlays.
+    const img = document.createElementNS(ns, "image");
+    img.setAttributeNS("http://www.w3.org/1999/xlink", "href", BACKDROP.src);
+    img.setAttribute("href", BACKDROP.src);
+    img.setAttribute("x", "0");
+    img.setAttribute("y", "0");
+    img.setAttribute("width", String(W));
+    img.setAttribute("height", String(H));
+    svg.appendChild(img);
 
-    // 2. Country fill (cream / paper).
-    const ch = document.createElementNS(ns, "polygon");
-    ch.setAttribute("class", "ch-fill");
-    ch.setAttribute("points", shadowPoints);
-    svg.appendChild(ch);
+    // LV95 → backdrop pixel.
+    function toSvg(e, n) {
+      const [lon, lat] = lv95ToLonLat(e, n);
+      const x = (lon - BACKDROP.lon_min) / (BACKDROP.lon_max - BACKDROP.lon_min) * W;
+      const y = (BACKDROP.lat_max - lat) / (BACKDROP.lat_max - BACKDROP.lat_min) * H;
+      return [x, y];
+    }
 
-    // 3. Zone rectangles, big first so small ones stay readable on top.
+    const tooltip = document.getElementById("zoneTooltip");
+    const wrap = document.getElementById("zoneMapWrap");
+
+    // Big rectangles first, small on top so labels stay readable.
     const sorted = ZONES.slice().sort(function (a, b) {
       const aA = (a.bbox[2] - a.bbox[0]) * (a.bbox[3] - a.bbox[1]);
       const bA = (b.bbox[2] - b.bbox[0]) * (b.bbox[3] - b.bbox[1]);
@@ -691,7 +703,7 @@
       const w = x2 - x1, h = y2 - y1;
       const isWinter = z.season === "both";
       const fill = isWinter ? "#3870b6" : "#4a8a3c";
-      const stroke = isWinter ? "#26487a" : "#2e5d23";
+      const stroke = isWinter ? "#1d3e6b" : "#28471f";
       const r = document.createElementNS(ns, "rect");
       r.setAttribute("class", "zone-rect");
       r.setAttribute("x", x1.toFixed(1));
@@ -701,9 +713,7 @@
       r.setAttribute("rx", "3");
       r.setAttribute("fill", fill);
       r.setAttribute("stroke", stroke);
-      const ttl = document.createElementNS(ns, "title");
-      ttl.textContent = z.n + " " + z.name;
-      r.appendChild(ttl);
+      r.dataset.label = `#${String(z.n).padStart(2, "0")} ${z.name}`;
       rects.appendChild(r);
       const t = document.createElementNS(ns, "text");
       t.setAttribute("class", "zone-label");
@@ -714,6 +724,23 @@
     }
     svg.appendChild(rects);
     svg.appendChild(labels);
+
+    // Hover tooltip. Uses the SVG's bounding box on screen to map cell
+    // pixel-space back to wrapper-relative CSS coords.
+    function showTip(rect, evt) {
+      if (!tooltip || !wrap) return;
+      tooltip.textContent = rect.dataset.label;
+      const wrapRect = wrap.getBoundingClientRect();
+      tooltip.style.left = (evt.clientX - wrapRect.left) + "px";
+      tooltip.style.top = (evt.clientY - wrapRect.top) + "px";
+      tooltip.classList.add("visible");
+    }
+    function hideTip() { if (tooltip) tooltip.classList.remove("visible"); }
+    svg.querySelectorAll(".zone-rect").forEach(function (rect) {
+      rect.addEventListener("mouseenter", e => showTip(rect, e));
+      rect.addEventListener("mousemove",  e => showTip(rect, e));
+      rect.addEventListener("mouseleave", hideTip);
+    });
   }
 
   // ───────────── language switching ─────────────

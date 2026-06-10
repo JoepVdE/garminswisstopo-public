@@ -1,6 +1,6 @@
 {
   "release_tag": "v1",
-  "asset_url_template": "https://github.com/JoepVdE/garminswisstopo/releases/download/v1/{name}",
+  "asset_url_template": "https://github.com/JoepVdE/garminswisstopo-public/releases/download/v1/{name}",
   "tile_cap": 500,
   "overview_tiles_est": 89,
   "overview": {

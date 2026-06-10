@@ -49,11 +49,8 @@
     font-size: 0.98rem;
   }
   .brand-mark {
-    width: 22px; height: 22px; border-radius: 4px;
-    background: var(--accent);
-    display: inline-flex; align-items: center; justify-content: center;
-    color: #fff; font-weight: 700; font-size: 0.9rem;
-    box-shadow: 0 1px 2px rgba(0,0,0,0.15);
+    width: 24px; height: 24px; display: block;
+    filter: drop-shadow(0 1px 1px rgba(0,0,0,0.18));
   }
   .langs { display: flex; gap: 0.25rem; }
   .langs button {
@@ -218,7 +215,11 @@
 <header class="topbar">
   <div class="topbar-inner">
     <a class="brand" href="index.html">
-      <span class="brand-mark">+</span>
+      <svg class="brand-mark" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <polygon points="12,2.5 22.5,21.5 1.5,21.5" fill="#d4351c"/>
+        <rect x="8" y="13" width="8" height="2.5" fill="#fff" rx="0.3"/>
+        <rect x="10.75" y="10.25" width="2.5" height="8" fill="#fff" rx="0.3"/>
+      </svg>
       <span data-i18n="brand">Swisstopo for Garmin</span>
     </a>
     <nav class="langs" aria-label="Language">
