@@ -389,41 +389,128 @@
       return;
     }
     const summer = activeSeason === 'summer';
-    let html = `<p><strong>${points.length}</strong> track points, route covers <strong>${scores.length}</strong> pack zone(s):</p>`;
-    for (const s of scores) {
-      const z = s.zone;
-      const isPrimary = s === scores[0];
+
+    // Pick the recommended download set. Goal: tell the user the *minimum*
+    // they need. Walk zones highest-coverage-first; add a zone only if it
+    // covers points the already-picked zones miss (>=5% new). Stop once the
+    // cumulative covered fraction is >=95%.
+    //
+    // This handles overlapping-zones cases (e.g. Bernese Oberland +
+    // Waadtländer Alpen both touching the same Haute Route segment): zone A
+    // covers 100%, zone B adds <1% new -> picker says "you only need A;
+    // zone B overlaps".
+    const finalRecommended = [];
+    const finalOthers = [];
+    {
+      const covered = new Set();
+      for (const s of scores) {
+        const hitIdx = new Set();
+        const [emin, nmin, emax, nmax] = s.zone.bbox_lv95;
+        for (let i = 0; i < points.length; i++) {
+          const [lat, lon] = points[i];
+          const [e, n] = proj4("EPSG:4326", "EPSG:2056", [lon, lat]);
+          if (e >= emin && e <= emax && n >= nmin && n <= nmax) hitIdx.add(i);
+        }
+        const added = [...hitIdx].filter(i => !covered.has(i)).length;
+        const addedFrac = points.length ? added / points.length : 0;
+        const enough = covered.size / points.length >= 0.95;
+        if (!enough && (finalRecommended.length === 0 || addedFrac >= 0.05)) {
+          finalRecommended.push({ ...s, addedFrac });
+          for (const i of hitIdx) covered.add(i);
+        } else {
+          finalOthers.push({ ...s, addedFrac });
+        }
+      }
+    }
+
+    const totalRecMb = finalRecommended.reduce((a, r) => {
+      const f = filesForSeason(r.zone, activeSeason);
+      return a + f.reduce((aa, x) => aa + (x.size_mb || 0), 0);
+    }, 0);
+    const overviewFiles = overviewFilesForSeason(activeSeason);
+    const overviewMb = overviewFiles.reduce((a, f) => a + (f.size_mb || 0), 0);
+
+    let html = `
+      <div class="next-steps" style="background:#eaf4ec; border-left-color:#2f7a3d; margin-top:0">
+        <h3 style="color:#2f7a3d; margin-top:0">Download this</h3>
+        <p style="margin:0.2rem 0 0.5rem">
+          Your route is fully covered by <strong>${finalRecommended.length} zone${finalRecommended.length === 1 ? "" : "s"}</strong>
+          + the all-CH overview. Total <strong>${(totalRecMb + overviewMb).toFixed(0)} MB</strong>.
+        </p>
+        ${renderDownloadsForZones(finalRecommended.map(r => r.zone), true)}
+      </div>`;
+
+    html += `<h3 style="margin-top:1.2rem">Why these</h3>`;
+    html += `<p style="font-size:0.85rem; color:#5b6470; margin:0.3rem 0 0.6rem">
+      Track points by zone (a zone shows here only if your route touches it):
+    </p>`;
+    for (const r of finalRecommended) {
+      const z = r.zone;
       const files = filesForSeason(z, activeSeason);
       const sizeMb = files.reduce((a, f) => a + (f.size_mb || 0), 0).toFixed(0);
-      const sizeStr = files.length ? `pack ${sizeMb} MB` : "not yet built";
-      html += `<div class="pack ${classify(s.frac)}">
-        <div class="pack-name">#${String(z.n).padStart(2,'0')} ${z.name}${summer ? " (summer)" : ""}</div>
-        <div class="pack-stats">${(s.frac*100).toFixed(1)}% of route — ${s.hits} pts, ${sizeStr}</div>
+      const sizeStr = files.length ? `${sizeMb} MB` : "not yet built";
+      html += `<div class="pack ${classify(r.frac)}" style="border-color:#2f7a3d">
+        <div class="pack-name">✓ #${String(z.n).padStart(2,'0')} ${z.name}${summer ? " (summer)" : ""}</div>
+        <div class="pack-stats">${(r.frac*100).toFixed(0)}% of route inside this zone — ${sizeStr}</div>
         <div class="pack-desc">${z.desc}</div>
-        ${isPrimary && files.length ? `<div class="dl-list"><strong>Download:</strong>${renderDownloads(z, true)}</div>` : ""}
-        ${isPrimary && !files.length ? `<div class="dl-list"><em>This zone hasn't been published yet for this season. The preview above uses live Swisstopo WMTS.</em></div>` : ""}
       </div>`;
     }
-    const anyBuilt = scores.some(s => filesForSeason(s.zone, activeSeason).length > 0);
+    if (finalOthers.length) {
+      html += `<h3 style="margin-top:1.2rem">Other zones the route touches (skip these)</h3>`;
+      html += `<p style="font-size:0.85rem; color:#5b6470; margin:0.3rem 0 0.6rem">
+        These zones overlap with the ones above — your route's points in them
+        are already covered. Downloading these too just wastes tile budget.
+      </p>`;
+      for (const r of finalOthers) {
+        const z = r.zone;
+        html += `<div class="pack" style="opacity:0.6">
+          <div class="pack-name">#${String(z.n).padStart(2,'0')} ${z.name}${summer ? " (summer)" : ""}</div>
+          <div class="pack-stats">${(r.frac*100).toFixed(0)}% inside — but only ${(r.addedFrac*100).toFixed(0)}% new coverage</div>
+          <div class="pack-desc">${z.desc}</div>
+        </div>`;
+      }
+    }
+
+    const anyBuilt = finalRecommended.some(r => filesForSeason(r.zone, activeSeason).length > 0);
     if (anyBuilt) {
       html += `<div class="next-steps">
-         <h3>Next steps</h3>
+         <h3>How to install</h3>
          <ol>
-           <li>Download every file above (overview + zone parts).</li>
-           <li>Follow <a href="install.html">the install guide</a> — copy them to
-               <code>Garmin/CustomMaps/</code> on the watch, delete any old <code>.kmz</code>
-               there, leave <code>.img</code> files alone.</li>
+           <li>Download every file from the green "Download this" box above.</li>
+           <li>Plug the watch in via USB. Open <code>GARMIN/Garmin/CustomMaps/</code>.</li>
+           <li>Delete any old <code>.kmz</code> files there.
+             <strong>Don't touch any <code>.img</code> files</strong> — those are the watch's built-in maps.</li>
+           <li>Copy the downloaded files in. Eject the watch and reboot it.</li>
+           <li>On the watch: Menu → Map → Configure Map → Map Layers → enable <strong>Custom Maps</strong>.</li>
          </ol>
+         <p style="margin:0.5rem 0 0">
+           Full step-by-step: <a href="install.html">install guide</a>.
+         </p>
        </div>`;
     }
-    if (scores.length > 1 && scores[0].frac < 0.9) {
-      html += `<div class="tip">
-        Route crosses ${scores.length} zones; primary covers ${(scores[0].frac*100).toFixed(0)}%.
-        Build a <a href="tile_picker.html">custom pack</a> if you want one file
-        spanning the whole route instead of swapping mid-tour.
-      </div>`;
-    }
     el.innerHTML = html;
+  }
+
+  function renderDownloadsForZones(zones, includeOverview) {
+    const files = [];
+    if (includeOverview) {
+      overviewFilesForSeason(activeSeason).forEach(f => files.push({
+        ...f, label: "overview (all of CH)",
+        url: fileDownloadUrl(f.name),
+      }));
+    }
+    for (const z of zones) {
+      filesForSeason(z, activeSeason).forEach(f => files.push({
+        ...f, label: z.name, url: fileDownloadUrl(f.name),
+      }));
+    }
+    if (files.length === 0) return "<em>No files published for this season yet.</em>";
+    return files.map(f =>
+      `<div class="dl-row">
+         <a href="${f.url}" download>${f.name}</a>
+         <span class="dl-meta">${f.size_mb} MB</span>
+       </div>`
+    ).join("");
   }
 
   function highlightZones(matched) {
