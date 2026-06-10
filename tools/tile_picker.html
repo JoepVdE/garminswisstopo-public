@@ -1,0 +1,1224 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Swisstopo Custom KMZ Pack Builder</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+      crossorigin="">
+<style>
+  body { font-family: system-ui, -apple-system, sans-serif; margin: 0; padding: 0; height: 100vh; display: flex; flex-direction: column; }
+  header { padding: 0.75rem 1rem; background: #2c3e50; color: white; }
+  header h1 { margin: 0 0 0.25rem 0; font-size: 1.15rem; }
+  header p { margin: 0; opacity: 0.8; font-size: 0.85rem; }
+  main { flex: 1; display: flex; min-height: 0; }
+  #sidebar { width: 360px; padding: 1rem; overflow-y: auto; border-right: 1px solid #ddd; background: #fafafa; }
+  #map { flex: 1; }
+  .stat-box { padding: 0.75rem; border-radius: 4px; margin: 0.5rem 0; transition: all 0.2s; }
+  .stat-box.neutral { background: #ecf0f1; }
+  .stat-box.ok       { background: #d4edda; color: #155724; }
+  .stat-box.warn     { background: #f8d7da; color: #721c24; }
+  .stat-line { font-size: 0.95rem; line-height: 1.4; }
+  .stat-line strong { font-size: 1.05rem; }
+  button {
+    padding: 0.45rem 0.9rem; background: #2c3e50; color: white;
+    border: none; border-radius: 4px; cursor: pointer;
+    font-size: 0.85rem; margin: 0.15rem 0.25rem 0.15rem 0;
+  }
+  button:hover { background: #34495e; }
+  button:disabled { background: #bdc3c7; cursor: not-allowed; }
+  button.secondary { background: #95a5a6; }
+  button.secondary:hover { background: #7f8c8d; }
+  pre {
+    background: #2c3e50; color: #ecf0f1; padding: 0.75rem; border-radius: 4px;
+    overflow-x: auto; font-size: 0.8rem; line-height: 1.4;
+  }
+  h3 { margin: 1rem 0 0.5rem 0; font-size: 0.95rem; color: #2c3e50; }
+  small { color: #888; font-size: 0.85rem; }
+  .tip { background: #fff8dc; padding: 0.5rem 0.7rem; border-left: 3px solid #f39c12;
+         margin: 0.5rem 0; font-size: 0.85rem; }
+  details { margin: 0.5rem 0; }
+  summary { cursor: pointer; color: #2c3e50; font-weight: 500; }
+  kbd {
+    background: #eee; border: 1px solid #ccc; border-radius: 3px;
+    box-shadow: 0 1px 0 rgba(0,0,0,0.15); color: #333;
+    padding: 1px 5px; font-family: monospace; font-size: 0.8em;
+  }
+  /* Controls help panel — always visible at the top of the sidebar. */
+  .controls-help {
+    background: #2c3e50; color: #ecf0f1;
+    padding: 0.7rem 0.85rem; border-radius: 6px; margin-bottom: 0.75rem;
+  }
+  .controls-help h3 {
+    margin: 0 0 0.5rem 0; color: #ecf0f1; font-size: 0.85rem;
+    text-transform: uppercase; letter-spacing: 0.5px; opacity: 0.7;
+  }
+  .ctrl-row {
+    display: flex; align-items: center; gap: 0.6rem;
+    padding: 0.35rem 0.5rem; border-radius: 4px; font-size: 0.85rem;
+    transition: background 0.15s;
+  }
+  .ctrl-row kbd {
+    background: #34495e; border-color: #555; color: #ecf0f1; min-width: 38px;
+    text-align: center; flex-shrink: 0;
+  }
+  .ctrl-row .arrow { opacity: 0.5; }
+  .ctrl-row.add    { color: #5dd6a0; }
+  .ctrl-row.remove { color: #f1948a; }
+  body.painting-add    .controls-help .ctrl-row.add    { background: #27ae60; color: white; }
+  body.painting-add    .controls-help .ctrl-row.add    kbd { background: #1e8449; border-color: #196f3d; }
+  body.painting-remove .controls-help .ctrl-row.remove { background: #c0392b; color: white; }
+  body.painting-remove .controls-help .ctrl-row.remove kbd { background: #922b21; border-color: #78281f; }
+  /* Map cursor reflects current paint mode. */
+  body.painting-add    #map { cursor: cell; }
+  body.painting-remove #map { cursor: not-allowed; }
+  /* GPX dropzone */
+  .gpx-drop {
+    border: 2px dashed #999; padding: 0.6rem 0.5rem; text-align: center;
+    cursor: pointer; border-radius: 5px; background: white;
+    font-size: 0.85rem; transition: all 0.15s;
+  }
+  .gpx-drop:hover { border-color: #2c3e50; background: #ecf0f1; }
+  .gpx-drop.over  { border-color: #27ae60; background: #d5f4e6; }
+  .gpx-chip {
+    display: inline-flex; align-items: center; gap: 0.3rem;
+    background: #eef2f7; border-radius: 12px; padding: 0.1rem 0.5rem;
+    margin: 0.15rem 0.2rem 0.15rem 0; font-size: 0.75rem;
+  }
+  .gpx-chip .swatch { width: 10px; height: 10px; border-radius: 50%; }
+  .gpx-chip .x {
+    cursor: pointer; color: #888; font-weight: 600;
+    margin-left: 0.15rem; padding: 0 0.15rem;
+  }
+  .gpx-chip .x:hover { color: #c0392b; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Custom KMZ Pack Builder</h1>
+  <p>Click cells to toggle. Hold <kbd>Ctrl</kbd> and move the mouse to paint-select, hold <kbd>Shift</kbd> to un-select. Tile counter tracks the Epix 2's 500-cap.</p>
+</header>
+<main>
+  <div id="sidebar">
+    <div class="controls-help" id="controlsHelp">
+      <h3>Controls</h3>
+      <div class="ctrl-row">
+        <kbd>Click</kbd><span class="arrow">→</span><span>toggle one cell</span>
+      </div>
+      <div class="ctrl-row add">
+        <kbd>Ctrl</kbd><span class="arrow">+ hover</span><span>paint cells as selected</span>
+      </div>
+      <div class="ctrl-row remove">
+        <kbd>Shift</kbd><span class="arrow">+ hover</span><span>un-select cells</span>
+      </div>
+    </div>
+
+    <h3 style="margin-top:0">Your watch</h3>
+    <select id="deviceSel" style="width:100%; padding:0.4rem; border-radius:4px; border:1px solid #ccc">
+      <option value="__loading__">Loading device list…</option>
+    </select>
+    <!-- Inline copy of watches.json so the page works when opened via file:// in
+         browsers that block fetch() of local files. JS reads this first and
+         only falls back to fetch() if it's missing. Keep in sync with
+         tools/watches.json — the build manifest reads the JSON file. -->
+    <script type="application/json" id="watches-data">
+{
+  "_comment": "Garmin Custom Maps capability per model. Tile caps are firmware render-cache limits; storage doesn't help. Default cap claims are sourced in docs/watch_matrix.md. 'disputed' = web record says 100 but project's empirical build at ~489 tiles renders fine on the maintainer's Epix 2.",
+  "groups": [
+    {
+      "label": "Epix (AMOLED watches)",
+      "devices": [
+        { "key": "epix2",            "name": "Epix 2 (Gen 2)",                "tile_cap": 500, "max_files": 100, "max_kmz_mb": 3, "disputed": true },
+        { "key": "epix_pro_42",      "name": "Epix Pro (Gen 2) 42 mm",        "tile_cap": 500, "max_files": 100, "max_kmz_mb": 3, "disputed": true },
+        { "key": "epix_pro_47",      "name": "Epix Pro (Gen 2) 47 mm",        "tile_cap": 500, "max_files": 100, "max_kmz_mb": 3, "disputed": true },
+        { "key": "epix_pro_51",      "name": "Epix Pro (Gen 2) 51 mm",        "tile_cap": 500, "max_files": 100, "max_kmz_mb": 3, "disputed": true },
+        { "key": "epix_gen1",        "name": "Epix (Gen 1, 2014)",            "tile_cap": 0,   "max_files": 0,   "max_kmz_mb": 0 }
+      ]
+    },
+    {
+      "label": "Fenix 8",
+      "devices": [
+        { "key": "fenix8_43",        "name": "Fenix 8 (43 mm AMOLED)",        "tile_cap": 500, "max_files": 100, "max_kmz_mb": 3, "disputed": true },
+        { "key": "fenix8_47",        "name": "Fenix 8 (47 mm AMOLED)",        "tile_cap": 500, "max_files": 100, "max_kmz_mb": 3, "disputed": true },
+        { "key": "fenix8_51",        "name": "Fenix 8 (51 mm AMOLED)",        "tile_cap": 500, "max_files": 100, "max_kmz_mb": 3, "disputed": true },
+        { "key": "fenix8_solar",     "name": "Fenix 8 Solar (MIP)",           "tile_cap": 500, "max_files": 100, "max_kmz_mb": 3, "disputed": true }
+      ]
+    },
+    {
+      "label": "Fenix 7 (Pro = 500-tile tier; non-Pro = 100-tile tier)",
+      "devices": [
+        { "key": "fenix7_pro",       "name": "Fenix 7 Pro",                   "tile_cap": 500, "max_files": 100, "max_kmz_mb": 3, "disputed": true },
+        { "key": "fenix7s_pro",      "name": "Fenix 7S Pro",                  "tile_cap": 500, "max_files": 100, "max_kmz_mb": 3, "disputed": true },
+        { "key": "fenix7x_pro",      "name": "Fenix 7X Pro (Solar)",          "tile_cap": 500, "max_files": 100, "max_kmz_mb": 3, "disputed": true },
+        { "key": "fenix7",           "name": "Fenix 7 (non-Pro)",             "tile_cap": 100, "max_files": 5,   "max_kmz_mb": 3, "note": "Use build_kmz_packs_fenix6.ps1." },
+        { "key": "fenix7s",          "name": "Fenix 7S",                      "tile_cap": 100, "max_files": 5,   "max_kmz_mb": 3, "note": "Use build_kmz_packs_fenix6.ps1." },
+        { "key": "fenix7x",          "name": "Fenix 7X (non-Pro)",            "tile_cap": 100, "max_files": 5,   "max_kmz_mb": 3, "note": "Use build_kmz_packs_fenix6.ps1." }
+      ]
+    },
+    {
+      "label": "Fenix 6",
+      "devices": [
+        { "key": "fenix6",           "name": "Fenix 6",                       "tile_cap": 100, "max_files": 5,   "max_kmz_mb": 3, "note": "Use build_kmz_packs_fenix6.ps1." },
+        { "key": "fenix6s",          "name": "Fenix 6S",                      "tile_cap": 100, "max_files": 5,   "max_kmz_mb": 3, "note": "Use build_kmz_packs_fenix6.ps1." },
+        { "key": "fenix6x",          "name": "Fenix 6X",                      "tile_cap": 100, "max_files": 5,   "max_kmz_mb": 3, "note": "Use build_kmz_packs_fenix6.ps1." },
+        { "key": "fenix6_pro",       "name": "Fenix 6 Pro",                   "tile_cap": 100, "max_files": 5,   "max_kmz_mb": 3, "note": "Use build_kmz_packs_fenix6.ps1." },
+        { "key": "fenix6s_pro",      "name": "Fenix 6S Pro",                  "tile_cap": 100, "max_files": 5,   "max_kmz_mb": 3, "note": "Use build_kmz_packs_fenix6.ps1." },
+        { "key": "fenix6x_pro",      "name": "Fenix 6X Pro",                  "tile_cap": 100, "max_files": 5,   "max_kmz_mb": 3, "note": "Use build_kmz_packs_fenix6.ps1." },
+        { "key": "fenix6_solar",     "name": "Fenix 6 Pro Solar",             "tile_cap": 100, "max_files": 5,   "max_kmz_mb": 3, "note": "Use build_kmz_packs_fenix6.ps1." },
+        { "key": "fenix6x_solar",    "name": "Fenix 6X Pro Solar",            "tile_cap": 100, "max_files": 5,   "max_kmz_mb": 3, "note": "Use build_kmz_packs_fenix6.ps1." }
+      ]
+    },
+    {
+      "label": "Fenix 5",
+      "devices": [
+        { "key": "fenix5x",          "name": "Fenix 5X (original)",           "tile_cap": 500, "max_files": 100, "max_kmz_mb": 3 },
+        { "key": "fenix5_plus",      "name": "Fenix 5 Plus",                  "tile_cap": 100, "max_files": 5,   "max_kmz_mb": 3, "note": "Use build_kmz_packs_fenix6.ps1." },
+        { "key": "fenix5s_plus",     "name": "Fenix 5S Plus",                 "tile_cap": 100, "max_files": 5,   "max_kmz_mb": 3, "note": "Use build_kmz_packs_fenix6.ps1." },
+        { "key": "fenix5x_plus",     "name": "Fenix 5X Plus",                 "tile_cap": 100, "max_files": 5,   "max_kmz_mb": 3, "note": "Use build_kmz_packs_fenix6.ps1." },
+        { "key": "fenix5",           "name": "Fenix 5 / 5S (no map)",         "tile_cap": 0,   "max_files": 0,   "max_kmz_mb": 0 }
+      ]
+    },
+    {
+      "label": "Enduro / Tactix / Quatix / MARQ",
+      "devices": [
+        { "key": "enduro",           "name": "Enduro (Gen 1)",                "tile_cap": 100, "max_files": 5,   "max_kmz_mb": 3, "note": "Use build_kmz_packs_fenix6.ps1." },
+        { "key": "enduro2",          "name": "Enduro 2",                      "tile_cap": 100, "max_files": 5,   "max_kmz_mb": 3, "note": "Use build_kmz_packs_fenix6.ps1." },
+        { "key": "enduro3",          "name": "Enduro 3 (toggle bug)",         "tile_cap": 100, "max_files": 5,   "max_kmz_mb": 3, "note": "Use build_kmz_packs_fenix6.ps1." },
+        { "key": "tactix_delta",     "name": "Tactix Delta / Solar",          "tile_cap": 100, "max_files": 5,   "max_kmz_mb": 3, "note": "Use build_kmz_packs_fenix6.ps1." },
+        { "key": "tactix7",          "name": "Tactix 7 / 7 Pro (MIP)",        "tile_cap": 100, "max_files": 5,   "max_kmz_mb": 3, "note": "Use build_kmz_packs_fenix6.ps1." },
+        { "key": "tactix7_amoled",   "name": "Tactix 7 Pro AMOLED",           "tile_cap": 500, "max_files": 100, "max_kmz_mb": 3, "disputed": true },
+        { "key": "quatix7",          "name": "Quatix 7 / 7 Pro",              "tile_cap": 100, "max_files": 5,   "max_kmz_mb": 3, "note": "Use build_kmz_packs_fenix6.ps1." },
+        { "key": "quatix8",          "name": "Quatix 8",                      "tile_cap": 500, "max_files": 100, "max_kmz_mb": 3, "disputed": true },
+        { "key": "marq_gen1",        "name": "MARQ (Gen 1)",                  "tile_cap": 100, "max_files": 5,   "max_kmz_mb": 3, "note": "Use build_kmz_packs_fenix6.ps1." },
+        { "key": "marq_gen2",        "name": "MARQ (Gen 2) family",           "tile_cap": 500, "max_files": 100, "max_kmz_mb": 3, "disputed": true }
+      ]
+    },
+    {
+      "label": "Forerunner",
+      "devices": [
+        { "key": "fr945",            "name": "Forerunner 945 / 945 LTE",      "tile_cap": 100, "max_files": 5,   "max_kmz_mb": 3, "note": "Use build_kmz_packs_fenix6.ps1." },
+        { "key": "fr955",            "name": "Forerunner 955 / 955 Solar",    "tile_cap": 100, "max_files": 5,   "max_kmz_mb": 3, "note": "Use build_kmz_packs_fenix6.ps1." },
+        { "key": "fr965",            "name": "Forerunner 965 (AMOLED)",       "tile_cap": 500, "max_files": 100, "max_kmz_mb": 3, "disputed": true },
+        { "key": "fr_older",         "name": "Forerunner 935 and earlier",    "tile_cap": 0,   "max_files": 0,   "max_kmz_mb": 0 }
+      ]
+    },
+    {
+      "label": "Edge (cycling)",
+      "devices": [
+        { "key": "edge1050",         "name": "Edge 1050 (AMOLED)",            "tile_cap": 250, "max_files": 4,   "max_kmz_mb": 3 },
+        { "key": "edge1040",         "name": "Edge 1040 / 1040 Solar",        "tile_cap": 250, "max_files": 4,   "max_kmz_mb": 3 },
+        { "key": "edge1030_plus",    "name": "Edge 1030 Plus (fw ≥ 3.0)",     "tile_cap": 250, "max_files": 4,   "max_kmz_mb": 3 },
+        { "key": "edge1030",         "name": "Edge 1030 (original)",          "tile_cap": 100, "max_files": 100, "max_kmz_mb": 3 },
+        { "key": "edge840",          "name": "Edge 840 / 840 Solar",          "tile_cap": 100, "max_files": 100, "max_kmz_mb": 3, "note": "Use build_kmz_packs_fenix6.ps1." },
+        { "key": "edge830",          "name": "Edge 830",                      "tile_cap": 100, "max_files": 100, "max_kmz_mb": 3, "note": "Use build_kmz_packs_fenix6.ps1." },
+        { "key": "edge540",          "name": "Edge 540 / 540 Solar",          "tile_cap": 100, "max_files": 100, "max_kmz_mb": 3, "note": "Use build_kmz_packs_fenix6.ps1." },
+        { "key": "edge530",          "name": "Edge 530",                      "tile_cap": 100, "max_files": 100, "max_kmz_mb": 3, "note": "Use build_kmz_packs_fenix6.ps1." },
+        { "key": "edge_810",         "name": "Edge 800 / 810",                "tile_cap": 100, "max_files": 100, "max_kmz_mb": 3 },
+        { "key": "edge_520",         "name": "Edge 510 / 520 / 520 Plus",     "tile_cap": 0,   "max_files": 0,   "max_kmz_mb": 0 }
+      ]
+    },
+    {
+      "label": "GPSMAP / Montana / Oregon (handhelds)",
+      "devices": [
+        { "key": "gpsmap67",         "name": "GPSMAP 67 / 67i",               "tile_cap": 500, "max_files": 100, "max_kmz_mb": 3 },
+        { "key": "gpsmap66",         "name": "GPSMAP 66 / 66s / 66i / 66sr",  "tile_cap": 500, "max_files": 100, "max_kmz_mb": 3 },
+        { "key": "gpsmap65",         "name": "GPSMAP 65 / 65s",               "tile_cap": 500, "max_files": 100, "max_kmz_mb": 3 },
+        { "key": "gpsmap64",         "name": "GPSMAP 64 / 64s / 64sx",        "tile_cap": 500, "max_files": 100, "max_kmz_mb": 3 },
+        { "key": "gpsmap62",         "name": "GPSMAP 62 / 62s",               "tile_cap": 100, "max_files": 100, "max_kmz_mb": 3 },
+        { "key": "gpsmap_marine",    "name": "GPSMAP 79 / 86 / 276Cx (marine)","tile_cap":100, "max_files": 100, "max_kmz_mb": 3 },
+        { "key": "montana_700",      "name": "Montana 700 / 700i / 750i",     "tile_cap": 500, "max_files": 100, "max_kmz_mb": 3 },
+        { "key": "montana_6xx",      "name": "Montana 600 / 650 / 680",       "tile_cap": 500, "max_files": 100, "max_kmz_mb": 3 },
+        { "key": "oregon_6x0",       "name": "Oregon 600 / 650 / 650t",       "tile_cap": 500, "max_files": 100, "max_kmz_mb": 3 },
+        { "key": "oregon_700",       "name": "Oregon 700 / 750 / 750t",       "tile_cap": 100, "max_files": 100, "max_kmz_mb": 3 },
+        { "key": "etrex_22x",        "name": "eTrex 22x / 32x / Solar",       "tile_cap": 100, "max_files": 100, "max_kmz_mb": 3 },
+        { "key": "etrex_20x",        "name": "eTrex 20 / 20x / 30 / 30x",     "tile_cap": 100, "max_files": 100, "max_kmz_mb": 3 },
+        { "key": "etrex_touch",      "name": "eTrex Touch 25 / 35",           "tile_cap": 100, "max_files": 100, "max_kmz_mb": 3 }
+      ]
+    },
+    {
+      "label": "Auto / Marine / zumo",
+      "devices": [
+        { "key": "zumo_xt",          "name": "zumo XT / XT2",                 "tile_cap": 100, "max_files": 100, "max_kmz_mb": 3 },
+        { "key": "zumo_5xx",         "name": "zumo 590 / 595 / 396 / 396",    "tile_cap": 100, "max_files": 100, "max_kmz_mb": 3 }
+      ]
+    },
+    {
+      "label": "Not supported (no Custom Maps)",
+      "devices": [
+        { "key": "instinct",         "name": "Instinct 1 / 2 / 2X / Crossover / 3", "tile_cap": 0, "max_files": 0, "max_kmz_mb": 0 },
+        { "key": "venu",             "name": "Venu / Vivoactive (any)",       "tile_cap": 0, "max_files": 0, "max_kmz_mb": 0 }
+      ]
+    }
+  ]
+}
+    </script>
+    <div id="deviceCaps" style="font-size:0.8rem; color:#666; margin-top:0.3rem">
+      Tile cap: <strong id="capLbl">?</strong> · Max files: <strong id="filesLbl">?</strong> · Max KMZ: <strong id="sizeLbl">?</strong> MB
+    </div>
+    <div id="deviceNote" style="font-size:0.78rem; color:#666; margin-top:0.3rem; padding:0.3rem 0.4rem; background:#f8f8f8; border-radius:3px"></div>
+
+    <h3>Map layers</h3>
+    <label style="display:block; padding:0.2rem 0">Base map —
+      <select id="optBaseMap" style="font-size:0.85rem">
+        <option value="winter" selected>winter LK25 (snow-shaded)</option>
+        <option value="summer">summer LK25</option>
+      </select>
+    </label>
+    <label style="display:block; padding:0.2rem 0">
+      <input type="checkbox" id="optSlope" checked> Slope shading (30°/35°/40°/45°)
+    </label>
+    <label style="display:block; padding:0.2rem 0">
+      <input type="checkbox" id="optRoutes" checked> Routes —
+      <select id="optRoutesType" style="font-size:0.85rem">
+        <option value="ski" selected>SAC ski tours (winter)</option>
+        <option value="wanderwege">Wanderwege (summer)</option>
+      </select>
+    </label>
+    <small style="display:block; font-size:0.75rem; color:#888">
+      Base map and routes toggle independently — mix any combo. Summer KMZ
+      builds are now in progress (see docs/summer_plan.md).
+    </small>
+
+    <div id="slopeDisclaimer" class="tip" style="background:#fef5e7; border-left:3px solid #f39c12; font-size:0.78rem; margin-top:0.4rem">
+      ⚠ <strong>Slope classes are indicative only.</strong> Derived from the
+      swissALTI3D 10 m DEM; they replace neither the current SLF avalanche
+      bulletin nor sound on-site tour planning. Use at your own risk.
+      <a href="install.html#slope-disclaimer">Full disclaimer</a>.
+    </div>
+
+    <div id="status" class="stat-box neutral">
+      <div class="stat-line"><strong>0 cells</strong> selected</div>
+      <div class="stat-line">~<strong id="tileEst">0</strong> tiles / <strong id="tileCapLbl">500</strong> cap</div>
+    </div>
+
+    <h3 style="margin-top:0.6rem">Auto-select from GPX</h3>
+    <div id="gpxDrop" class="gpx-drop">
+      <strong>Drop GPX file(s) here</strong><br>
+      <small>or click to browse — Haute Route, multi-day tours, etc.</small>
+    </div>
+    <input type="file" id="gpxInput" accept=".gpx" multiple style="display:none">
+    <div style="display:flex; align-items:center; gap:0.4rem; font-size:0.78rem; color:#555; margin:0.3rem 0">
+      Buffer:
+      <input type="range" id="gpxBuffer" min="0" max="10" step="1" value="2"
+             style="flex:1; min-width:80px">
+      <span><strong id="gpxBufferLbl">2</strong> km</span>
+    </div>
+    <div id="gpxLoaded" style="font-size:0.78rem; color:#555; margin-top:0.2rem"></div>
+
+    <h3 style="margin-top:0.6rem">Where are you staying?</h3>
+    <div style="display:flex; gap:0.3rem; align-items:center">
+      <input type="text" id="townInput" placeholder="e.g. Zermatt, Verbier, Davos"
+             autocomplete="off" style="flex:1; padding:0.35rem; font-size:0.85rem;
+             border:1px solid #ccc; border-radius:4px">
+      <button id="townAdd" style="padding:0.35rem 0.7rem">Add</button>
+    </div>
+    <div id="townSuggest" style="font-size:0.8rem; color:#444; margin-top:0.15rem;
+         background:white; border:1px solid #eee; border-radius:4px; max-height:140px;
+         overflow-y:auto; display:none"></div>
+    <div style="display:flex; align-items:center; gap:0.4rem; font-size:0.78rem; color:#555; margin:0.3rem 0">
+      Radius:
+      <input type="range" id="townRadius" min="2" max="40" step="1" value="15"
+             style="flex:1; min-width:80px">
+      <span><strong id="townRadiusLbl">15</strong> km</span>
+    </div>
+    <div id="townLoaded" style="font-size:0.78rem; color:#555; margin-top:0.2rem"></div>
+
+    <h3 style="margin-top:0.6rem">Build &amp; email</h3>
+    <input type="email" id="buildEmail" placeholder="your@email.com (we'll send the download link)"
+           autocomplete="email" style="width:100%; padding:0.4rem; font-size:0.85rem;
+           border:1px solid #ccc; border-radius:4px; margin-bottom:0.3rem">
+
+    <button id="clearBtn" class="secondary">Clear all</button>
+    <button id="buildBtn" disabled>Build my custom pack</button>
+    <details style="margin-top:0.5rem">
+      <summary><small>Developer build (PowerShell on your own machine)</small></summary>
+      <button id="exportBtn" disabled style="margin-top:0.4rem">Export selection.json</button>
+    </details>
+
+    <div id="jobProgress" style="display:none; margin-top:0.5rem"></div>
+
+    <details>
+      <summary>How this works</summary>
+      <div style="font-size:0.85rem; color:#555; line-height:1.5; padding-top:0.5rem">
+        <p>Each cell is 10 × 10 km in LV95. At LK25-native 2.5 m/px, one cell
+        costs roughly <strong>10 tiles</strong> on the watch (15 raw, minus what
+        gets dropped by the empty-tile mask). 500-cap ≈ ~50 cells of LK25-native
+        coverage.</p>
+        <p>The output is a bbox you can feed to <code>build_kmz_packs.ps1
+        -CustomBbox …</code> to produce a custom KMZ pack matching your selection.</p>
+        <p>Plain drag still pans the map. While <kbd>Ctrl</kbd> or <kbd>Shift</kbd>
+        is held, the map cursor changes and the Controls panel above highlights
+        the active mode.</p>
+      </div>
+    </details>
+
+    <div class="tip">
+      Scattered cells are fine — the build pipeline reads <code>selection.json</code>
+      and only emits tiles inside the cells you picked. Garmin happily renders
+      non-contiguous tiles.
+    </div>
+
+    <h3>Output</h3>
+    <div id="output"><small>Make a selection and click Export.</small></div>
+  </div>
+  <div id="map"></div>
+</main>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+        crossorigin=""></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.10.0/proj4.js"></script>
+<script>
+  proj4.defs("EPSG:2056",
+    "+proj=somerc +lat_0=46.95240555555556 +lon_0=7.439583333333333 " +
+    "+k_0=1 +x_0=2600000 +y_0=1200000 +ellps=bessel " +
+    "+towgs84=674.374,15.056,405.346,0,0,0,0 +units=m +no_defs");
+
+  // Switzerland LV95 extent (canonical)
+  const CH = { eMin: 2485000, nMin: 1075000, eMax: 2834000, nMax: 1296000 };
+  const CELL_KM = 10;
+  const CELL_M  = CELL_KM * 1000;
+
+  // At 2.5 m/px LK25-native: 1 tile (1024 px) ≈ 2.56 km.
+  // Raw tiles per 10x10 km cell = (10/2.56)^2 ≈ 15.3.
+  // After --mask-blank typically drops ~30% (lake/edge), kept ≈ 10.
+  const TILES_PER_CELL_RAW  = Math.ceil((CELL_KM / 2.56) ** 2);
+  const TILES_PER_CELL_KEPT = Math.round(TILES_PER_CELL_RAW * 0.7);
+  // Device matrix loaded from watches.json so the list isn't hardcoded here.
+  // Structure: { groups: [{ label, devices: [{ key, name, tile_cap, max_files,
+  // max_kmz_mb, disputed?, note? }] }] }
+  let WATCH_INDEX = new Map();   // key -> device object
+  let deviceProfile = { key: "epix2", tileCap: 500, maxFiles: 100, maxKmzMB: 3 };
+
+  function populateWatches(json) {
+    const sel = document.getElementById('deviceSel');
+    const html = json.groups.map(g => {
+      const opts = g.devices.map(d => {
+        const tag = d.tile_cap === 0 ? "no Custom Maps"
+                                     : `${d.tile_cap} tiles${d.disputed ? " ⚠" : ""}`;
+        return `<option value="${d.key}">${d.name} — ${tag}</option>`;
+      }).join("");
+      return `<optgroup label="${g.label}">${opts}</optgroup>`;
+    }).join("");
+    sel.innerHTML = html;
+
+    WATCH_INDEX = new Map();
+    for (const g of json.groups) for (const d of g.devices) WATCH_INDEX.set(d.key, d);
+
+    // Default to Epix 2 (maintainer's actual device); fall back to first known.
+    sel.value = WATCH_INDEX.has("epix2") ? "epix2" : [...WATCH_INDEX.keys()][0];
+    readDeviceProfile();
+  }
+
+  function readDeviceProfile() {
+    const sel = document.getElementById('deviceSel');
+    const d = WATCH_INDEX.get(sel.value);
+    if (!d) return;
+    deviceProfile = {
+      key:      d.key,
+      tileCap:  d.tile_cap,
+      maxFiles: d.max_files,
+      maxKmzMB: d.max_kmz_mb,
+    };
+    document.getElementById('capLbl').textContent     = d.tile_cap;
+    document.getElementById('filesLbl').textContent   = d.max_files;
+    document.getElementById('sizeLbl').textContent    = d.max_kmz_mb;
+    document.getElementById('tileCapLbl').textContent = d.tile_cap;
+
+    let note = d.note || "";
+    if (d.disputed) {
+      note = `⚠ <strong>Disputed cap.</strong> Web sources say 100 tiles; the
+              project's empirical build on the maintainer's Epix 2 runs at ~489
+              tiles. Default 500; drop to a 100-tile device if you see missing
+              edge tiles. ` + note;
+    }
+    if (d.tile_cap === 0) {
+      note = "❌ This device does not render KMZ Custom Maps. The build button is disabled.";
+    }
+    document.getElementById('deviceNote').innerHTML = note;
+    document.getElementById('buildBtn').disabled =
+      selectedCells().length === 0 || d.tile_cap === 0;
+    updateStatus();
+  }
+
+  // Prefer the inline copy (works under file:// where fetch() is blocked).
+  // Fall back to fetch() so the same page works hosted with an updated JSON.
+  const inlineEl = document.getElementById('watches-data');
+  if (inlineEl && inlineEl.textContent.trim()) {
+    try {
+      populateWatches(JSON.parse(inlineEl.textContent));
+    } catch (e) {
+      console.error("inline watches-data parse failed:", e);
+    }
+  } else {
+    fetch('watches.json')
+      .then(r => r.json())
+      .then(populateWatches)
+      .catch(err => {
+        console.warn("watches.json failed:", err);
+        populateWatches({ groups: [{
+          label: "Fallback (watches.json unreachable)",
+          devices: [{ key: "epix2", name: "Epix 2 / Fenix 7 Pro family",
+                      tile_cap: 500, max_files: 100, max_kmz_mb: 3, disputed: true,
+                      note: "Default fallback." }]
+        }]});
+      });
+  }
+  // Replaces the old constants throughout: code below reads `deviceProfile.tileCap`.
+  const TILE_CAP = 500;          // kept for one comment string below — dynamic in logic
+  const OVERVIEW_RESERVE = 89;
+  const TILE_BUDGET_REGIONAL = TILE_CAP - OVERVIEW_RESERVE;
+
+  function lv95ToLatLng(e, n) {
+    const [lon, lat] = proj4("EPSG:2056", "EPSG:4326", [e, n]);
+    return [lat, lon];
+  }
+
+  const map = L.map('map', { preferCanvas: true }).setView([46.8, 8.2], 8);
+
+  // ---------------------------------------------------------------------
+  // Live preview of what gets baked into the KMZ. Base raster + slope +
+  // routes — all from Swisstopo WMTS, swapped in response to the toggle
+  // checkboxes above. Same layer choice as gpx_pack_picker.html.
+  // ---------------------------------------------------------------------
+  const WMTS_URL = 'https://wmts{s}.geo.admin.ch/1.0.0/{layer}/default/current/3857/{z}/{x}/{y}.{ext}';
+  const wmtsBase = (layer) => L.tileLayer(WMTS_URL, {
+    attribution: '© <a href="https://www.swisstopo.admin.ch">swisstopo</a>',
+    subdomains: ['10','11','12','13','14'],
+    maxZoom: 18, minZoom: 6,
+    layer, ext: 'jpeg',
+  });
+  const wmtsOvly = (layer, opacity = 0.55) => L.tileLayer(WMTS_URL, {
+    attribution: '© <a href="https://www.swisstopo.admin.ch">swisstopo</a>',
+    subdomains: ['10','11','12','13','14'],
+    maxZoom: 18, minZoom: 6,
+    opacity, layer, ext: 'png',
+  });
+
+  const baseLayers = {
+    winter: wmtsBase('ch.swisstopo.pixelkarte-farbe-winter'),
+    summer: wmtsBase('ch.swisstopo.pixelkarte-farbe'),
+  };
+  const slopeLayer  = wmtsOvly('ch.swisstopo.hangneigung-ueber_30', 0.55);
+  const routeLayers = {
+    ski:        wmtsOvly('ch.swisstopo-karto.skitouren', 0.9),
+    wanderwege: wmtsOvly('ch.swisstopo.swisstlm3d-wanderwege', 0.9),
+  };
+
+  function refreshLayers() {
+    const baseMap    = document.getElementById('optBaseMap').value;     // winter|summer
+    const wantSlope  = document.getElementById('optSlope').checked;
+    const wantRoutes = document.getElementById('optRoutes').checked;
+    const routesKey  = document.getElementById('optRoutesType').value;  // ski|wanderwege
+    console.log("[tile-picker] refresh layers", { baseMap, wantSlope, wantRoutes, routesKey });
+
+    // Remove every managed layer, re-add in z-order (base, slope, routes).
+    Object.values(baseLayers).forEach(l => { if (map.hasLayer(l)) map.removeLayer(l); });
+    if (map.hasLayer(slopeLayer)) map.removeLayer(slopeLayer);
+    Object.values(routeLayers).forEach(l => { if (map.hasLayer(l)) map.removeLayer(l); });
+
+    baseLayers[baseMap].addTo(map);
+    if (wantSlope)  slopeLayer.addTo(map);
+    if (wantRoutes) routeLayers[routesKey].addTo(map);
+  }
+
+  ['optBaseMap', 'optSlope', 'optRoutes', 'optRoutesType'].forEach(id =>
+    document.getElementById(id).addEventListener('change', refreshLayers));
+  refreshLayers();
+
+  // Build cell grid: walk LV95 in CELL_M steps.
+  //
+  // LV95 (somerc) is rotated ~1° vs lat/lon, so an axis-aligned LV95 square
+  // is a slight parallelogram in lat/lon. Drawing each cell as L.rectangle
+  // (which is lat/lon axis-aligned) produces ~hundred-metre gaps and
+  // overlaps between adjacent cells when you zoom in past ~14.
+  //
+  // Fix: project the grid vertices ONCE and share them between neighbours,
+  // then draw each cell as a 4-corner L.polygon. Adjacent cells share two
+  // corners exactly => zero gaps, zero overlap.
+  const eSteps = [];
+  for (let e = CH.eMin; e <= CH.eMax; e += CELL_M) eSteps.push(Math.min(e, CH.eMax));
+  if (eSteps[eSteps.length - 1] !== CH.eMax) eSteps.push(CH.eMax);
+  const nSteps = [];
+  for (let n = CH.nMin; n <= CH.nMax; n += CELL_M) nSteps.push(Math.min(n, CH.nMax));
+  if (nSteps[nSteps.length - 1] !== CH.nMax) nSteps.push(CH.nMax);
+
+  // verts[i][j] = lat/lng of the grid vertex at (eSteps[i], nSteps[j]).
+  const verts = eSteps.map(e => nSteps.map(n => lv95ToLatLng(e, n)));
+
+  const cells = [];
+  for (let i = 0; i < eSteps.length - 1; i++) {
+    for (let j = 0; j < nSteps.length - 1; j++) {
+      const e = eSteps[i], n = nSteps[j];
+      const eMax = eSteps[i + 1], nMax = nSteps[j + 1];
+      // Polygon vertices in CCW order (Leaflet doesn't care, but consistency
+      // helps if we ever need winding).
+      const polyPts = [
+        verts[i][j],         // SW
+        verts[i + 1][j],     // SE
+        verts[i + 1][j + 1], // NE
+        verts[i][j + 1],     // NW
+      ];
+      const rect = L.polygon(polyPts, {
+        color: "#555", weight: 0.4, fillColor: "#3498db", fillOpacity: 0,
+      }).addTo(map);
+      const cell = {
+        lv95: [e, n, eMax, nMax],
+        bounds: L.latLngBounds(polyPts),
+        selected: false,
+        rect,
+      };
+      // Plain click toggles a single cell.
+      rect.on('click', (ev) => {
+        const oe = ev.originalEvent;
+        if (oe && (oe.shiftKey || oe.ctrlKey)) return; // paint handler takes care of these
+        toggleCell(cell);
+      });
+      // Hover-paint: while Ctrl is held, mousing over a cell selects it; Shift
+      // un-selects. The modifier is read from the live event so the user can
+      // press / release without lifting the mouse.
+      rect.on('mouseover', (ev) => {
+        const oe = ev.originalEvent;
+        if (!oe) return;
+        if (oe.shiftKey) {
+          if (cell.selected) { setCellSelected(cell, false); updateStatus(); }
+        } else if (oe.ctrlKey) {
+          if (!cell.selected) { setCellSelected(cell, true); updateStatus(); }
+        }
+      });
+      cells.push(cell);
+    }
+  }
+
+  function setCellSelected(c, sel) {
+    if (c.selected === sel) return false;
+    c.selected = sel;
+    c.rect.setStyle({
+      fillOpacity: sel ? 0.45 : 0,
+      color:       sel ? "#2980b9" : "#555",
+      weight:      sel ? 1.8 : 0.4
+    });
+    return true;
+  }
+
+  function toggleCell(c) {
+    setCellSelected(c, !c.selected);
+    updateStatus();
+  }
+
+  // ---------------------------------------------------------------------
+  // GPX auto-select
+  //
+  // Drop one or more GPX files; project each track point WGS84 -> LV95;
+  // every cell containing a point (plus an optional km buffer for weather
+  // alternatives — Haute Route Chamonix-Zermatt is the canonical use case
+  // since the standard route has several snow-condition reroutes) gets
+  // selected.
+  //
+  // Multiple files queue: each gets a coloured chip + polyline. Removing a
+  // chip deselects the cells that file added.
+  // ---------------------------------------------------------------------
+  const CHIP_COLORS = ["#e74c3c","#27ae60","#8e44ad","#e67e22","#16a085","#2980b9"];
+  let nextChipColorIdx = 0;
+  const gpxFiles = []; // {id, name, color, points, polyline, cellIndices: Set<int>}
+
+  // Direct index of a cell by LV95 e,n -> ei, nj (uniform 10 km grid).
+  function lv95PointToCellIdx(e, n) {
+    const ei = Math.floor((e - CH.eMin) / CELL_M);
+    const nj = Math.floor((n - CH.nMin) / CELL_M);
+    if (ei < 0 || ei >= eSteps.length - 1) return null;
+    if (nj < 0 || nj >= nSteps.length - 1) return null;
+    return ei * (nSteps.length - 1) + nj;
+  }
+
+  // Cells touched by a track, with km buffer (Chebyshev distance in cells).
+  function cellsForTrack(latlonPoints, bufferKm) {
+    const idxBuf = Math.ceil((bufferKm * 1000) / CELL_M);
+    const hits = new Set();
+    let outside = 0;
+    for (const [lat, lon] of latlonPoints) {
+      const [e, n] = proj4("EPSG:4326", "EPSG:2056", [lon, lat]);
+      const ei = Math.floor((e - CH.eMin) / CELL_M);
+      const nj = Math.floor((n - CH.nMin) / CELL_M);
+      const eiOk = ei >= 0 && ei < eSteps.length - 1;
+      const njOk = nj >= 0 && nj < nSteps.length - 1;
+      if (!eiOk || !njOk) { outside++; continue; }
+      // Expand by buffer in cell units (Chebyshev neighbourhood).
+      for (let di = -idxBuf; di <= idxBuf; di++) {
+        for (let dj = -idxBuf; dj <= idxBuf; dj++) {
+          const ei2 = ei + di, nj2 = nj + dj;
+          if (ei2 < 0 || ei2 >= eSteps.length - 1) continue;
+          if (nj2 < 0 || nj2 >= nSteps.length - 1) continue;
+          hits.add(ei2 * (nSteps.length - 1) + nj2);
+        }
+      }
+    }
+    return { cells: hits, outside };
+  }
+
+  function parseGpx(text) {
+    const doc = new DOMParser().parseFromString(text, 'application/xml');
+    if (doc.querySelector('parsererror')) throw new Error("invalid XML");
+    const points = [];
+    doc.querySelectorAll('trkpt, rtept, wpt').forEach(el => {
+      const lat = parseFloat(el.getAttribute('lat'));
+      const lon = parseFloat(el.getAttribute('lon'));
+      if (Number.isFinite(lat) && Number.isFinite(lon)) points.push([lat, lon]);
+    });
+    return points;
+  }
+
+  function renderChips() {
+    const el = document.getElementById('gpxLoaded');
+    if (gpxFiles.length === 0) { el.innerHTML = ""; return; }
+    el.innerHTML = gpxFiles.map(g =>
+      `<span class="gpx-chip" data-id="${g.id}">
+         <span class="swatch" style="background:${g.color}"></span>
+         ${g.name} <small>(${g.points} pts → ${g.cellIndices.size} cells${g.outside ? `, ${g.outside} pts outside CH` : ""})</small>
+         <span class="x" data-id="${g.id}" title="Remove">×</span>
+       </span>`
+    ).join("");
+    el.querySelectorAll('.x').forEach(x => x.addEventListener('click', e => {
+      removeGpx(e.target.dataset.id);
+    }));
+  }
+
+  function applyCellSet(cellIndices, select) {
+    let changed = false;
+    for (const idx of cellIndices) {
+      if (setCellSelected(cells[idx], select)) changed = true;
+    }
+    if (changed) updateStatus();
+  }
+
+  function addGpxFile(file) {
+    const id = `g${Date.now()}_${Math.floor(Math.random()*1e4)}`;
+    const color = CHIP_COLORS[nextChipColorIdx++ % CHIP_COLORS.length];
+    const buffer = parseFloat(document.getElementById('gpxBuffer').value) || 0;
+    const reader = new FileReader();
+    reader.onload = ev => {
+      try {
+        const points = parseGpx(ev.target.result);
+        if (points.length === 0) throw new Error("no track points");
+        const { cells: hits, outside } = cellsForTrack(points, buffer);
+        const polyline = L.polyline(points, {
+          color, weight: 3, opacity: 0.9
+        }).addTo(map);
+        const entry = { id, name: file.name, color, points: points.length,
+                        polyline, cellIndices: hits, outside, rawPoints: points };
+        gpxFiles.push(entry);
+        applyCellSet(hits, true);
+        renderChips();
+      } catch (err) {
+        alert(`GPX load failed for ${file.name}: ${err.message}`);
+      }
+    };
+    reader.readAsText(file);
+  }
+
+  function removeGpx(id) {
+    const i = gpxFiles.findIndex(g => g.id === id);
+    if (i < 0) return;
+    const g = gpxFiles[i];
+    map.removeLayer(g.polyline);
+    // Only deselect cells that aren't also referenced by another loaded GPX
+    // or by a town circle (towns are declared below; lookup is safe at click
+    // time even though the array is referenced before its declaration).
+    const stillRefd = new Set();
+    for (const other of gpxFiles) {
+      if (other.id === id) continue;
+      for (const c of other.cellIndices) stillRefd.add(c);
+    }
+    if (typeof towns !== 'undefined') {
+      for (const t of towns) for (const c of t.cellIndices) stillRefd.add(c);
+    }
+    const toDeselect = new Set();
+    for (const c of g.cellIndices) if (!stillRefd.has(c)) toDeselect.add(c);
+    gpxFiles.splice(i, 1);
+    applyCellSet(toDeselect, false);
+    renderChips();
+  }
+
+  // Buffer slider: recompute every loaded GPX's cell set.
+  function recomputeAllGpxCells() {
+    const buffer = parseFloat(document.getElementById('gpxBuffer').value) || 0;
+    document.getElementById('gpxBufferLbl').textContent = buffer;
+    if (gpxFiles.length === 0) return;
+    // Recompute per-file cell sets first.
+    const newPerFile = gpxFiles.map(g => cellsForTrack(g.rawPoints, buffer).cells);
+    // Union of new sets, minus the union of old sets => deselect difference,
+    // select union of new not in old.
+    const oldUnion = new Set();
+    for (const g of gpxFiles) for (const c of g.cellIndices) oldUnion.add(c);
+    const newUnion = new Set();
+    for (const s of newPerFile) for (const c of s) newUnion.add(c);
+    // Cells to deselect: in oldUnion, not in newUnion.
+    const toDeselect = new Set([...oldUnion].filter(c => !newUnion.has(c)));
+    // Cells to select: in newUnion (apply will no-op if already selected).
+    applyCellSet(toDeselect, false);
+    applyCellSet(newUnion, true);
+    // Commit new sets.
+    for (let k = 0; k < gpxFiles.length; k++) gpxFiles[k].cellIndices = newPerFile[k];
+    renderChips();
+  }
+
+  // Wire up dropzone + file input.
+  const gpxDrop  = document.getElementById('gpxDrop');
+  const gpxInput = document.getElementById('gpxInput');
+  gpxDrop.addEventListener('click', () => gpxInput.click());
+  gpxInput.addEventListener('change', e => {
+    for (const f of e.target.files) addGpxFile(f);
+    gpxInput.value = ""; // allow re-adding the same file
+  });
+  ['dragover','dragenter'].forEach(ev =>
+    gpxDrop.addEventListener(ev, e => { e.preventDefault(); gpxDrop.classList.add('over'); }));
+  ['dragleave','dragend','drop'].forEach(ev =>
+    gpxDrop.addEventListener(ev, () => gpxDrop.classList.remove('over')));
+  gpxDrop.addEventListener('drop', e => {
+    e.preventDefault();
+    for (const f of e.dataTransfer.files) addGpxFile(f);
+  });
+  document.getElementById('gpxBuffer').addEventListener('input', recomputeAllGpxCells);
+
+  // ---------------------------------------------------------------------
+  // Town picker — "I'm staying in <town>, radius <r> km"
+  //
+  // Uses Swisstopo's SearchServer (no API key, native LV95). The search is
+  // type=locations which covers towns, hamlets, valleys, and named landmarks.
+  // Adding a town selects every cell whose CENTRE is within radius km of
+  // the town's LV95 coordinate, and draws a circle on the map.
+  //
+  // The radius slider re-computes all loaded towns in-place; the chip × button
+  // removes one town and deselects cells unique to it.
+  // ---------------------------------------------------------------------
+  const SWISSTOPO_SEARCH = "https://api3.geo.admin.ch/rest/services/api/SearchServer";
+  const towns = []; // {id, label, e, n, radiusKm, color, circle, cellIndices}
+  let townDebounce = null;
+
+  function townSearch(query) {
+    // Note: Swisstopo's SearchServer uses sr=2056 to get LV95 coords back.
+    // type=locations covers cities/villages/landmarks (gg25 + sn25 + zipcode).
+    const url = `${SWISSTOPO_SEARCH}?type=locations&sr=2056&searchText=${encodeURIComponent(query)}`;
+    return fetch(url).then(r => r.json()).then(j => (j.results || []).slice(0, 8).map(r => {
+      // SearchServer's `attrs.label` carries HTML <b>…</b> highlighting.
+      const label = (r.attrs.label || "").replace(/<\/?b>/g, "");
+      // SearchServer swaps: y = east (~2.6M), x = north (~1.2M).
+      return { label, e: r.attrs.y, n: r.attrs.x,
+               lat: r.attrs.lat, lon: r.attrs.lon };
+    }));
+  }
+
+  function cellsWithinRadius(centerE, centerN, radiusKm) {
+    const r2 = (radiusKm * 1000) ** 2;
+    const hits = new Set();
+    // Bounding-box pre-filter: only check cells whose centre is within a
+    // bounding square; final test is true L2 distance.
+    const eiMin = Math.max(0, Math.floor((centerE - radiusKm * 1000 - CH.eMin) / CELL_M));
+    const eiMax = Math.min(eSteps.length - 2, Math.floor((centerE + radiusKm * 1000 - CH.eMin) / CELL_M));
+    const njMin = Math.max(0, Math.floor((centerN - radiusKm * 1000 - CH.nMin) / CELL_M));
+    const njMax = Math.min(nSteps.length - 2, Math.floor((centerN + radiusKm * 1000 - CH.nMin) / CELL_M));
+    for (let ei = eiMin; ei <= eiMax; ei++) {
+      const eCenter = (eSteps[ei] + eSteps[ei + 1]) / 2;
+      for (let nj = njMin; nj <= njMax; nj++) {
+        const nCenter = (nSteps[nj] + nSteps[nj + 1]) / 2;
+        if ((eCenter - centerE) ** 2 + (nCenter - centerN) ** 2 <= r2) {
+          hits.add(ei * (nSteps.length - 1) + nj);
+        }
+      }
+    }
+    return hits;
+  }
+
+  function renderTownChips() {
+    const el = document.getElementById('townLoaded');
+    if (towns.length === 0) { el.innerHTML = ""; return; }
+    el.innerHTML = towns.map(t =>
+      `<span class="gpx-chip" data-id="${t.id}">
+         <span class="swatch" style="background:${t.color}"></span>
+         ${t.label} <small>(${t.radiusKm} km → ${t.cellIndices.size} cells)</small>
+         <span class="x" data-id="${t.id}" title="Remove">×</span>
+       </span>`
+    ).join("");
+    el.querySelectorAll('.x').forEach(x => x.addEventListener('click', e => {
+      removeTown(e.target.dataset.id);
+    }));
+  }
+
+  function addTown(label, e, n) {
+    const radiusKm = parseFloat(document.getElementById('townRadius').value) || 15;
+    const color = CHIP_COLORS[(nextChipColorIdx++) % CHIP_COLORS.length];
+    const [lon, lat] = proj4("EPSG:2056", "EPSG:4326", [e, n]);
+    const circle = L.circle([lat, lon], {
+      radius: radiusKm * 1000, color, weight: 2, fillOpacity: 0.08,
+    }).addTo(map);
+    const cellIndices = cellsWithinRadius(e, n, radiusKm);
+    const t = { id: `t${Date.now()}_${Math.floor(Math.random()*1e4)}`,
+                label, e, n, radiusKm, color, circle, cellIndices };
+    towns.push(t);
+    applyCellSet(cellIndices, true);
+    renderTownChips();
+    // Pan/zoom to the town if it's offscreen.
+    if (!map.getBounds().contains([lat, lon])) {
+      map.setView([lat, lon], Math.max(map.getZoom(), 10));
+    }
+  }
+
+  function removeTown(id) {
+    const i = towns.findIndex(t => t.id === id);
+    if (i < 0) return;
+    const t = towns[i];
+    map.removeLayer(t.circle);
+    const stillRefd = new Set();
+    for (const other of towns) {
+      if (other.id === id) continue;
+      for (const c of other.cellIndices) stillRefd.add(c);
+    }
+    // Also keep cells still referenced by any loaded GPX file.
+    for (const g of gpxFiles) for (const c of g.cellIndices) stillRefd.add(c);
+    const toDeselect = new Set();
+    for (const c of t.cellIndices) if (!stillRefd.has(c)) toDeselect.add(c);
+    towns.splice(i, 1);
+    applyCellSet(toDeselect, false);
+    renderTownChips();
+  }
+
+  function recomputeAllTownCircles() {
+    const radiusKm = parseFloat(document.getElementById('townRadius').value) || 15;
+    document.getElementById('townRadiusLbl').textContent = radiusKm;
+    if (towns.length === 0) return;
+    const newPerTown = towns.map(t => cellsWithinRadius(t.e, t.n, radiusKm));
+    const oldUnion = new Set();
+    for (const t of towns) for (const c of t.cellIndices) oldUnion.add(c);
+    const newUnion = new Set();
+    for (const s of newPerTown) for (const c of s) newUnion.add(c);
+    const toDeselect = new Set([...oldUnion].filter(c => !newUnion.has(c)));
+    applyCellSet(toDeselect, false);
+    applyCellSet(newUnion, true);
+    for (let k = 0; k < towns.length; k++) {
+      towns[k].cellIndices = newPerTown[k];
+      towns[k].radiusKm = radiusKm;
+      towns[k].circle.setRadius(radiusKm * 1000);
+    }
+    renderTownChips();
+  }
+
+  // Suggestion dropdown — debounced as the user types.
+  function showSuggestions(items) {
+    const el = document.getElementById('townSuggest');
+    if (!items.length) { el.style.display = 'none'; return; }
+    el.innerHTML = items.map((r, i) =>
+      `<div class="suggest-row" data-i="${i}"
+            style="padding:0.3rem 0.5rem; cursor:pointer; border-bottom:1px solid #f4f4f4">
+         ${r.label}
+       </div>`
+    ).join("");
+    el.style.display = 'block';
+    el.querySelectorAll('.suggest-row').forEach(row => {
+      row.addEventListener('mouseenter', () => row.style.background = '#ecf0f1');
+      row.addEventListener('mouseleave', () => row.style.background = 'white');
+      row.addEventListener('click', () => {
+        const r = items[parseInt(row.dataset.i, 10)];
+        document.getElementById('townInput').value = r.label;
+        addTown(r.label, r.e, r.n);
+        el.style.display = 'none';
+      });
+    });
+  }
+
+  document.getElementById('townInput').addEventListener('input', e => {
+    const q = e.target.value.trim();
+    clearTimeout(townDebounce);
+    if (q.length < 2) {
+      document.getElementById('townSuggest').style.display = 'none';
+      return;
+    }
+    townDebounce = setTimeout(() => {
+      townSearch(q).then(showSuggestions).catch(err => {
+        console.warn("town search failed:", err);
+        document.getElementById('townSuggest').style.display = 'none';
+      });
+    }, 220);
+  });
+
+  document.getElementById('townAdd').addEventListener('click', () => {
+    const q = document.getElementById('townInput').value.trim();
+    if (q.length < 2) return;
+    townSearch(q).then(results => {
+      if (!results.length) { alert(`No result for "${q}"`); return; }
+      addTown(results[0].label, results[0].e, results[0].n);
+      document.getElementById('townInput').value = "";
+      document.getElementById('townSuggest').style.display = 'none';
+    }).catch(err => alert(`Search failed: ${err.message}`));
+  });
+
+  document.getElementById('townInput').addEventListener('keydown', e => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      document.getElementById('townAdd').click();
+    }
+  });
+
+  document.getElementById('townRadius').addEventListener('input', recomputeAllTownCircles);
+
+  // ---------------------------------------------------------------------
+  // Modifier-key state: drive cursor + Controls-panel highlight, and
+  // suspend map drag so Ctrl/Shift+drag paints rather than panning.
+  // ---------------------------------------------------------------------
+  const mods = { ctrl: false, shift: false };
+
+  function syncModState() {
+    const painting = mods.ctrl || mods.shift;
+    document.body.classList.toggle('painting-add',    mods.ctrl  && !mods.shift);
+    document.body.classList.toggle('painting-remove', mods.shift);
+    if (painting) map.dragging.disable();
+    else          map.dragging.enable();
+  }
+
+  window.addEventListener('keydown', (e) => {
+    let changed = false;
+    if (e.key === 'Control' && !mods.ctrl)  { mods.ctrl  = true; changed = true; }
+    if (e.key === 'Shift'   && !mods.shift) { mods.shift = true; changed = true; }
+    if (changed) syncModState();
+  });
+  window.addEventListener('keyup', (e) => {
+    let changed = false;
+    if (e.key === 'Control' && mods.ctrl)  { mods.ctrl  = false; changed = true; }
+    if (e.key === 'Shift'   && mods.shift) { mods.shift = false; changed = true; }
+    if (changed) syncModState();
+  });
+  // Releasing focus (alt-tab, modal, devtools) drops modifier state — be safe.
+  window.addEventListener('blur', () => {
+    mods.ctrl = false; mods.shift = false; syncModState();
+  });
+
+  function selectedCells() { return cells.filter(c => c.selected); }
+
+  function updateStatus() {
+    const sel = selectedCells();
+    // Cell-precise tile estimate (this is what the cell-precise build emits).
+    // Each picked cell ~= TILES_PER_CELL_KEPT after blank-mask drop. We still
+    // compute the union bbox for the legacy bbox-mode export.
+    let est = 0, unionBbox = null;
+    if (sel.length > 0) {
+      let eMin = +Infinity, nMin = +Infinity, eMax = -Infinity, nMax = -Infinity;
+      for (const c of sel) {
+        eMin = Math.min(eMin, c.lv95[0]); nMin = Math.min(nMin, c.lv95[1]);
+        eMax = Math.max(eMax, c.lv95[2]); nMax = Math.max(nMax, c.lv95[3]);
+      }
+      unionBbox = [eMin, nMin, eMax, nMax];
+      est = sel.length * TILES_PER_CELL_KEPT;
+    }
+
+    const statusEl = document.getElementById('status');
+    statusEl.querySelector('.stat-line strong').textContent = sel.length;
+    document.getElementById('tileEst').textContent = est;
+
+    // Live cap is whatever the user picked in the device dropdown.
+    const cap = deviceProfile.tileCap;
+    if (est === 0) {
+      statusEl.className = 'stat-box neutral';
+    } else if (est > cap) {
+      statusEl.className = 'stat-box warn';
+    } else if (cap >= 500 && est > cap - OVERVIEW_RESERVE) {
+      // Only the 500-tile tier ships an overview today; below that, no reserve.
+      statusEl.className = 'stat-box warn';
+    } else {
+      statusEl.className = 'stat-box ok';
+    }
+
+    document.getElementById('exportBtn').disabled = sel.length === 0;
+    document.getElementById('buildBtn').disabled  = sel.length === 0;
+    return { unionBbox, est, count: sel.length };
+  }
+
+  document.getElementById('deviceSel').addEventListener('change', readDeviceProfile);
+  readDeviceProfile();
+
+  document.getElementById('clearBtn').addEventListener('click', () => {
+    for (const c of cells) {
+      if (c.selected) {
+        c.selected = false;
+        c.rect.setStyle({ fillOpacity: 0, color: "#555", weight: 0.4 });
+      }
+    }
+    // Also drop any loaded GPX files + their polylines, and any town circles.
+    while (gpxFiles.length) {
+      const g = gpxFiles.pop();
+      if (g.polyline) map.removeLayer(g.polyline);
+    }
+    if (typeof towns !== 'undefined') {
+      while (towns.length) {
+        const t = towns.pop();
+        if (t.circle) map.removeLayer(t.circle);
+      }
+      renderTownChips();
+    }
+    renderChips();
+    updateStatus();
+    document.getElementById('output').innerHTML = '<small>Make a selection and click "Build my custom pack".</small>';
+    document.getElementById('jobProgress').style.display = 'none';
+  });
+
+  // ---------------------------------------------------------------------
+  // Hosted build flow — POST cells to the Cloudflare Worker, which dispatches
+  // the GH Actions custom_build.yml workflow. We don't poll for status: the
+  // workflow emails the user when the KMZ is ready (~10–15 min). Read more
+  // in docs/hosted_build_setup.md.
+  //
+  // window.GSST_BUILD_API is injected at deploy time (pages.yml) from a
+  // repo secret. Absent => button just tells the user how to build locally.
+  // ---------------------------------------------------------------------
+  const BUILD_API = (window.GSST_BUILD_API || "").replace(/\/$/, "");
+
+  async function buildHosted(cells) {
+    const progEl = document.getElementById('jobProgress');
+    progEl.style.display = 'block';
+
+    if (!BUILD_API) {
+      progEl.innerHTML = `<div class="stat-box warn">
+        ⚠ Hosted build isn't configured for this deployment.
+        Use the "Developer build" path below for a local PowerShell build, or
+        ask the maintainer to set <code>GSST_BUILD_API</code> in the GH Pages secrets.
+      </div>`;
+      return;
+    }
+
+    const email = document.getElementById('buildEmail').value.trim();
+    if (!email) {
+      if (!confirm("No email entered — you'll have to find your build manually on the GitHub Actions page. Continue?")) {
+        progEl.style.display = 'none'; return;
+      }
+    }
+
+    const payload = {
+      cells,
+      name: 'custom_' + Date.now().toString(36),
+      email,
+      device: deviceProfile.key,
+      tile_cap: deviceProfile.tileCap,
+      max_files: deviceProfile.maxFiles,
+      max_kmz_mb: deviceProfile.maxKmzMB,
+      base_map:       document.getElementById('optBaseMap').value,
+      routes_type:    document.getElementById('optRoutesType').value,
+      include_slope:  document.getElementById('optSlope').checked,
+      include_routes: document.getElementById('optRoutes').checked,
+    };
+
+    progEl.innerHTML = `<div class="stat-box neutral">Queuing build with GitHub Actions…</div>`;
+    let resp;
+    try {
+      resp = await fetch(`${BUILD_API}/build`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+    } catch (e) {
+      progEl.innerHTML = `<div class="stat-box warn">
+        ⚠ Can't reach the build worker (${BUILD_API}).<br>
+        ${e.message}
+      </div>`;
+      return;
+    }
+    if (!resp.ok) {
+      let body = {}; try { body = await resp.json(); } catch {}
+      if (resp.status === 429) {
+        progEl.innerHTML = `<div class="stat-box warn">
+          ⚠ Monthly build limit reached (${body.limit || 5} per email/IP per month).<br>
+          ${body.error || ""}
+        </div>`;
+        return;
+      }
+      progEl.innerHTML = `<div class="stat-box warn">⚠ Build refused: ${resp.status} ${body.error || ""}</div>`;
+      return;
+    }
+    const job = await resp.json();
+    const left = typeof job.remaining === 'number'
+      ? `<small>(${job.remaining} of ${job.limit} build${job.limit === 1 ? "" : "s"} remaining this month)</small>` : "";
+    progEl.innerHTML = `
+      <div class="stat-box ok">
+        ✓ Build queued. Job <code>${job.job_id}</code>. ${left}
+        <p style="margin-top:0.5rem">${job.message || ""}</p>
+        ${job.release_url ? `<p style="font-size:0.85rem;margin-top:0.4rem">
+          The KMZ ZIP will appear at
+          <a href="${job.release_url}" target="_blank" rel="noopener">this release page</a>
+          when the build finishes. ${email ? "You'll also get an email with the link." : ""}
+        </p>` : ""}
+        <p style="font-size:0.85rem;margin-top:0.4rem">
+          Then follow <a href="install.html">the install guide</a> to put the KMZ on your watch.
+        </p>
+      </div>`;
+  }
+
+  document.getElementById('buildBtn').addEventListener('click', () => {
+    const { est, count } = updateStatus();
+    const sel = selectedCells();
+    if (!sel.length) return;
+    if (est > TILE_CAP) {
+      if (!confirm(`Selection is ~${est} tiles, over the 500-cap. Build anyway?`)) return;
+    }
+    buildHosted(sel.map(c => c.lv95));
+  });
+
+  document.getElementById('exportBtn').addEventListener('click', () => {
+    const { unionBbox, est, count } = updateStatus();
+    if (!unionBbox) return;
+    const bboxStr = unionBbox.join(',');
+    const sel = selectedCells();
+    const manifest = {
+      cells_lv95: sel.map(c => c.lv95),
+      union_bbox_lv95: unionBbox,
+      cell_count: count,
+      estimated_tiles_kept: est,
+      tile_cap_total: TILE_CAP,
+      tile_cap_alongside_overview: TILE_BUDGET_REGIONAL,
+      generated: new Date().toISOString()
+    };
+
+    const out = document.getElementById('output');
+    let warn = '';
+    if (est > TILE_CAP) {
+      warn = `<div class="stat-box warn">⚠ Estimated ${est} tiles exceeds 500-cap.
+              The watch will silently drop tiles. Trim the selection.</div>`;
+    } else if (est > TILE_BUDGET_REGIONAL) {
+      warn = `<div class="stat-box warn">⚠ Estimated ${est} tiles exceeds the
+              ${TILE_BUDGET_REGIONAL}-tile alongside-overview budget. You'll need
+              to deploy this pack with <code>-NoOverview</code>.</div>`;
+    } else {
+      warn = `<div class="stat-box ok">✓ Estimated ${est} tiles — fits 500-cap with
+              ${TILE_BUDGET_REGIONAL - est} tiles to spare alongside the all-CH overview.</div>`;
+    }
+
+    out.innerHTML = `
+      ${warn}
+      <p><strong>1. Save the selection:</strong></p>
+      <p><button id="downloadBtn">Download selection.json</button></p>
+      <p><small>Put it somewhere the build script can find it (e.g. the repo root).</small></p>
+      <p><strong>2. Build the pack (cell-precise):</strong></p>
+      <pre>.\\build_kmz_packs.ps1 -CustomCellsJson selection.json -CustomName "my_pack" -SkipOverview</pre>
+      <p><small>Tiles outside your picked cells are skipped, so scattered selections
+      don't waste budget. Output: <code>out\\packs\\99_my_pack[_part_NNN].kmz</code>.</small></p>
+      <p><strong>3. Activate after build:</strong></p>
+      <pre>.\\activate_pack.ps1 -SyncLibrary
+.\\activate_pack.ps1 -Zone my_pack${est > TILE_BUDGET_REGIONAL ? ' -NoOverview' : ''}</pre>
+      <details style="margin-top:0.5rem">
+        <summary><small>Alt: legacy single-bbox build (every non-blank tile in the rectangle below)</small></summary>
+        <p><strong>Union bbox (LV95):</strong></p>
+        <pre>${bboxStr}</pre>
+        <pre>.\\build_kmz_packs.ps1 -CustomBbox "${bboxStr}" -CustomName "my_pack" -SkipOverview</pre>
+      </details>
+    `;
+
+    document.getElementById('downloadBtn').addEventListener('click', () => {
+      const blob = new Blob([JSON.stringify(manifest, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = 'selection.json'; a.click();
+      URL.revokeObjectURL(url);
+    });
+  });
+
+  updateStatus();
+</script>
+</body>
+</html>

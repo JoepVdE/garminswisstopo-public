@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Install Swisstopo maps on your Garmin watch</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  body {
+    font-family: system-ui, -apple-system, sans-serif;
+    max-width: 760px; margin: 2rem auto; padding: 0 1rem;
+    line-height: 1.55; color: #222;
+  }
+  h1 { font-size: 1.8rem; margin-top: 0; }
+  h2 { margin-top: 2rem; border-bottom: 2px solid #eee; padding-bottom: 0.3rem; }
+  h3 { margin-top: 1.5rem; }
+  code, pre { background: #f4f4f4; padding: 0.1em 0.3em; border-radius: 3px; font-size: 0.9em; }
+  pre { padding: 0.6rem 0.8rem; overflow-x: auto; line-height: 1.4; }
+  .warn  { background: #fef5e7; border-left: 4px solid #f39c12; padding: 0.7rem 1rem; margin: 1rem 0; border-radius: 4px; }
+  .danger{ background: #fadbd8; border-left: 4px solid #c0392b; padding: 0.7rem 1rem; margin: 1rem 0; border-radius: 4px; }
+  .good  { background: #d4edda; border-left: 4px solid #27ae60; padding: 0.7rem 1rem; margin: 1rem 0; border-radius: 4px; }
+  .nav { margin-bottom: 1.5rem; font-size: 0.9rem; color: #666; }
+  .nav a { color: #2c3e50; }
+  ol li, ul li { margin: 0.3rem 0; }
+</style>
+</head>
+<body>
+<div class="nav">← <a href="index.html">Back to tools</a></div>
+
+<h1>Install Swisstopo maps on your Garmin watch</h1>
+
+<p>Works on <strong>Epix 2</strong> and <strong>Fenix 7 Pro</strong>.
+Read the section at the bottom if you have a Fenix 6.
+No special software needed — we just copy files.</p>
+
+<h2>Step 1 — Pick which maps you want</h2>
+<ul>
+  <li><strong><a href="gpx_pack_picker.html">GPX picker</a></strong> — drop a GPX of your tour and get direct download links for the right zone.</li>
+  <li><strong><a href="tile_picker.html">Tile picker</a></strong> — paint your own area and have a custom pack built (5–15 min).</li>
+</ul>
+<p>Always also download <code>00_overview_ch.kmz</code> (the all-CH background). The GPX picker links to it automatically.</p>
+
+<h2>Step 2 — Plug the watch into your computer</h2>
+<p>Use the USB cable that came with the watch. It appears as a USB drive
+named <strong>GARMIN</strong>. If nothing shows up, try a different USB port —
+many phone-charging cables don't carry data.</p>
+
+<h2>Step 3 — Open the <code>Garmin/CustomMaps/</code> folder</h2>
+<p>On the GARMIN drive, navigate to:</p>
+<pre>GARMIN/Garmin/CustomMaps/</pre>
+<p>(Yes, the word <em>Garmin</em> appears twice.) If <code>CustomMaps/</code>
+doesn't exist, create it. The name must be exactly <code>CustomMaps</code>
+(capital C, capital M, no space).</p>
+
+<h2>Step 4 — Clean out old <code>.kmz</code> files</h2>
+<div class="good"><strong>✅ DELETE</strong> every file inside <code>CustomMaps/</code> that ends in <code>.kmz</code>. Those are old maps. They steal your tile budget.</div>
+<div class="danger"><strong>❌ DO NOT DELETE</strong> any <code>.img</code> file, anywhere on the GARMIN drive. Those are your built-in maps (TopoActive, basemap). Deleting them breaks the watch and you'll need a factory reset.</div>
+<p>Folders to leave completely alone, even if they look empty:</p>
+<ul>
+  <li><code>Garmin/Maps/</code></li>
+  <li><code>Garmin/Maps/MapInstall/</code></li>
+  <li>anything containing <code>.img</code>, <code>.gma</code>, <code>.unl</code>, or <code>.jnx</code></li>
+</ul>
+<p>Rule of thumb: <strong>only delete files ending in <code>.kmz</code></strong>, and <strong>only inside <code>Garmin/CustomMaps/</code></strong>.</p>
+
+<h2>Step 5 — Copy the new <code>.kmz</code> files in</h2>
+<p>Drag every <code>.kmz</code> you downloaded into <code>Garmin/CustomMaps/</code>. Overview + regional all go in the same folder.</p>
+<pre>GARMIN/
+└── Garmin/
+    └── CustomMaps/
+        ├── 00_overview_ch.kmz
+        ├── 02_wallis_west_part_001.kmz
+        ├── 02_wallis_west_part_002.kmz
+        ├── 02_wallis_west_part_003.kmz
+        └── 02_wallis_west_part_004.kmz</pre>
+<div class="warn"><strong>Don't mix zones.</strong> The watch caps at ~500 tiles across all KMZs combined. One overview + one regional zone uses almost the whole budget. Extra zones get silently dropped.</div>
+
+<h2>Step 6 — Safely eject</h2>
+<ul>
+  <li>Windows: right-click GARMIN in <em>This PC</em> → <em>Eject</em>.</li>
+  <li>Mac: drag the drive to the Trash.</li>
+  <li>Linux: right-click → <em>Eject</em>.</li>
+</ul>
+
+<h2>Step 7 — Reboot the watch and enable Custom Maps</h2>
+<ol>
+  <li>Hold the <em>Light</em> button (top-left) for ~15 seconds until the watch powers off, then press it again to power back on.</li>
+  <li>Hold the back button → <strong>Map → Map Settings → Map Layers</strong>
+    (sometimes labelled "Configure Map" or "Configure Maps").</li>
+  <li>Make sure <strong>Custom Maps</strong> is <strong>On</strong>.</li>
+</ol>
+<p>Done. Open the map screen — the LK25 raster with slope shading and ski-tour routes is there.</p>
+<div class="warn">⚠ Individual KMZs do <strong>not</strong> appear in Map Manager. Map Manager only lists built-in <code>.img</code> map families. KMZs render as one combined layer with one toggle. Swap regions by moving files via USB.</div>
+
+<h2>Switching regions later</h2>
+<ol>
+  <li>Plug in, open <code>Garmin/CustomMaps/</code>.</li>
+  <li>Delete the old regional <code>.kmz</code> (keep <code>00_overview_ch.kmz</code>).</li>
+  <li>Copy the new region's <code>.kmz</code> in.</li>
+  <li>Eject, reboot.</li>
+</ol>
+
+<h2>Troubleshooting</h2>
+<p><strong>Map looks blank.</strong> Did you reboot? Did you enable Map Layers → Custom Maps? Are the <code>.kmz</code> in <code>Garmin/CustomMaps/</code> and not <code>Garmin/Maps/</code>?</p>
+<p><strong>Only part of the region renders.</strong> Over the 500-tile cap — keep only one regional pack at a time.</p>
+<p><strong>Watch can't show maps at all.</strong> An <code>.img</code> was probably deleted. Reinstall the basemap via Garmin Express.</p>
+<p><strong>Watch hangs on boot.</strong> Unplug, hold <em>Light</em> 30 s, retry. If persistent, remove the most recently added <code>.kmz</code>.</p>
+
+<h2>Fenix 6 / 6 Pro / 6X Pro</h2>
+<p>The current packs <strong>don't fit</strong> on the Fenix 6 family — those watches cap at <strong>100 tiles total</strong> (vs 500 on Epix 2 / Fenix 7 Pro) and 3 MB per KMZ. A coarser Fenix 6 build is planned but not yet shipped. Until then, the GPX picker still works for orientation; for the actual map on the watch you'd fall back to Garmin TOPO Schweiz v2 PRO.</p>
+
+<h2 id="slope-disclaimer">Slope-shading disclaimer ⚠</h2>
+
+<p><strong>Read this before using the slope overlay for avalanche-relevant
+decisions.</strong></p>
+
+<p style="font-style: italic">Die in dieser Karte dargestellten Hangneigungsklassen sind aus dem
+swissALTI3D-Höhenmodell (10 m) abgeleitet und können lokal von der Realität
+abweichen. Sie ersetzen weder das aktuelle Lawinenbulletin des SLF noch eine
+fundierte Tourenplanung mit aktuellen Verhältnissen vor Ort. Nutzung auf
+eigene Verantwortung.</p>
+
+<p>Slope-angle classes (30° / 35° / 40° / 45°+) shown on this map are derived
+from the swissALTI3D 10 m DEM published by swisstopo. Class boundaries are
+calibrated against the official <code>ch.swisstopo.hangneigung-ueber_30</code>
+SLF product, but <strong>no warranty</strong> is given that any individual
+pixel matches the official Swisstopo / SLF classification.</p>
+
+<p>Slope angle is one of many factors in avalanche risk. This map does
+<strong>not</strong> incorporate snowpack stability, weather, aspect-specific
+danger, terrain traps, or the daily SLF
+<a href="https://www.slf.ch">Lawinenbulletin</a> — all of which must be
+consulted independently before any winter backcountry travel.</p>
+
+<p>The authors, contributors, and any redistributor accept no liability for
+injury, loss, or damage arising from use of this map. Backcountry skiing and
+ski touring are activities with inherent risks including death; users assume
+all such risks. By using this map you acknowledge you are a competent
+independent decision-maker and not relying on this tool as a primary safety
+input.</p>
+
+</body>
+</html>
