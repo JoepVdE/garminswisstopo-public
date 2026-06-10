@@ -2,121 +2,259 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>Swisstopo Custom KMZ Pack Builder</title>
+<title>Custom KMZ pack builder</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
       integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
       crossorigin="">
 <style>
-  body { font-family: system-ui, -apple-system, sans-serif; margin: 0; padding: 0; height: 100vh; display: flex; flex-direction: column; }
-  header { padding: 0.75rem 1rem; background: #2c3e50; color: white; }
-  header h1 { margin: 0 0 0.25rem 0; font-size: 1.15rem; }
-  header p { margin: 0; opacity: 0.8; font-size: 0.85rem; }
+  :root {
+    --bg: #faf8f3;
+    --surface: #ffffff;
+    --ink: #1a1d21;
+    --muted: #5b6470;
+    --line: #e7e3d8;
+    --accent: #d4351c;
+    --accent-dark: #a82a16;
+    --good: #2f7a3d;
+    --good-bg: #eaf4ec;
+    --warn: #8a5a00;
+    --warn-bg: #fbf3df;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; height: 100%; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, system-ui, sans-serif;
+    background: var(--bg); color: var(--ink); line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    display: flex; flex-direction: column;
+  }
+  a { color: var(--accent-dark); }
+
+  /* Top bar */
+  .topbar {
+    border-bottom: 1px solid var(--line);
+    background: rgba(250,248,243,0.95);
+    backdrop-filter: saturate(160%) blur(8px);
+    flex: 0 0 auto;
+  }
+  .topbar-inner {
+    max-width: 1280px; margin: 0 auto;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 1rem; height: 54px;
+  }
+  .brand {
+    display: flex; align-items: center; gap: 0.55rem;
+    font-weight: 600; color: var(--ink); text-decoration: none;
+    font-size: 0.98rem;
+  }
+  .brand-mark {
+    width: 22px; height: 22px; border-radius: 4px;
+    background: var(--accent);
+    display: inline-flex; align-items: center; justify-content: center;
+    color: #fff; font-weight: 700; font-size: 0.9rem;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.15);
+  }
+  .langs { display: flex; gap: 0.25rem; }
+  .langs button {
+    appearance: none; border: 1px solid var(--line); background: transparent;
+    color: var(--muted); font: inherit; font-size: 0.78rem; font-weight: 600;
+    padding: 0.28rem 0.55rem; border-radius: 999px; cursor: pointer;
+    letter-spacing: 0.04em; margin: 0;
+    transition: background 0.15s, color 0.15s, border-color 0.15s;
+  }
+  .langs button:hover { background: #f1efe7; color: var(--ink); }
+  .langs button[aria-pressed="true"] {
+    background: var(--ink); color: #fff; border-color: var(--ink);
+  }
+
+  /* Page title strip */
+  .page-title {
+    background: var(--surface); border-bottom: 1px solid var(--line);
+    padding: 0.85rem 1rem;
+  }
+  .page-title-inner {
+    max-width: 1280px; margin: 0 auto;
+    display: flex; align-items: baseline; gap: 0.6rem; flex-wrap: wrap;
+  }
+  .page-title h1 { margin: 0; font-size: 1.15rem; letter-spacing: -0.01em; }
+  .page-title p { margin: 0; color: var(--muted); font-size: 0.9rem; }
+
   main { flex: 1; display: flex; min-height: 0; }
-  #sidebar { width: 360px; padding: 1rem; overflow-y: auto; border-right: 1px solid #ddd; background: #fafafa; }
-  #map { flex: 1; }
-  .stat-box { padding: 0.75rem; border-radius: 4px; margin: 0.5rem 0; transition: all 0.2s; }
-  .stat-box.neutral { background: #ecf0f1; }
-  .stat-box.ok       { background: #d4edda; color: #155724; }
-  .stat-box.warn     { background: #f8d7da; color: #721c24; }
-  .stat-line { font-size: 0.95rem; line-height: 1.4; }
-  .stat-line strong { font-size: 1.05rem; }
+  #sidebar {
+    width: 380px; max-width: 40vw;
+    padding: 1rem; overflow-y: auto;
+    border-right: 1px solid var(--line);
+    background: var(--bg);
+  }
+  #map { flex: 1; min-width: 0; background: #ddd; }
+
+  @media (max-width: 760px) {
+    main { flex-direction: column; }
+    #sidebar { width: 100%; max-width: none; max-height: 55vh; border-right: 0; border-bottom: 1px solid var(--line); }
+    #map { min-height: 45vh; }
+  }
+
+  .stat-box {
+    padding: 0.6rem 0.75rem; border-radius: 8px;
+    margin: 0.5rem 0; transition: all 0.2s;
+    border: 1px solid var(--line); background: var(--surface);
+  }
+  .stat-box.neutral { background: var(--surface); }
+  .stat-box.ok      { background: var(--good-bg); border-color: #cfe4d3; color: #1d4a25; }
+  .stat-box.warn    { background: #fbe8e6; border-color: #f1c8c1; color: #6b1d10; }
+  .stat-line { font-size: 0.92rem; line-height: 1.4; }
+  .stat-line strong { font-size: 1.02rem; }
+
   button {
-    padding: 0.45rem 0.9rem; background: #2c3e50; color: white;
-    border: none; border-radius: 4px; cursor: pointer;
-    font-size: 0.85rem; margin: 0.15rem 0.25rem 0.15rem 0;
+    padding: 0.5rem 0.95rem; background: var(--ink); color: #fff;
+    border: none; border-radius: 7px; cursor: pointer;
+    font: inherit; font-size: 0.88rem; font-weight: 600;
+    margin: 0.15rem 0.25rem 0.15rem 0;
+    transition: background 0.15s, transform 0.05s;
   }
-  button:hover { background: #34495e; }
-  button:disabled { background: #bdc3c7; cursor: not-allowed; }
-  button.secondary { background: #95a5a6; }
-  button.secondary:hover { background: #7f8c8d; }
+  button:hover { background: #2c3138; }
+  button:active { transform: translateY(1px); }
+  button:disabled { background: #cfccc1; color: #888; cursor: not-allowed; }
+  button.secondary { background: var(--surface); color: var(--ink); border: 1px solid var(--line); }
+  button.secondary:hover { border-color: #cfccc1; background: #fff; }
+  #buildBtn { background: var(--accent); }
+  #buildBtn:hover { background: var(--accent-dark); }
+  #buildBtn:disabled { background: #cfccc1; }
+
   pre {
-    background: #2c3e50; color: #ecf0f1; padding: 0.75rem; border-radius: 4px;
-    overflow-x: auto; font-size: 0.8rem; line-height: 1.4;
+    background: #2a2d31; color: #f0ece1; padding: 0.7rem 0.85rem; border-radius: 6px;
+    overflow-x: auto; font-size: 0.78rem; line-height: 1.45;
   }
-  h3 { margin: 1rem 0 0.5rem 0; font-size: 0.95rem; color: #2c3e50; }
-  small { color: #888; font-size: 0.85rem; }
-  .tip { background: #fff8dc; padding: 0.5rem 0.7rem; border-left: 3px solid #f39c12;
-         margin: 0.5rem 0; font-size: 0.85rem; }
+  h3 {
+    margin: 1rem 0 0.45rem; font-size: 0.75rem; color: var(--ink);
+    text-transform: uppercase; letter-spacing: 0.04em; font-weight: 600;
+  }
+  small { color: var(--muted); font-size: 0.82rem; }
+  .tip {
+    background: var(--warn-bg); padding: 0.55rem 0.75rem;
+    border: 1px solid #ecdfb6; border-radius: 8px;
+    margin: 0.5rem 0; font-size: 0.83rem; color: #6b4a00;
+  }
+  .tip a { color: #6b4a00; }
   details { margin: 0.5rem 0; }
-  summary { cursor: pointer; color: #2c3e50; font-weight: 500; }
+  summary { cursor: pointer; color: var(--ink); font-weight: 500; font-size: 0.9rem; }
   kbd {
-    background: #eee; border: 1px solid #ccc; border-radius: 3px;
-    box-shadow: 0 1px 0 rgba(0,0,0,0.15); color: #333;
-    padding: 1px 5px; font-family: monospace; font-size: 0.8em;
+    background: var(--surface); border: 1px solid var(--line); border-radius: 3px;
+    box-shadow: 0 1px 0 rgba(0,0,0,0.05); color: var(--ink);
+    padding: 1px 5px; font-family: ui-monospace, SFMono-Regular, monospace; font-size: 0.78em;
   }
-  /* Controls help panel — always visible at the top of the sidebar. */
+
+  /* Controls help panel */
   .controls-help {
-    background: #2c3e50; color: #ecf0f1;
-    padding: 0.7rem 0.85rem; border-radius: 6px; margin-bottom: 0.75rem;
+    background: var(--surface); border: 1px solid var(--line);
+    padding: 0.6rem 0.75rem; border-radius: 8px; margin-bottom: 0.75rem;
   }
   .controls-help h3 {
-    margin: 0 0 0.5rem 0; color: #ecf0f1; font-size: 0.85rem;
-    text-transform: uppercase; letter-spacing: 0.5px; opacity: 0.7;
+    margin: 0 0 0.4rem; color: var(--muted); font-size: 0.7rem;
+    text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600;
   }
   .ctrl-row {
-    display: flex; align-items: center; gap: 0.6rem;
-    padding: 0.35rem 0.5rem; border-radius: 4px; font-size: 0.85rem;
+    display: flex; align-items: center; gap: 0.55rem;
+    padding: 0.25rem 0.4rem; border-radius: 5px; font-size: 0.85rem;
     transition: background 0.15s;
   }
   .ctrl-row kbd {
-    background: #34495e; border-color: #555; color: #ecf0f1; min-width: 38px;
+    background: #f1efe7; border-color: var(--line); color: var(--ink); min-width: 38px;
     text-align: center; flex-shrink: 0;
   }
   .ctrl-row .arrow { opacity: 0.5; }
-  .ctrl-row.add    { color: #5dd6a0; }
-  .ctrl-row.remove { color: #f1948a; }
-  body.painting-add    .controls-help .ctrl-row.add    { background: #27ae60; color: white; }
-  body.painting-add    .controls-help .ctrl-row.add    kbd { background: #1e8449; border-color: #196f3d; }
-  body.painting-remove .controls-help .ctrl-row.remove { background: #c0392b; color: white; }
-  body.painting-remove .controls-help .ctrl-row.remove kbd { background: #922b21; border-color: #78281f; }
-  /* Map cursor reflects current paint mode. */
+  .ctrl-row.add    { color: var(--good); }
+  .ctrl-row.remove { color: var(--accent-dark); }
+  body.painting-add    .controls-help .ctrl-row.add    { background: var(--good-bg); }
+  body.painting-add    .controls-help .ctrl-row.add    kbd { background: var(--good); border-color: #1e8449; color: #fff; }
+  body.painting-remove .controls-help .ctrl-row.remove { background: #fbe8e6; }
+  body.painting-remove .controls-help .ctrl-row.remove kbd { background: var(--accent); border-color: var(--accent-dark); color: #fff; }
   body.painting-add    #map { cursor: cell; }
   body.painting-remove #map { cursor: not-allowed; }
+
   /* GPX dropzone */
   .gpx-drop {
-    border: 2px dashed #999; padding: 0.6rem 0.5rem; text-align: center;
-    cursor: pointer; border-radius: 5px; background: white;
-    font-size: 0.85rem; transition: all 0.15s;
+    border: 2px dashed #b9b29c; padding: 0.65rem 0.5rem; text-align: center;
+    cursor: pointer; border-radius: 8px; background: var(--surface);
+    font-size: 0.86rem; transition: all 0.15s;
   }
-  .gpx-drop:hover { border-color: #2c3e50; background: #ecf0f1; }
-  .gpx-drop.over  { border-color: #27ae60; background: #d5f4e6; }
+  .gpx-drop:hover { border-color: var(--accent); background: #fff; }
+  .gpx-drop.over  { border-color: var(--good); background: var(--good-bg); }
   .gpx-chip {
     display: inline-flex; align-items: center; gap: 0.3rem;
-    background: #eef2f7; border-radius: 12px; padding: 0.1rem 0.5rem;
+    background: #f1efe7; border: 1px solid var(--line); border-radius: 14px;
+    padding: 0.1rem 0.5rem;
     margin: 0.15rem 0.2rem 0.15rem 0; font-size: 0.75rem;
   }
   .gpx-chip .swatch { width: 10px; height: 10px; border-radius: 50%; }
   .gpx-chip .x {
-    cursor: pointer; color: #888; font-weight: 600;
+    cursor: pointer; color: var(--muted); font-weight: 600;
     margin-left: 0.15rem; padding: 0 0.15rem;
   }
-  .gpx-chip .x:hover { color: #c0392b; }
+  .gpx-chip .x:hover { color: var(--accent-dark); }
+
+  /* Select inputs */
+  select, input[type="text"], input[type="email"] {
+    font: inherit; font-size: 0.88rem;
+    border: 1px solid var(--line); border-radius: 6px; padding: 0.4rem 0.55rem;
+    background: var(--surface); color: var(--ink);
+  }
+  select { padding: 0.3rem 0.4rem; }
+
+  footer {
+    flex: 0 0 auto;
+    border-top: 1px solid var(--line);
+    background: var(--surface);
+    padding: 0.55rem 1rem;
+    font-size: 0.72rem; color: #888;
+    text-align: center;
+  }
+  footer a { color: #888; }
 </style>
 </head>
 <body>
-<header>
-  <h1>Custom KMZ Pack Builder</h1>
-  <p>Click cells to toggle. Hold <kbd>Ctrl</kbd> and move the mouse to paint-select, hold <kbd>Shift</kbd> to un-select. Tile counter tracks the Epix 2's 500-cap.</p>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <a class="brand" href="index.html">
+      <span class="brand-mark">+</span>
+      <span data-i18n="brand">Swisstopo for Garmin</span>
+    </a>
+    <nav class="langs" aria-label="Language">
+      <button type="button" data-lang="en" aria-pressed="false">EN</button>
+      <button type="button" data-lang="de" aria-pressed="false">DE</button>
+      <button type="button" data-lang="fr" aria-pressed="false">FR</button>
+      <button type="button" data-lang="it" aria-pressed="false">IT</button>
+    </nav>
+  </div>
 </header>
+
+<div class="page-title">
+  <div class="page-title-inner">
+    <h1 data-i18n="page.title">Custom KMZ pack builder</h1>
+    <p data-i18n="page.subtitle">Paint an area, drop a GPX, or pick a town. We build a pack and email it to you.</p>
+  </div>
+</div>
+
 <main>
   <div id="sidebar">
     <div class="controls-help" id="controlsHelp">
-      <h3>Controls</h3>
+      <h3 data-i18n="ctrl.heading">Controls</h3>
       <div class="ctrl-row">
-        <kbd>Click</kbd><span class="arrow">→</span><span>toggle one cell</span>
+        <kbd data-i18n="ctrl.click_kbd">Click</kbd><span class="arrow">→</span><span data-i18n="ctrl.click">toggle one cell</span>
       </div>
       <div class="ctrl-row add">
-        <kbd>Ctrl</kbd><span class="arrow">+ hover</span><span>paint cells as selected</span>
+        <kbd>Ctrl</kbd><span class="arrow" data-i18n="ctrl.plus_hover">+ hover</span><span data-i18n="ctrl.ctrl_hover">paint cells as selected</span>
       </div>
       <div class="ctrl-row remove">
-        <kbd>Shift</kbd><span class="arrow">+ hover</span><span>un-select cells</span>
+        <kbd>Shift</kbd><span class="arrow" data-i18n="ctrl.plus_hover">+ hover</span><span data-i18n="ctrl.shift_hover">un-select cells</span>
       </div>
     </div>
 
-    <h3 style="margin-top:0">Your watch</h3>
-    <select id="deviceSel" style="width:100%; padding:0.4rem; border-radius:4px; border:1px solid #ccc">
-      <option value="__loading__">Loading device list…</option>
+    <h3 style="margin-top:0" data-i18n="device.heading">Your watch</h3>
+    <select id="deviceSel" style="width:100%">
+      <option value="__loading__" data-i18n="device.loading">Loading device list…</option>
     </select>
     <!-- Inline copy of watches.json so the page works when opened via file:// in
          browsers that block fetch() of local files. JS reads this first and
@@ -253,118 +391,112 @@
   ]
 }
     </script>
-    <div id="deviceCaps" style="font-size:0.8rem; color:#666; margin-top:0.3rem">
-      Tile cap: <strong id="capLbl">?</strong> · Max files: <strong id="filesLbl">?</strong> · Max KMZ: <strong id="sizeLbl">?</strong> MB
+    <div id="deviceCaps" style="font-size:0.78rem; color:var(--muted); margin-top:0.3rem">
+      <span data-i18n="device.cap">Tile cap:</span> <strong id="capLbl">?</strong> ·
+      <span data-i18n="device.files">Max files:</span> <strong id="filesLbl">?</strong> ·
+      <span data-i18n="device.kmz">Max KMZ:</span> <strong id="sizeLbl">?</strong> MB
     </div>
-    <div id="deviceNote" style="font-size:0.78rem; color:#666; margin-top:0.3rem; padding:0.3rem 0.4rem; background:#f8f8f8; border-radius:3px"></div>
+    <div id="deviceNote" style="font-size:0.78rem; color:var(--muted); margin-top:0.3rem; padding:0.3rem 0.4rem; background:var(--surface); border:1px solid var(--line); border-radius:5px"></div>
 
-    <h3>Map layers</h3>
-    <label style="display:block; padding:0.2rem 0">Base map —
-      <select id="optBaseMap" style="font-size:0.85rem">
-        <option value="winter" selected>winter LK25 (snow-shaded)</option>
-        <option value="summer">summer LK25</option>
+    <h3 data-i18n="layers.heading">Map layers</h3>
+    <label style="display:block; padding:0.25rem 0; font-size:0.88rem"><span data-i18n="layers.base">Base map:</span>
+      <select id="optBaseMap">
+        <option value="winter" selected data-i18n="layers.base_winter">winter LK25 (snow-shaded)</option>
+        <option value="summer" data-i18n="layers.base_summer">summer LK25</option>
       </select>
     </label>
-    <label style="display:block; padding:0.2rem 0">
-      <input type="checkbox" id="optSlope" checked> Slope shading (30°/35°/40°/45°)
+    <label style="display:block; padding:0.25rem 0; font-size:0.88rem">
+      <input type="checkbox" id="optSlope" checked> <span data-i18n="layers.slope">Slope shading (30°/35°/40°/45°)</span>
     </label>
-    <label style="display:block; padding:0.2rem 0">
-      <input type="checkbox" id="optRoutes" checked> Routes —
-      <select id="optRoutesType" style="font-size:0.85rem">
-        <option value="ski" selected>SAC ski tours (winter)</option>
-        <option value="wanderwege">Wanderwege (summer)</option>
+    <label style="display:block; padding:0.25rem 0; font-size:0.88rem">
+      <input type="checkbox" id="optRoutes" checked> <span data-i18n="layers.routes">Routes:</span>
+      <select id="optRoutesType">
+        <option value="ski" selected data-i18n="layers.routes_ski">SAC ski tours (winter)</option>
+        <option value="wanderwege" data-i18n="layers.routes_ww">Wanderwege (summer)</option>
       </select>
     </label>
-    <small style="display:block; font-size:0.75rem; color:#888">
-      Base map and routes toggle independently — mix any combination. Both
-      seasons ship 26 prebuilt zones; custom shapes go through the build queue
-      at the bottom of the panel.
+    <small style="display:block; font-size:0.76rem; color:var(--muted); margin-top:0.2rem" data-i18n="layers.note">
+      Base map and routes toggle independently. Mix any combination. Both seasons ship 26 prebuilt zones; custom shapes go through the build queue at the bottom of the panel.
     </small>
 
-    <div id="slopeDisclaimer" class="tip" style="background:#fef5e7; border-left:3px solid #f39c12; font-size:0.78rem; margin-top:0.4rem">
-      ⚠ <strong>Slope classes are indicative only.</strong> Derived from the
-      swissALTI3D 10 m DEM; they replace neither the current SLF avalanche
-      bulletin nor sound on-site tour planning. Use at your own risk.
-      <a href="install.html#slope-disclaimer">Full disclaimer</a>.
+    <div id="slopeDisclaimer" class="tip" data-i18n="slope.tip">
+      ⚠ Slope classes are indicative only. Derived from the swissALTI3D 10 m elevation model. They do not replace the SLF avalanche bulletin or sound on-site tour planning. Use at your own risk. Full disclaimer in the install guide.
     </div>
 
     <div id="status" class="stat-box neutral">
-      <div class="stat-line"><strong>0 cells</strong> selected</div>
-      <div class="stat-line">~<strong id="tileEst">0</strong> tiles / <strong id="tileCapLbl">500</strong> cap</div>
+      <div class="stat-line"><strong>0 <span data-i18n="status.cells">cells</span></strong> <span data-i18n="status.selected">selected</span></div>
+      <div class="stat-line">~<strong id="tileEst">0</strong> <span data-i18n="status.tiles_of">tiles /</span> <strong id="tileCapLbl">500</strong> <span data-i18n="status.cap">cap</span></div>
     </div>
 
-    <h3 style="margin-top:0.6rem">Auto-select from GPX</h3>
+    <h3 style="margin-top:0.6rem" data-i18n="gpx.heading">Auto-select from GPX</h3>
     <div id="gpxDrop" class="gpx-drop">
-      <strong>Drop GPX file(s) here</strong><br>
-      <small>or click to browse — Haute Route, multi-day tours, etc.</small>
+      <strong data-i18n="gpx.drop_title">Drop GPX file(s) here</strong><br>
+      <small data-i18n="gpx.drop_sub">or click to browse (Haute Route, multi-day tours, etc.)</small>
     </div>
     <input type="file" id="gpxInput" accept=".gpx" multiple style="display:none">
-    <div style="display:flex; align-items:center; gap:0.4rem; font-size:0.78rem; color:#555; margin:0.3rem 0">
-      Buffer:
+    <div style="display:flex; align-items:center; gap:0.4rem; font-size:0.8rem; color:var(--muted); margin:0.3rem 0">
+      <span data-i18n="gpx.buffer">Buffer:</span>
       <input type="range" id="gpxBuffer" min="0" max="10" step="1" value="2"
              style="flex:1; min-width:80px">
       <span><strong id="gpxBufferLbl">2</strong> km</span>
     </div>
-    <div id="gpxLoaded" style="font-size:0.78rem; color:#555; margin-top:0.2rem"></div>
+    <div id="gpxLoaded" style="font-size:0.78rem; color:var(--muted); margin-top:0.2rem"></div>
 
-    <h3 style="margin-top:0.6rem">Where are you staying?</h3>
+    <h3 style="margin-top:0.6rem" data-i18n="town.heading">Where are you staying?</h3>
     <div style="display:flex; gap:0.3rem; align-items:center">
-      <input type="text" id="townInput" placeholder="e.g. Zermatt, Verbier, Davos"
-             autocomplete="off" style="flex:1; padding:0.35rem; font-size:0.85rem;
-             border:1px solid #ccc; border-radius:4px">
-      <button id="townAdd" style="padding:0.35rem 0.7rem">Add</button>
+      <input type="text" id="townInput" data-i18n-placeholder="town.placeholder"
+             placeholder="e.g. Zermatt, Verbier, Davos"
+             autocomplete="off" style="flex:1">
+      <button id="townAdd" data-i18n="town.add">Add</button>
     </div>
-    <div id="townSuggest" style="font-size:0.8rem; color:#444; margin-top:0.15rem;
-         background:white; border:1px solid #eee; border-radius:4px; max-height:140px;
+    <div id="townSuggest" style="font-size:0.85rem; color:var(--ink); margin-top:0.15rem;
+         background:var(--surface); border:1px solid var(--line); border-radius:6px; max-height:140px;
          overflow-y:auto; display:none"></div>
-    <div style="display:flex; align-items:center; gap:0.4rem; font-size:0.78rem; color:#555; margin:0.3rem 0">
-      Radius:
+    <div style="display:flex; align-items:center; gap:0.4rem; font-size:0.8rem; color:var(--muted); margin:0.3rem 0">
+      <span data-i18n="town.radius">Radius:</span>
       <input type="range" id="townRadius" min="2" max="40" step="1" value="15"
              style="flex:1; min-width:80px">
       <span><strong id="townRadiusLbl">15</strong> km</span>
     </div>
-    <div id="townLoaded" style="font-size:0.78rem; color:#555; margin-top:0.2rem"></div>
+    <div id="townLoaded" style="font-size:0.78rem; color:var(--muted); margin-top:0.2rem"></div>
 
-    <h3 style="margin-top:0.6rem">Build &amp; email</h3>
-    <input type="email" id="buildEmail" placeholder="your@email.com (we'll send the download link)"
-           autocomplete="email" style="width:100%; padding:0.4rem; font-size:0.85rem;
-           border:1px solid #ccc; border-radius:4px; margin-bottom:0.3rem">
+    <h3 style="margin-top:0.6rem" data-i18n="build.heading">Build and email</h3>
+    <input type="email" id="buildEmail" data-i18n-placeholder="build.email_placeholder"
+           placeholder="your@email.com (we send the download link)"
+           autocomplete="email" style="width:100%; margin-bottom:0.4rem">
 
-    <button id="clearBtn" class="secondary">Clear all</button>
-    <button id="buildBtn" disabled>Build my custom pack</button>
+    <button id="clearBtn" class="secondary" data-i18n="build.clear">Clear all</button>
+    <button id="buildBtn" disabled data-i18n="build.go">Build my custom pack</button>
     <details style="margin-top:0.5rem">
-      <summary><small>Developer build (PowerShell on your own machine)</small></summary>
-      <button id="exportBtn" disabled style="margin-top:0.4rem">Export selection.json</button>
+      <summary><small data-i18n="build.dev_summary">Developer build (PowerShell on your own machine)</small></summary>
+      <button id="exportBtn" disabled style="margin-top:0.4rem" data-i18n="build.dev_export">Export selection.json</button>
     </details>
 
     <div id="jobProgress" style="display:none; margin-top:0.5rem"></div>
 
     <details>
-      <summary>How this works</summary>
-      <div style="font-size:0.85rem; color:#555; line-height:1.5; padding-top:0.5rem">
-        <p>Each cell is 10 × 10 km in LV95. At LK25-native 2.5 m/px, one cell
-        costs roughly <strong>10 tiles</strong> on the watch (15 raw, minus what
-        gets dropped by the empty-tile mask). 500-cap ≈ ~50 cells of LK25-native
-        coverage.</p>
-        <p>The output is a bbox you can feed to <code>build_kmz_packs.ps1
-        -CustomBbox …</code> to produce a custom KMZ pack matching your selection.</p>
-        <p>Plain drag still pans the map. While <kbd>Ctrl</kbd> or <kbd>Shift</kbd>
-        is held, the map cursor changes and the Controls panel above highlights
-        the active mode.</p>
+      <summary data-i18n="how.summary">How this works</summary>
+      <div style="font-size:0.85rem; color:var(--muted); line-height:1.5; padding-top:0.5rem">
+        <p data-i18n="how.p1">Each cell is 10 × 10 km in LV95. At LK25-native 2.5 m/px one cell costs roughly 10 tiles on the watch (15 raw, minus what gets dropped by the empty-tile mask). The 500-cap is about 50 cells of LK25-native coverage.</p>
+        <p data-i18n="how.p2">The output is a selection file you can feed into the local build script to produce a custom KMZ pack matching your selection.</p>
+        <p data-i18n="how.p3">Plain drag still pans the map. While Ctrl or Shift is held, the map cursor changes and the Controls panel above highlights the active mode.</p>
       </div>
     </details>
 
-    <div class="tip">
-      Scattered cells are fine — the build pipeline reads <code>selection.json</code>
-      and only emits tiles inside the cells you picked. Garmin happily renders
-      non-contiguous tiles.
+    <div class="tip" data-i18n="scattered.tip">
+      Scattered cells are fine. The build pipeline only emits tiles inside the cells you picked. Garmin happily renders non-contiguous tiles.
     </div>
 
-    <h3>Output</h3>
-    <div id="output"><small>Make a selection and click Export.</small></div>
+    <h3 data-i18n="output.heading">Output</h3>
+    <div id="output"><small data-i18n="output.empty">Make a selection and click Build my custom pack.</small></div>
   </div>
   <div id="map"></div>
 </main>
+
+<footer>
+  <span data-i18n="footer.data">Map data © swisstopo.</span>
+  <span data-i18n="footer.legal">An independent community project. Not affiliated with Garmin Ltd. or swisstopo. "Garmin", "Epix" and "Fenix" are trademarks of Garmin Ltd.</span>
+</footer>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
         integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
@@ -1220,6 +1352,257 @@
   });
 
   updateStatus();
+
+  // ───────────── i18n (EN / DE / FR / IT) ─────────────
+  const I18N = {
+    en: {
+      "brand": "Swisstopo for Garmin",
+      "page.title": "Custom KMZ pack builder",
+      "page.subtitle": "Paint an area, drop a GPX, or pick a town. We build a pack and email it to you.",
+      "ctrl.heading": "Controls",
+      "ctrl.click_kbd": "Click",
+      "ctrl.click": "toggle one cell",
+      "ctrl.plus_hover": "+ hover",
+      "ctrl.ctrl_hover": "paint cells as selected",
+      "ctrl.shift_hover": "un-select cells",
+      "device.heading": "Your watch",
+      "device.loading": "Loading device list…",
+      "device.cap": "Tile cap:",
+      "device.files": "Max files:",
+      "device.kmz": "Max KMZ:",
+      "layers.heading": "Map layers",
+      "layers.base": "Base map:",
+      "layers.base_winter": "winter LK25 (snow-shaded)",
+      "layers.base_summer": "summer LK25",
+      "layers.slope": "Slope shading (30°/35°/40°/45°)",
+      "layers.routes": "Routes:",
+      "layers.routes_ski": "SAC ski tours (winter)",
+      "layers.routes_ww": "Wanderwege (summer)",
+      "layers.note": "Base map and routes toggle independently. Mix any combination. Both seasons ship 26 prebuilt zones; custom shapes go through the build queue at the bottom of the panel.",
+      "slope.tip": "⚠ Slope classes are indicative only. Derived from the swissALTI3D 10 m elevation model. They do not replace the SLF avalanche bulletin or sound on-site tour planning. Use at your own risk. Full disclaimer in the install guide.",
+      "status.cells": "cells",
+      "status.selected": "selected",
+      "status.tiles_of": "tiles /",
+      "status.cap": "cap",
+      "gpx.heading": "Auto-select from GPX",
+      "gpx.drop_title": "Drop GPX file(s) here",
+      "gpx.drop_sub": "or click to browse (Haute Route, multi-day tours, etc.)",
+      "gpx.buffer": "Buffer:",
+      "town.heading": "Where are you staying?",
+      "town.placeholder": "e.g. Zermatt, Verbier, Davos",
+      "town.add": "Add",
+      "town.radius": "Radius:",
+      "build.heading": "Build and email",
+      "build.email_placeholder": "your@email.com (we send the download link)",
+      "build.clear": "Clear all",
+      "build.go": "Build my custom pack",
+      "build.dev_summary": "Developer build (PowerShell on your own machine)",
+      "build.dev_export": "Export selection.json",
+      "how.summary": "How this works",
+      "how.p1": "Each cell is 10 × 10 km in LV95. At LK25-native 2.5 m/px one cell costs roughly 10 tiles on the watch (15 raw, minus what gets dropped by the empty-tile mask). The 500-cap is about 50 cells of LK25-native coverage.",
+      "how.p2": "The output is a selection file you can feed into the local build script to produce a custom KMZ pack matching your selection.",
+      "how.p3": "Plain drag still pans the map. While Ctrl or Shift is held, the map cursor changes and the Controls panel above highlights the active mode.",
+      "scattered.tip": "Scattered cells are fine. The build pipeline only emits tiles inside the cells you picked. Garmin happily renders non-contiguous tiles.",
+      "output.heading": "Output",
+      "output.empty": "Make a selection and click Build my custom pack.",
+      "footer.data": "Map data © swisstopo.",
+      "footer.legal": "An independent community project. Not affiliated with Garmin Ltd. or swisstopo. \"Garmin\", \"Epix\" and \"Fenix\" are trademarks of Garmin Ltd."
+    },
+    de: {
+      "brand": "Swisstopo für Garmin",
+      "page.title": "Eigenes KMZ-Paket bauen",
+      "page.subtitle": "Gebiet einzeichnen, GPX hochladen oder Ort auswählen. Wir bauen ein Paket und mailen es dir.",
+      "ctrl.heading": "Steuerung",
+      "ctrl.click_kbd": "Klick",
+      "ctrl.click": "eine Zelle ein-/ausschalten",
+      "ctrl.plus_hover": "+ über Zelle",
+      "ctrl.ctrl_hover": "Zellen auswählen (malen)",
+      "ctrl.shift_hover": "Zellen wieder abwählen",
+      "device.heading": "Deine Uhr",
+      "device.loading": "Geräteliste wird geladen…",
+      "device.cap": "Kachelgrenze:",
+      "device.files": "Max. Dateien:",
+      "device.kmz": "Max. KMZ:",
+      "layers.heading": "Karten-Ebenen",
+      "layers.base": "Grundkarte:",
+      "layers.base_winter": "LK25 Winter (Schneedeckung)",
+      "layers.base_summer": "LK25 Sommer",
+      "layers.slope": "Hangneigung (30°/35°/40°/45°)",
+      "layers.routes": "Routen:",
+      "layers.routes_ski": "SAC-Skitouren (Winter)",
+      "layers.routes_ww": "Wanderwege (Sommer)",
+      "layers.note": "Grundkarte und Routen lassen sich unabhängig umschalten. Beide Saisons liefern 26 vorgebaute Regionen; eigene Formen laufen über die Build-Queue unten im Panel.",
+      "slope.tip": "⚠ Hangneigungsklassen sind nur indikativ. Aus dem swissALTI3D-Höhenmodell (10 m) abgeleitet. Sie ersetzen weder das SLF-Lawinenbulletin noch eine seriöse Tourenplanung vor Ort. Nutzung auf eigene Verantwortung. Vollständiger Haftungsausschluss in der Installationsanleitung.",
+      "status.cells": "Zellen",
+      "status.selected": "ausgewählt",
+      "status.tiles_of": "Kacheln /",
+      "status.cap": "Limit",
+      "gpx.heading": "Aus GPX automatisch wählen",
+      "gpx.drop_title": "GPX-Datei(en) hier ablegen",
+      "gpx.drop_sub": "oder klicken zum Auswählen (Haute Route, Mehrtagestouren, etc.)",
+      "gpx.buffer": "Puffer:",
+      "town.heading": "Wo übernachtest du?",
+      "town.placeholder": "z. B. Zermatt, Verbier, Davos",
+      "town.add": "Hinzu",
+      "town.radius": "Radius:",
+      "build.heading": "Bauen und mailen",
+      "build.email_placeholder": "deine@email.ch (Download-Link kommt per Mail)",
+      "build.clear": "Alles zurücksetzen",
+      "build.go": "Eigenes Paket bauen",
+      "build.dev_summary": "Eigener Build (PowerShell auf deinem Rechner)",
+      "build.dev_export": "selection.json exportieren",
+      "how.summary": "Wie das funktioniert",
+      "how.p1": "Jede Zelle ist 10 × 10 km in LV95. Bei LK25-nativ 2.5 m/px kostet eine Zelle ca. 10 Kacheln auf der Uhr (15 roh, minus was die Leer-Kachel-Maske wegnimmt). Das 500er-Limit entspricht etwa 50 Zellen LK25-native Abdeckung.",
+      "how.p2": "Das Ergebnis ist eine Auswahldatei, die du in das lokale Build-Skript einspeisen kannst, um ein eigenes KMZ-Paket passend zu deiner Auswahl zu erzeugen.",
+      "how.p3": "Normales Ziehen verschiebt weiterhin die Karte. Wenn Ctrl oder Shift gehalten wird, ändert sich der Mauszeiger und das Steuerungs-Panel oben hebt den aktiven Modus hervor.",
+      "scattered.tip": "Verstreute Zellen sind okay. Die Build-Pipeline gibt nur Kacheln innerhalb der gewählten Zellen aus. Garmin rendert nicht zusammenhängende Kacheln problemlos.",
+      "output.heading": "Ausgabe",
+      "output.empty": "Auswahl treffen und auf „Eigenes Paket bauen\" klicken.",
+      "footer.data": "Kartendaten © swisstopo.",
+      "footer.legal": "Ein unabhängiges Community-Projekt. Nicht von Garmin Ltd. oder swisstopo betrieben. „Garmin\", „Epix\" und „Fenix\" sind Marken von Garmin Ltd."
+    },
+    fr: {
+      "brand": "Swisstopo pour Garmin",
+      "page.title": "Construire un pack KMZ sur mesure",
+      "page.subtitle": "Dessine une zone, dépose un GPX, ou choisis une localité. On construit un pack et on te l'envoie par mail.",
+      "ctrl.heading": "Contrôles",
+      "ctrl.click_kbd": "Clic",
+      "ctrl.click": "bascule une cellule",
+      "ctrl.plus_hover": "+ survol",
+      "ctrl.ctrl_hover": "peindre des cellules",
+      "ctrl.shift_hover": "désélectionner des cellules",
+      "device.heading": "Ta montre",
+      "device.loading": "Chargement de la liste…",
+      "device.cap": "Limite de tuiles :",
+      "device.files": "Max fichiers :",
+      "device.kmz": "Max KMZ :",
+      "layers.heading": "Couches de la carte",
+      "layers.base": "Carte de base :",
+      "layers.base_winter": "LK25 hiver (manteau neigeux)",
+      "layers.base_summer": "LK25 été",
+      "layers.slope": "Pente (30°/35°/40°/45°)",
+      "layers.routes": "Itinéraires :",
+      "layers.routes_ski": "Itinéraires ski CAS (hiver)",
+      "layers.routes_ww": "Sentiers (été)",
+      "layers.note": "Carte de base et itinéraires se basculent indépendamment. Les deux saisons proposent 26 régions prêtes ; les formes sur mesure passent par la file d'attente en bas du panneau.",
+      "slope.tip": "⚠ Les classes de pente sont indicatives. Dérivées du modèle altimétrique swissALTI3D 10 m. Elles ne remplacent ni le bulletin d'avalanches SLF, ni une planification sérieuse sur le terrain. À tes risques et périls. Avertissement complet dans le guide d'installation.",
+      "status.cells": "cellules",
+      "status.selected": "sélectionnées",
+      "status.tiles_of": "tuiles /",
+      "status.cap": "limite",
+      "gpx.heading": "Sélection automatique depuis un GPX",
+      "gpx.drop_title": "Dépose ici le ou les fichiers GPX",
+      "gpx.drop_sub": "ou clique pour parcourir (Haute Route, sorties pluri-jours, etc.)",
+      "gpx.buffer": "Marge :",
+      "town.heading": "Où loges-tu ?",
+      "town.placeholder": "ex. Zermatt, Verbier, Davos",
+      "town.add": "Ajouter",
+      "town.radius": "Rayon :",
+      "build.heading": "Construire et envoyer",
+      "build.email_placeholder": "ton@email.com (on envoie le lien de téléchargement)",
+      "build.clear": "Tout effacer",
+      "build.go": "Construire mon pack sur mesure",
+      "build.dev_summary": "Build développeur (PowerShell sur ta machine)",
+      "build.dev_export": "Exporter selection.json",
+      "how.summary": "Comment ça marche",
+      "how.p1": "Chaque cellule mesure 10 × 10 km en LV95. Au natif LK25 (2,5 m/px), une cellule coûte environ 10 tuiles sur la montre (15 brutes, moins ce que le masque de tuiles vides retire). La limite de 500 équivaut à ~50 cellules de couverture native LK25.",
+      "how.p2": "Le résultat est un fichier de sélection que tu peux fournir au script de build local pour produire un pack KMZ sur mesure.",
+      "how.p3": "Un simple glisser déplace toujours la carte. Tant que Ctrl ou Shift est maintenu, le curseur change et le panneau Contrôles ci-dessus met en évidence le mode actif.",
+      "scattered.tip": "Les cellules éparses sont OK. Le pipeline de build n'émet que des tuiles dans les cellules choisies. Garmin affiche très bien des tuiles non contiguës.",
+      "output.heading": "Sortie",
+      "output.empty": "Fais une sélection et clique sur « Construire mon pack sur mesure ».",
+      "footer.data": "Données cartographiques © swisstopo.",
+      "footer.legal": "Projet indépendant de la communauté. Non affilié à Garmin Ltd. ou swisstopo. « Garmin », « Epix » et « Fenix » sont des marques de Garmin Ltd."
+    },
+    it: {
+      "brand": "Swisstopo per Garmin",
+      "page.title": "Costruisci un pacchetto KMZ personalizzato",
+      "page.subtitle": "Disegna un'area, carica un GPX o scegli una località. Costruiamo un pacchetto e te lo inviamo via mail.",
+      "ctrl.heading": "Controlli",
+      "ctrl.click_kbd": "Clic",
+      "ctrl.click": "attiva/disattiva una cella",
+      "ctrl.plus_hover": "+ passaggio",
+      "ctrl.ctrl_hover": "seleziona celle (dipingi)",
+      "ctrl.shift_hover": "deseleziona celle",
+      "device.heading": "Il tuo orologio",
+      "device.loading": "Caricamento elenco dispositivi…",
+      "device.cap": "Limite tile:",
+      "device.files": "Max file:",
+      "device.kmz": "Max KMZ:",
+      "layers.heading": "Livelli della mappa",
+      "layers.base": "Mappa di base:",
+      "layers.base_winter": "LK25 inverno (con neve)",
+      "layers.base_summer": "LK25 estate",
+      "layers.slope": "Pendenza (30°/35°/40°/45°)",
+      "layers.routes": "Itinerari:",
+      "layers.routes_ski": "Itinerari sci CAS (inverno)",
+      "layers.routes_ww": "Sentieri (estate)",
+      "layers.note": "Mappa di base e itinerari si attivano in modo indipendente. Entrambe le stagioni offrono 26 regioni precostruite; le forme personalizzate passano dalla coda di build in fondo al pannello.",
+      "slope.tip": "⚠ Le classi di pendenza sono solo indicative. Derivate dal modello altimetrico swissALTI3D 10 m. Non sostituiscono il bollettino valanghe SLF né una pianificazione seria sul posto. Uso a proprio rischio. Avvertenza completa nella guida all'installazione.",
+      "status.cells": "celle",
+      "status.selected": "selezionate",
+      "status.tiles_of": "tile /",
+      "status.cap": "limite",
+      "gpx.heading": "Selezione automatica da GPX",
+      "gpx.drop_title": "Trascina qui i file GPX",
+      "gpx.drop_sub": "o clicca per scegliere (Haute Route, tour pluri-giornalieri, ecc.)",
+      "gpx.buffer": "Margine:",
+      "town.heading": "Dove alloggi?",
+      "town.placeholder": "es. Zermatt, Verbier, Davos",
+      "town.add": "Aggiungi",
+      "town.radius": "Raggio:",
+      "build.heading": "Costruisci e invia",
+      "build.email_placeholder": "tua@email.com (inviamo il link di download)",
+      "build.clear": "Cancella tutto",
+      "build.go": "Costruisci il mio pacchetto",
+      "build.dev_summary": "Build da sviluppatore (PowerShell sul tuo PC)",
+      "build.dev_export": "Esporta selection.json",
+      "how.summary": "Come funziona",
+      "how.p1": "Ogni cella è 10 × 10 km in LV95. A risoluzione nativa LK25 (2,5 m/px), una cella costa circa 10 tile sull'orologio (15 grezze meno ciò che la maschera tile vuote rimuove). Il limite di 500 equivale a circa 50 celle di copertura nativa LK25.",
+      "how.p2": "L'output è un file di selezione che puoi dare allo script di build locale per produrre un pacchetto KMZ su misura.",
+      "how.p3": "Il trascinamento normale sposta ancora la mappa. Mentre Ctrl o Shift è premuto, il cursore cambia e il pannello Controlli sopra evidenzia la modalità attiva.",
+      "scattered.tip": "Le celle sparse vanno bene. La pipeline di build emette tile solo dentro le celle scelte. Garmin mostra tranquillamente tile non contigue.",
+      "output.heading": "Output",
+      "output.empty": "Fai una selezione e clicca su \"Costruisci il mio pacchetto\".",
+      "footer.data": "Dati cartografici © swisstopo.",
+      "footer.legal": "Progetto indipendente della community. Non affiliato a Garmin Ltd. o swisstopo. «Garmin», «Epix» e «Fenix» sono marchi di Garmin Ltd."
+    }
+  };
+  const LANGS = ["en", "de", "fr", "it"];
+  let CURRENT_LANG = "en";
+  function detectLang() {
+    let stored = null;
+    try { stored = localStorage.getItem("lang"); } catch (e) {}
+    if (stored && LANGS.indexOf(stored) >= 0) return stored;
+    const nav = (navigator.languages && navigator.languages[0]) || navigator.language || "en";
+    const code = String(nav).toLowerCase().slice(0, 2);
+    if (LANGS.indexOf(code) >= 0) return code;
+    return "en";
+  }
+  function applyI18n() {
+    document.documentElement.lang = CURRENT_LANG;
+    const d = I18N[CURRENT_LANG] || I18N.en;
+    document.querySelectorAll("[data-i18n]").forEach(el => {
+      const v = d[el.getAttribute("data-i18n")];
+      if (v != null) el.textContent = v;
+    });
+    document.querySelectorAll("[data-i18n-placeholder]").forEach(el => {
+      const v = d[el.getAttribute("data-i18n-placeholder")];
+      if (v != null) el.setAttribute("placeholder", v);
+    });
+    document.querySelectorAll(".langs button").forEach(btn => {
+      btn.setAttribute("aria-pressed", btn.dataset.lang === CURRENT_LANG ? "true" : "false");
+    });
+  }
+  document.querySelectorAll(".langs button").forEach(btn => {
+    btn.addEventListener("click", () => {
+      CURRENT_LANG = btn.dataset.lang;
+      try { localStorage.setItem("lang", CURRENT_LANG); } catch (e) {}
+      applyI18n();
+    });
+  });
+  CURRENT_LANG = detectLang();
+  applyI18n();
 </script>
 </body>
 </html>
