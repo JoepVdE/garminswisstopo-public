@@ -1,0 +1,95 @@
+# Build + deploy the tools/ static site to GitHub Pages.
+#
+# On every push to main:
+#   1. Run tools/build_manifest.py and tools/inline_data.py so the deployed
+#      site reflects the current PS1 zone lists + watches.json.
+#   2. Inject window.GSST_BUILD_API from the GSST_BUILD_API repo secret into
+#      tile_picker.html so the hosted build button hits the real API. If the
+#      secret is empty the picker silently falls back to the local-build path.
+#   3. Upload the tools/ directory as the Pages artifact.
+#
+# Enable in repo Settings → Pages → Source = "GitHub Actions" before pushing
+# this workflow. The first run is the deploy; subsequent ones are updates.
+
+name: Deploy tools site to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "tools/**"
+      - "build_kmz_packs*.ps1"          # zone array changes -> manifest changes
+      - ".github/workflows/pages.yml"
+  workflow_dispatch:                     # manual trigger from Actions tab
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false              # don't kill an in-flight deploy
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      # Regenerate manifest from the current PS1 zone arrays. We don't run the
+      # build pipeline in CI -- the manifest just inventories which KMZ files
+      # are already on the GitHub Release that matches the configured tag.
+      - name: Regenerate tools/manifest.json
+        env:
+          GSST_RELEASE_TAG: ${{ vars.GSST_RELEASE_TAG || 'v1' }}
+        run: |
+          python tools/build_manifest.py \
+            --release-tag "$GSST_RELEASE_TAG" \
+            --repo-slug "${{ github.repository }}"
+
+      - name: Re-inline watches.json into tile_picker.html
+        run: python tools/inline_data.py
+
+      # Inject the hosted build-API URL (if configured). The picker reads
+      # window.GSST_BUILD_API at runtime; absent => the developer-only PS1
+      # path stays the only build option.
+      - name: Inject build API URL
+        env:
+          GSST_BUILD_API: ${{ secrets.GSST_BUILD_API }}
+        run: |
+          if [ -n "$GSST_BUILD_API" ]; then
+            echo "Injecting GSST_BUILD_API = $GSST_BUILD_API"
+            # Insert window.GSST_BUILD_API as the very first <script> after <body>.
+            python - <<PY
+          import os, re, pathlib
+          p = pathlib.Path("tools/tile_picker.html")
+          url = os.environ["GSST_BUILD_API"].rstrip("/")
+          html = p.read_text(encoding="utf-8")
+          tag = f'<script>window.GSST_BUILD_API = "{url}";</script>'
+          new = re.sub(r"(<body[^>]*>)", r"\1\n" + tag, html, count=1)
+          p.write_text(new, encoding="utf-8")
+          print("Injected", url, "into", p)
+          PY
+          else
+            echo "No GSST_BUILD_API secret set — picker will show offline-only path."
+          fi
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./tools
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

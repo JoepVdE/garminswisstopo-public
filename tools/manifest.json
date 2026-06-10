@@ -1,0 +1,1517 @@
+{
+  "release_tag": "v1",
+  "asset_url_template": "https://github.com/JoepVdE/garminswisstopo/releases/download/v1/{name}",
+  "tile_cap": 500,
+  "overview_tiles_est": 89,
+  "overview": {
+    "name": "overview_ch",
+    "desc": "All of Switzerland @ 25 m/px. Always-on background.",
+    "files": [
+      {
+        "name": "00_overview_ch.kmz",
+        "size_mb": 26.3
+      }
+    ],
+    "winter_files": [
+      {
+        "name": "00_overview_ch.kmz",
+        "size_mb": 26.3
+      }
+    ],
+    "summer_files": [],
+    "total_size_mb": 26.3
+  },
+  "zones": [
+    {
+      "n": 1,
+      "name": "waadtlaender_alpen",
+      "bbox_lv95": [
+        2540000,
+        1110000,
+        2590000,
+        1160000
+      ],
+      "desc": "Diablerets, Dent du Midi, Pays d'Enhaut",
+      "files": [
+        {
+          "name": "01_waadtlaender_alpen_part_001.kmz",
+          "size_mb": 39.5
+        },
+        {
+          "name": "01_waadtlaender_alpen_part_002.kmz",
+          "size_mb": 36.6
+        },
+        {
+          "name": "01_waadtlaender_alpen_part_003.kmz",
+          "size_mb": 38.5
+        },
+        {
+          "name": "01_waadtlaender_alpen_part_004.kmz",
+          "size_mb": 24.9
+        }
+      ],
+      "winter_files": [
+        {
+          "name": "01_waadtlaender_alpen_part_001.kmz",
+          "size_mb": 39.5
+        },
+        {
+          "name": "01_waadtlaender_alpen_part_002.kmz",
+          "size_mb": 36.6
+        },
+        {
+          "name": "01_waadtlaender_alpen_part_003.kmz",
+          "size_mb": 38.5
+        },
+        {
+          "name": "01_waadtlaender_alpen_part_004.kmz",
+          "size_mb": 24.9
+        }
+      ],
+      "summer_files": [
+        {
+          "name": "01_waadtlaender_alpen_summer_part_001.kmz",
+          "size_mb": 41.3
+        },
+        {
+          "name": "01_waadtlaender_alpen_summer_part_002.kmz",
+          "size_mb": 38.3
+        },
+        {
+          "name": "01_waadtlaender_alpen_summer_part_003.kmz",
+          "size_mb": 45.9
+        },
+        {
+          "name": "01_waadtlaender_alpen_summer_part_004.kmz",
+          "size_mb": 21.3
+        }
+      ],
+      "total_size_mb": 139.5,
+      "winter_size_mb": 139.5,
+      "summer_size_mb": 146.8,
+      "total_tiles_est": 250,
+      "seasons": [
+        "winter",
+        "summer"
+      ]
+    },
+    {
+      "n": 2,
+      "name": "wallis_west",
+      "bbox_lv95": [
+        2575000,
+        1080000,
+        2625000,
+        1130000
+      ],
+      "desc": "Verbier, Val de Bagnes, Grand Combin, Trient",
+      "files": [
+        {
+          "name": "02_wallis_west_part_001.kmz",
+          "size_mb": 49.1
+        },
+        {
+          "name": "02_wallis_west_part_002.kmz",
+          "size_mb": 47.9
+        },
+        {
+          "name": "02_wallis_west_part_003.kmz",
+          "size_mb": 48.9
+        },
+        {
+          "name": "02_wallis_west_part_004.kmz",
+          "size_mb": 22.2
+        }
+      ],
+      "winter_files": [
+        {
+          "name": "02_wallis_west_part_001.kmz",
+          "size_mb": 49.1
+        },
+        {
+          "name": "02_wallis_west_part_002.kmz",
+          "size_mb": 47.9
+        },
+        {
+          "name": "02_wallis_west_part_003.kmz",
+          "size_mb": 48.9
+        },
+        {
+          "name": "02_wallis_west_part_004.kmz",
+          "size_mb": 22.2
+        }
+      ],
+      "summer_files": [
+        {
+          "name": "02_wallis_west_summer_part_001.kmz",
+          "size_mb": 52.5
+        },
+        {
+          "name": "02_wallis_west_summer_part_002.kmz",
+          "size_mb": 51.6
+        },
+        {
+          "name": "02_wallis_west_summer_part_003.kmz",
+          "size_mb": 53.2
+        },
+        {
+          "name": "02_wallis_west_summer_part_004.kmz",
+          "size_mb": 23.6
+        }
+      ],
+      "total_size_mb": 168.1,
+      "winter_size_mb": 168.1,
+      "summer_size_mb": 180.9,
+      "total_tiles_est": 250,
+      "seasons": [
+        "winter",
+        "summer"
+      ]
+    },
+    {
+      "n": 3,
+      "name": "wallis_zentral",
+      "bbox_lv95": [
+        2600000,
+        1100000,
+        2645000,
+        1145000
+      ],
+      "desc": "Crans-Montana, Anniviers, Heremence",
+      "files": [
+        {
+          "name": "03_wallis_zentral_part_001.kmz",
+          "size_mb": 49.7
+        },
+        {
+          "name": "03_wallis_zentral_part_002.kmz",
+          "size_mb": 46.7
+        },
+        {
+          "name": "03_wallis_zentral_part_003.kmz",
+          "size_mb": 47.1
+        },
+        {
+          "name": "03_wallis_zentral_part_004.kmz",
+          "size_mb": 1.7
+        }
+      ],
+      "winter_files": [
+        {
+          "name": "03_wallis_zentral_part_001.kmz",
+          "size_mb": 49.7
+        },
+        {
+          "name": "03_wallis_zentral_part_002.kmz",
+          "size_mb": 46.7
+        },
+        {
+          "name": "03_wallis_zentral_part_003.kmz",
+          "size_mb": 47.1
+        },
+        {
+          "name": "03_wallis_zentral_part_004.kmz",
+          "size_mb": 1.7
+        }
+      ],
+      "summer_files": [
+        {
+          "name": "03_wallis_zentral_summer_part_001.kmz",
+          "size_mb": 54.6
+        },
+        {
+          "name": "03_wallis_zentral_summer_part_002.kmz",
+          "size_mb": 50.1
+        },
+        {
+          "name": "03_wallis_zentral_summer_part_003.kmz",
+          "size_mb": 51.9
+        },
+        {
+          "name": "03_wallis_zentral_summer_part_004.kmz",
+          "size_mb": 1.8
+        }
+      ],
+      "total_size_mb": 145.2,
+      "winter_size_mb": 145.2,
+      "summer_size_mb": 158.4,
+      "total_tiles_est": 202,
+      "seasons": [
+        "winter",
+        "summer"
+      ]
+    },
+    {
+      "n": 4,
+      "name": "mattertal_saastal",
+      "bbox_lv95": [
+        2620000,
+        1085000,
+        2660000,
+        1125000
+      ],
+      "desc": "Zermatt, Saas-Fee, Monte Rosa",
+      "files": [
+        {
+          "name": "04_mattertal_saastal_part_001.kmz",
+          "size_mb": 45.3
+        },
+        {
+          "name": "04_mattertal_saastal_part_002.kmz",
+          "size_mb": 49.6
+        },
+        {
+          "name": "04_mattertal_saastal_part_003.kmz",
+          "size_mb": 6.3
+        }
+      ],
+      "winter_files": [
+        {
+          "name": "04_mattertal_saastal_part_001.kmz",
+          "size_mb": 45.3
+        },
+        {
+          "name": "04_mattertal_saastal_part_002.kmz",
+          "size_mb": 49.6
+        },
+        {
+          "name": "04_mattertal_saastal_part_003.kmz",
+          "size_mb": 6.3
+        }
+      ],
+      "summer_files": [
+        {
+          "name": "04_mattertal_saastal_summer_part_001.kmz",
+          "size_mb": 50.4
+        },
+        {
+          "name": "04_mattertal_saastal_summer_part_002.kmz",
+          "size_mb": 53.9
+        },
+        {
+          "name": "04_mattertal_saastal_summer_part_003.kmz",
+          "size_mb": 5.7
+        }
+      ],
+      "total_size_mb": 101.2,
+      "winter_size_mb": 101.2,
+      "summer_size_mb": 110.0,
+      "total_tiles_est": 160,
+      "seasons": [
+        "winter",
+        "summer"
+      ]
+    },
+    {
+      "n": 5,
+      "name": "goms_aletsch",
+      "bbox_lv95": [
+        2640000,
+        1130000,
+        2685000,
+        1170000
+      ],
+      "desc": "Aletsch, Furka, Grimsel, Eggishorn",
+      "files": [
+        {
+          "name": "05_goms_aletsch_part_001.kmz",
+          "size_mb": 48.7
+        },
+        {
+          "name": "05_goms_aletsch_part_002.kmz",
+          "size_mb": 48.3
+        },
+        {
+          "name": "05_goms_aletsch_part_003.kmz",
+          "size_mb": 29.6
+        }
+      ],
+      "winter_files": [
+        {
+          "name": "05_goms_aletsch_part_001.kmz",
+          "size_mb": 48.7
+        },
+        {
+          "name": "05_goms_aletsch_part_002.kmz",
+          "size_mb": 48.3
+        },
+        {
+          "name": "05_goms_aletsch_part_003.kmz",
+          "size_mb": 29.6
+        }
+      ],
+      "summer_files": [
+        {
+          "name": "05_goms_aletsch_summer_part_001.kmz",
+          "size_mb": 52.8
+        },
+        {
+          "name": "05_goms_aletsch_summer_part_002.kmz",
+          "size_mb": 52.0
+        },
+        {
+          "name": "05_goms_aletsch_summer_part_003.kmz",
+          "size_mb": 31.8
+        }
+      ],
+      "total_size_mb": 126.6,
+      "winter_size_mb": 126.6,
+      "summer_size_mb": 136.6,
+      "total_tiles_est": 180,
+      "seasons": [
+        "winter",
+        "summer"
+      ]
+    },
+    {
+      "n": 6,
+      "name": "berner_oberland_west",
+      "bbox_lv95": [
+        2580000,
+        1140000,
+        2625000,
+        1180000
+      ],
+      "desc": "Gstaad, Adelboden, Wildhorn, Wildstrubel",
+      "files": [
+        {
+          "name": "06_berner_oberland_west_part_001.kmz",
+          "size_mb": 41.8
+        },
+        {
+          "name": "06_berner_oberland_west_part_002.kmz",
+          "size_mb": 42.9
+        },
+        {
+          "name": "06_berner_oberland_west_part_003.kmz",
+          "size_mb": 26.5
+        }
+      ],
+      "winter_files": [
+        {
+          "name": "06_berner_oberland_west_part_001.kmz",
+          "size_mb": 41.8
+        },
+        {
+          "name": "06_berner_oberland_west_part_002.kmz",
+          "size_mb": 42.9
+        },
+        {
+          "name": "06_berner_oberland_west_part_003.kmz",
+          "size_mb": 26.5
+        }
+      ],
+      "summer_files": [
+        {
+          "name": "06_berner_oberland_west_summer_part_001.kmz",
+          "size_mb": 44.2
+        },
+        {
+          "name": "06_berner_oberland_west_summer_part_002.kmz",
+          "size_mb": 45.3
+        },
+        {
+          "name": "06_berner_oberland_west_summer_part_003.kmz",
+          "size_mb": 28.5
+        }
+      ],
+      "total_size_mb": 111.2,
+      "winter_size_mb": 111.2,
+      "summer_size_mb": 118.0,
+      "total_tiles_est": 180,
+      "seasons": [
+        "winter",
+        "summer"
+      ]
+    },
+    {
+      "n": 7,
+      "name": "jungfrau_region",
+      "bbox_lv95": [
+        2625000,
+        1150000,
+        2670000,
+        1185000
+      ],
+      "desc": "Grindelwald, Lauterbrunnen, Eiger",
+      "files": [
+        {
+          "name": "07_jungfrau_region_part_001.kmz",
+          "size_mb": 45.0
+        },
+        {
+          "name": "07_jungfrau_region_part_002.kmz",
+          "size_mb": 49.7
+        },
+        {
+          "name": "07_jungfrau_region_part_003.kmz",
+          "size_mb": 6.0
+        }
+      ],
+      "winter_files": [
+        {
+          "name": "07_jungfrau_region_part_001.kmz",
+          "size_mb": 45.0
+        },
+        {
+          "name": "07_jungfrau_region_part_002.kmz",
+          "size_mb": 49.7
+        },
+        {
+          "name": "07_jungfrau_region_part_003.kmz",
+          "size_mb": 6.0
+        }
+      ],
+      "summer_files": [
+        {
+          "name": "07_jungfrau_region_summer_part_001.kmz",
+          "size_mb": 48.0
+        },
+        {
+          "name": "07_jungfrau_region_summer_part_002.kmz",
+          "size_mb": 53.8
+        },
+        {
+          "name": "07_jungfrau_region_summer_part_003.kmz",
+          "size_mb": 6.3
+        }
+      ],
+      "total_size_mb": 100.7,
+      "winter_size_mb": 100.7,
+      "summer_size_mb": 108.1,
+      "total_tiles_est": 158,
+      "seasons": [
+        "winter",
+        "summer"
+      ]
+    },
+    {
+      "n": 8,
+      "name": "zentralschweiz",
+      "bbox_lv95": [
+        2675000,
+        1180000,
+        2720000,
+        1220000
+      ],
+      "desc": "Engelberg, Susten, Mythen, Hoch-Ybrig",
+      "files": [
+        {
+          "name": "08_zentralschweiz_part_001.kmz",
+          "size_mb": 41.0
+        },
+        {
+          "name": "08_zentralschweiz_part_002.kmz",
+          "size_mb": 45.9
+        },
+        {
+          "name": "08_zentralschweiz_part_003.kmz",
+          "size_mb": 30.9
+        }
+      ],
+      "winter_files": [
+        {
+          "name": "08_zentralschweiz_part_001.kmz",
+          "size_mb": 41.0
+        },
+        {
+          "name": "08_zentralschweiz_part_002.kmz",
+          "size_mb": 45.9
+        },
+        {
+          "name": "08_zentralschweiz_part_003.kmz",
+          "size_mb": 30.9
+        }
+      ],
+      "summer_files": [
+        {
+          "name": "08_zentralschweiz_summer_part_001.kmz",
+          "size_mb": 43.0
+        },
+        {
+          "name": "08_zentralschweiz_summer_part_002.kmz",
+          "size_mb": 49.9
+        },
+        {
+          "name": "08_zentralschweiz_summer_part_003.kmz",
+          "size_mb": 33.8
+        }
+      ],
+      "total_size_mb": 117.8,
+      "winter_size_mb": 117.8,
+      "summer_size_mb": 126.7,
+      "total_tiles_est": 180,
+      "seasons": [
+        "winter",
+        "summer"
+      ]
+    },
+    {
+      "n": 9,
+      "name": "glarus_surselva",
+      "bbox_lv95": [
+        2700000,
+        1170000,
+        2745000,
+        1210000
+      ],
+      "desc": "Toedi, Disentis, Vals, Maderan",
+      "files": [
+        {
+          "name": "09_glarus_surselva_part_001.kmz",
+          "size_mb": 46.5
+        },
+        {
+          "name": "09_glarus_surselva_part_002.kmz",
+          "size_mb": 47.4
+        },
+        {
+          "name": "09_glarus_surselva_part_003.kmz",
+          "size_mb": 27.3
+        }
+      ],
+      "winter_files": [
+        {
+          "name": "09_glarus_surselva_part_001.kmz",
+          "size_mb": 46.5
+        },
+        {
+          "name": "09_glarus_surselva_part_002.kmz",
+          "size_mb": 47.4
+        },
+        {
+          "name": "09_glarus_surselva_part_003.kmz",
+          "size_mb": 27.3
+        }
+      ],
+      "summer_files": [
+        {
+          "name": "09_glarus_surselva_summer_part_001.kmz",
+          "size_mb": 50.2
+        },
+        {
+          "name": "09_glarus_surselva_summer_part_002.kmz",
+          "size_mb": 51.8
+        },
+        {
+          "name": "09_glarus_surselva_summer_part_003.kmz",
+          "size_mb": 29.1
+        }
+      ],
+      "total_size_mb": 121.2,
+      "winter_size_mb": 121.2,
+      "summer_size_mb": 131.1,
+      "total_tiles_est": 180,
+      "seasons": [
+        "winter",
+        "summer"
+      ]
+    },
+    {
+      "n": 10,
+      "name": "davos_klosters",
+      "bbox_lv95": [
+        2770000,
+        1180000,
+        2810000,
+        1215000
+      ],
+      "desc": "Davos, Klosters, Silvretta, Praettigau",
+      "files": [
+        {
+          "name": "10_davos_klosters_part_001.kmz",
+          "size_mb": 42.7
+        },
+        {
+          "name": "10_davos_klosters_part_002.kmz",
+          "size_mb": 40.6
+        },
+        {
+          "name": "10_davos_klosters_part_003.kmz",
+          "size_mb": 0.5
+        }
+      ],
+      "winter_files": [
+        {
+          "name": "10_davos_klosters_part_001.kmz",
+          "size_mb": 42.7
+        },
+        {
+          "name": "10_davos_klosters_part_002.kmz",
+          "size_mb": 40.6
+        },
+        {
+          "name": "10_davos_klosters_part_003.kmz",
+          "size_mb": 0.5
+        }
+      ],
+      "summer_files": [
+        {
+          "name": "10_davos_klosters_summer_part_001.kmz",
+          "size_mb": 45.4
+        },
+        {
+          "name": "10_davos_klosters_summer_part_002.kmz",
+          "size_mb": 43.7
+        },
+        {
+          "name": "10_davos_klosters_summer_part_003.kmz",
+          "size_mb": 0.5
+        }
+      ],
+      "total_size_mb": 83.8,
+      "winter_size_mb": 83.8,
+      "summer_size_mb": 89.6,
+      "total_tiles_est": 140,
+      "seasons": [
+        "winter",
+        "summer"
+      ]
+    },
+    {
+      "n": 11,
+      "name": "engadin",
+      "bbox_lv95": [
+        2780000,
+        1140000,
+        2820000,
+        1180000
+      ],
+      "desc": "St. Moritz, Bernina, Bregaglia, Albula",
+      "files": [
+        {
+          "name": "11_engadin_part_001.kmz",
+          "size_mb": 43.9
+        },
+        {
+          "name": "11_engadin_part_002.kmz",
+          "size_mb": 42.5
+        },
+        {
+          "name": "11_engadin_part_003.kmz",
+          "size_mb": 19.1
+        }
+      ],
+      "winter_files": [
+        {
+          "name": "11_engadin_part_001.kmz",
+          "size_mb": 43.9
+        },
+        {
+          "name": "11_engadin_part_002.kmz",
+          "size_mb": 42.5
+        },
+        {
+          "name": "11_engadin_part_003.kmz",
+          "size_mb": 19.1
+        }
+      ],
+      "summer_files": [
+        {
+          "name": "11_engadin_summer_part_001.kmz",
+          "size_mb": 47.7
+        },
+        {
+          "name": "11_engadin_summer_part_002.kmz",
+          "size_mb": 46.5
+        },
+        {
+          "name": "11_engadin_summer_part_003.kmz",
+          "size_mb": 19.9
+        }
+      ],
+      "total_size_mb": 105.5,
+      "winter_size_mb": 105.5,
+      "summer_size_mb": 114.1,
+      "total_tiles_est": 160,
+      "seasons": [
+        "winter",
+        "summer"
+      ]
+    },
+    {
+      "n": 12,
+      "name": "tessin_gotthard",
+      "bbox_lv95": [
+        2680000,
+        1095000,
+        2730000,
+        1145000
+      ],
+      "desc": "Gotthard, Lukmanier, Bedretto, Maggia",
+      "files": [
+        {
+          "name": "12_tessin_gotthard_part_001.kmz",
+          "size_mb": 47.3
+        },
+        {
+          "name": "12_tessin_gotthard_part_002.kmz",
+          "size_mb": 46.6
+        },
+        {
+          "name": "12_tessin_gotthard_part_003.kmz",
+          "size_mb": 40.0
+        },
+        {
+          "name": "12_tessin_gotthard_part_004.kmz",
+          "size_mb": 25.2
+        }
+      ],
+      "winter_files": [
+        {
+          "name": "12_tessin_gotthard_part_001.kmz",
+          "size_mb": 47.3
+        },
+        {
+          "name": "12_tessin_gotthard_part_002.kmz",
+          "size_mb": 46.6
+        },
+        {
+          "name": "12_tessin_gotthard_part_003.kmz",
+          "size_mb": 40.0
+        },
+        {
+          "name": "12_tessin_gotthard_part_004.kmz",
+          "size_mb": 25.2
+        }
+      ],
+      "summer_files": [
+        {
+          "name": "12_tessin_gotthard_summer_part_001.kmz",
+          "size_mb": 52.0
+        },
+        {
+          "name": "12_tessin_gotthard_summer_part_002.kmz",
+          "size_mb": 51.3
+        },
+        {
+          "name": "12_tessin_gotthard_summer_part_003.kmz",
+          "size_mb": 43.4
+        },
+        {
+          "name": "12_tessin_gotthard_summer_part_004.kmz",
+          "size_mb": 26.9
+        }
+      ],
+      "total_size_mb": 159.1,
+      "winter_size_mb": 159.1,
+      "summer_size_mb": 173.6,
+      "total_tiles_est": 250,
+      "seasons": [
+        "winter",
+        "summer"
+      ]
+    },
+    {
+      "n": 13,
+      "name": "alpstein_toggenburg",
+      "bbox_lv95": [
+        2720000,
+        1220000,
+        2770000,
+        1255000
+      ],
+      "desc": "Saentis, Churfirsten, Wildhuser Schafberg",
+      "files": [
+        {
+          "name": "13_alpstein_toggenburg_part_001.kmz",
+          "size_mb": 41.7
+        },
+        {
+          "name": "13_alpstein_toggenburg_part_002.kmz",
+          "size_mb": 43.5
+        },
+        {
+          "name": "13_alpstein_toggenburg_part_003.kmz",
+          "size_mb": 15.3
+        }
+      ],
+      "winter_files": [
+        {
+          "name": "13_alpstein_toggenburg_part_001.kmz",
+          "size_mb": 41.7
+        },
+        {
+          "name": "13_alpstein_toggenburg_part_002.kmz",
+          "size_mb": 43.5
+        },
+        {
+          "name": "13_alpstein_toggenburg_part_003.kmz",
+          "size_mb": 15.3
+        }
+      ],
+      "summer_files": [
+        {
+          "name": "13_alpstein_toggenburg_summer_part_001.kmz",
+          "size_mb": 44.1
+        },
+        {
+          "name": "13_alpstein_toggenburg_summer_part_002.kmz",
+          "size_mb": 45.2
+        },
+        {
+          "name": "13_alpstein_toggenburg_summer_part_003.kmz",
+          "size_mb": 16.2
+        }
+      ],
+      "total_size_mb": 100.5,
+      "winter_size_mb": 100.5,
+      "summer_size_mb": 105.5,
+      "total_tiles_est": 175,
+      "seasons": [
+        "winter",
+        "summer"
+      ]
+    },
+    {
+      "n": 14,
+      "name": "berner_voralpen",
+      "bbox_lv95": [
+        2615000,
+        1175000,
+        2660000,
+        1210000
+      ],
+      "desc": "Hohgant, Brienzer Rothorn, Sigriswil",
+      "files": [
+        {
+          "name": "14_berner_voralpen_part_001.kmz",
+          "size_mb": 43.6
+        },
+        {
+          "name": "14_berner_voralpen_part_002.kmz",
+          "size_mb": 42.9
+        },
+        {
+          "name": "14_berner_voralpen_part_003.kmz",
+          "size_mb": 4.6
+        }
+      ],
+      "winter_files": [
+        {
+          "name": "14_berner_voralpen_part_001.kmz",
+          "size_mb": 43.6
+        },
+        {
+          "name": "14_berner_voralpen_part_002.kmz",
+          "size_mb": 42.9
+        },
+        {
+          "name": "14_berner_voralpen_part_003.kmz",
+          "size_mb": 4.6
+        }
+      ],
+      "summer_files": [
+        {
+          "name": "14_berner_voralpen_summer_part_001.kmz",
+          "size_mb": 45.5
+        },
+        {
+          "name": "14_berner_voralpen_summer_part_002.kmz",
+          "size_mb": 44.8
+        },
+        {
+          "name": "14_berner_voralpen_summer_part_003.kmz",
+          "size_mb": 4.9
+        }
+      ],
+      "total_size_mb": 91.1,
+      "winter_size_mb": 91.1,
+      "summer_size_mb": 95.2,
+      "total_tiles_est": 158,
+      "seasons": [
+        "winter",
+        "summer"
+      ]
+    },
+    {
+      "n": 15,
+      "name": "fribourger_voralpen",
+      "bbox_lv95": [
+        2580000,
+        1170000,
+        2615000,
+        1195000
+      ],
+      "desc": "Gantrisch, Kaiseregg, Schwarzsee",
+      "files": [
+        {
+          "name": "15_fribourger_voralpen_part_001.kmz",
+          "size_mb": 38.7
+        },
+        {
+          "name": "15_fribourger_voralpen_part_002.kmz",
+          "size_mb": 8.2
+        }
+      ],
+      "winter_files": [
+        {
+          "name": "15_fribourger_voralpen_part_001.kmz",
+          "size_mb": 38.7
+        },
+        {
+          "name": "15_fribourger_voralpen_part_002.kmz",
+          "size_mb": 8.2
+        }
+      ],
+      "summer_files": [
+        {
+          "name": "15_fribourger_voralpen_summer_part_001.kmz",
+          "size_mb": 40.1
+        },
+        {
+          "name": "15_fribourger_voralpen_summer_part_002.kmz",
+          "size_mb": 8.8
+        }
+      ],
+      "total_size_mb": 46.9,
+      "winter_size_mb": 46.9,
+      "summer_size_mb": 48.9,
+      "total_tiles_est": 88,
+      "seasons": [
+        "winter",
+        "summer"
+      ]
+    },
+    {
+      "n": 16,
+      "name": "glarner_voralpen",
+      "bbox_lv95": [
+        2730000,
+        1200000,
+        2770000,
+        1230000
+      ],
+      "desc": "Flumserberg, Pizol, Walensee",
+      "files": [
+        {
+          "name": "16_glarner_voralpen_part_001.kmz",
+          "size_mb": 43.6
+        },
+        {
+          "name": "16_glarner_voralpen_part_002.kmz",
+          "size_mb": 30.1
+        }
+      ],
+      "winter_files": [
+        {
+          "name": "16_glarner_voralpen_part_001.kmz",
+          "size_mb": 43.6
+        },
+        {
+          "name": "16_glarner_voralpen_part_002.kmz",
+          "size_mb": 30.1
+        }
+      ],
+      "summer_files": [
+        {
+          "name": "16_glarner_voralpen_summer_part_001.kmz",
+          "size_mb": 45.6
+        },
+        {
+          "name": "16_glarner_voralpen_summer_part_002.kmz",
+          "size_mb": 32.0
+        }
+      ],
+      "total_size_mb": 73.7,
+      "winter_size_mb": 73.7,
+      "summer_size_mb": 77.6,
+      "total_tiles_est": 120,
+      "seasons": [
+        "winter",
+        "summer"
+      ]
+    },
+    {
+      "n": 17,
+      "name": "spluegen_hinterrhein",
+      "bbox_lv95": [
+        2745000,
+        1140000,
+        2780000,
+        1175000
+      ],
+      "desc": "Spluegen, Heinzenberg, Vals",
+      "files": [
+        {
+          "name": "17_spluegen_hinterrhein_part_001.kmz",
+          "size_mb": 41.9
+        },
+        {
+          "name": "17_spluegen_hinterrhein_part_002.kmz",
+          "size_mb": 40.9
+        },
+        {
+          "name": "17_spluegen_hinterrhein_part_003.kmz",
+          "size_mb": 0.6
+        }
+      ],
+      "winter_files": [
+        {
+          "name": "17_spluegen_hinterrhein_part_001.kmz",
+          "size_mb": 41.9
+        },
+        {
+          "name": "17_spluegen_hinterrhein_part_002.kmz",
+          "size_mb": 40.9
+        },
+        {
+          "name": "17_spluegen_hinterrhein_part_003.kmz",
+          "size_mb": 0.6
+        }
+      ],
+      "summer_files": [
+        {
+          "name": "17_spluegen_hinterrhein_summer_part_001.kmz",
+          "size_mb": 45.3
+        },
+        {
+          "name": "17_spluegen_hinterrhein_summer_part_002.kmz",
+          "size_mb": 44.2
+        },
+        {
+          "name": "17_spluegen_hinterrhein_summer_part_003.kmz",
+          "size_mb": 0.6
+        }
+      ],
+      "total_size_mb": 83.4,
+      "winter_size_mb": 83.4,
+      "summer_size_mb": 90.1,
+      "total_tiles_est": 122,
+      "seasons": [
+        "winter",
+        "summer"
+      ]
+    },
+    {
+      "n": 18,
+      "name": "muenstertal_ofenpass",
+      "bbox_lv95": [
+        2800000,
+        1170000,
+        2830000,
+        1200000
+      ],
+      "desc": "Muenstertal, Scuol, Ofenpass",
+      "files": [
+        {
+          "name": "18_muenstertal_ofenpass_part_001.kmz",
+          "size_mb": 43.7
+        },
+        {
+          "name": "18_muenstertal_ofenpass_part_002.kmz",
+          "size_mb": 19.8
+        }
+      ],
+      "winter_files": [
+        {
+          "name": "18_muenstertal_ofenpass_part_001.kmz",
+          "size_mb": 43.7
+        },
+        {
+          "name": "18_muenstertal_ofenpass_part_002.kmz",
+          "size_mb": 19.8
+        }
+      ],
+      "summer_files": [
+        {
+          "name": "18_muenstertal_ofenpass_summer_part_001.kmz",
+          "size_mb": 47.4
+        },
+        {
+          "name": "18_muenstertal_ofenpass_summer_part_002.kmz",
+          "size_mb": 21.3
+        }
+      ],
+      "total_size_mb": 63.5,
+      "winter_size_mb": 63.5,
+      "summer_size_mb": 68.7,
+      "total_tiles_est": 90,
+      "seasons": [
+        "winter",
+        "summer"
+      ]
+    },
+    {
+      "n": 19,
+      "name": "jura_west",
+      "bbox_lv95": [
+        2510000,
+        1175000,
+        2570000,
+        1220000
+      ],
+      "desc": "Mt. Tendre, Suchet, Vue des Alpes",
+      "files": [
+        {
+          "name": "19_jura_west_part_001.kmz",
+          "size_mb": 33.8
+        },
+        {
+          "name": "19_jura_west_part_002.kmz",
+          "size_mb": 32.2
+        },
+        {
+          "name": "19_jura_west_part_003.kmz",
+          "size_mb": 34.0
+        },
+        {
+          "name": "19_jura_west_part_004.kmz",
+          "size_mb": 4.3
+        }
+      ],
+      "winter_files": [
+        {
+          "name": "19_jura_west_part_001.kmz",
+          "size_mb": 33.8
+        },
+        {
+          "name": "19_jura_west_part_002.kmz",
+          "size_mb": 32.2
+        },
+        {
+          "name": "19_jura_west_part_003.kmz",
+          "size_mb": 34.0
+        },
+        {
+          "name": "19_jura_west_part_004.kmz",
+          "size_mb": 4.3
+        }
+      ],
+      "summer_files": [
+        {
+          "name": "19_jura_west_summer_part_001.kmz",
+          "size_mb": 34.0
+        },
+        {
+          "name": "19_jura_west_summer_part_002.kmz",
+          "size_mb": 32.3
+        },
+        {
+          "name": "19_jura_west_summer_part_003.kmz",
+          "size_mb": 34.2
+        },
+        {
+          "name": "19_jura_west_summer_part_004.kmz",
+          "size_mb": 4.4
+        }
+      ],
+      "total_size_mb": 104.3,
+      "winter_size_mb": 104.3,
+      "summer_size_mb": 104.9,
+      "total_tiles_est": 270,
+      "seasons": [
+        "winter",
+        "summer"
+      ]
+    },
+    {
+      "n": 20,
+      "name": "jura_ost",
+      "bbox_lv95": [
+        2580000,
+        1220000,
+        2620000,
+        1250000
+      ],
+      "desc": "Weissenstein, Belchen, Hasenmatt",
+      "files": [
+        {
+          "name": "20_jura_ost_part_001.kmz",
+          "size_mb": 40.9
+        },
+        {
+          "name": "20_jura_ost_part_002.kmz",
+          "size_mb": 23.0
+        }
+      ],
+      "winter_files": [
+        {
+          "name": "20_jura_ost_part_001.kmz",
+          "size_mb": 40.9
+        },
+        {
+          "name": "20_jura_ost_part_002.kmz",
+          "size_mb": 23.0
+        }
+      ],
+      "summer_files": [
+        {
+          "name": "20_jura_ost_summer_part_001.kmz",
+          "size_mb": 43.6
+        },
+        {
+          "name": "20_jura_ost_summer_part_002.kmz",
+          "size_mb": 24.0
+        }
+      ],
+      "total_size_mb": 63.9,
+      "winter_size_mb": 63.9,
+      "summer_size_mb": 67.6,
+      "total_tiles_est": 120,
+      "seasons": [
+        "winter",
+        "summer"
+      ]
+    },
+    {
+      "n": 21,
+      "name": "zuerich_villigen",
+      "bbox_lv95": [
+        2640000,
+        1225000,
+        2710000,
+        1273000
+      ],
+      "desc": "Zuerich, ETH/Uni, Uetliberg, Sihlwald + Tuerlersee + full Albis ridge, Pfannenstiel, Greifensee, Limmattal (Baden, Wettingen, Brugg), Aaretal (Aarau), Villigen/PSI, Buelach, Doettingen",
+      "files": [
+        {
+          "name": "21_zuerich_villigen_part_001.kmz",
+          "size_mb": 39.4
+        },
+        {
+          "name": "21_zuerich_villigen_part_002.kmz",
+          "size_mb": 42.9
+        },
+        {
+          "name": "21_zuerich_villigen_part_003.kmz",
+          "size_mb": 44.1
+        },
+        {
+          "name": "21_zuerich_villigen_part_004.kmz",
+          "size_mb": 39.7
+        },
+        {
+          "name": "21_zuerich_villigen_part_005.kmz",
+          "size_mb": 15.4
+        }
+      ],
+      "winter_files": [
+        {
+          "name": "21_zuerich_villigen_part_001.kmz",
+          "size_mb": 39.4
+        },
+        {
+          "name": "21_zuerich_villigen_part_002.kmz",
+          "size_mb": 42.9
+        },
+        {
+          "name": "21_zuerich_villigen_part_003.kmz",
+          "size_mb": 44.1
+        },
+        {
+          "name": "21_zuerich_villigen_part_004.kmz",
+          "size_mb": 39.7
+        },
+        {
+          "name": "21_zuerich_villigen_part_005.kmz",
+          "size_mb": 15.4
+        }
+      ],
+      "summer_files": [
+        {
+          "name": "21_zuerich_villigen_summer_part_001.kmz",
+          "size_mb": 40.9
+        },
+        {
+          "name": "21_zuerich_villigen_summer_part_002.kmz",
+          "size_mb": 44.9
+        },
+        {
+          "name": "21_zuerich_villigen_summer_part_003.kmz",
+          "size_mb": 45.5
+        },
+        {
+          "name": "21_zuerich_villigen_summer_part_004.kmz",
+          "size_mb": 40.6
+        },
+        {
+          "name": "21_zuerich_villigen_summer_part_005.kmz",
+          "size_mb": 16.1
+        }
+      ],
+      "total_size_mb": 181.5,
+      "winter_size_mb": 181.5,
+      "summer_size_mb": 188.0,
+      "total_tiles_est": 336,
+      "seasons": [
+        "winter",
+        "summer"
+      ]
+    },
+    {
+      "n": 22,
+      "name": "lac_leman",
+      "bbox_lv95": [
+        2495000,
+        1115000,
+        2555000,
+        1165000
+      ],
+      "desc": "Geneva, Lausanne, Vevey, Yverdon, La Cote, Lavaux",
+      "files": [],
+      "winter_files": [],
+      "summer_files": [
+        {
+          "name": "22_lac_leman_summer_part_001.kmz",
+          "size_mb": 35.9
+        },
+        {
+          "name": "22_lac_leman_summer_part_002.kmz",
+          "size_mb": 27.6
+        },
+        {
+          "name": "22_lac_leman_summer_part_003.kmz",
+          "size_mb": 27.0
+        },
+        {
+          "name": "22_lac_leman_summer_part_004.kmz",
+          "size_mb": 15.4
+        }
+      ],
+      "total_size_mb": 0,
+      "winter_size_mb": 0,
+      "summer_size_mb": 105.9,
+      "total_tiles_est": 300,
+      "seasons": [
+        "summer"
+      ]
+    },
+    {
+      "n": 23,
+      "name": "mittelland_west",
+      "bbox_lv95": [
+        2580000,
+        1195000,
+        2625000,
+        1230000
+      ],
+      "desc": "Bern, Burgdorf, Solothurn, Emmental West",
+      "files": [],
+      "winter_files": [],
+      "summer_files": [
+        {
+          "name": "23_mittelland_west_summer_part_001.kmz",
+          "size_mb": 39.1
+        },
+        {
+          "name": "23_mittelland_west_summer_part_002.kmz",
+          "size_mb": 41.1
+        },
+        {
+          "name": "23_mittelland_west_summer_part_003.kmz",
+          "size_mb": 3.5
+        }
+      ],
+      "total_size_mb": 0,
+      "winter_size_mb": 0,
+      "summer_size_mb": 83.7,
+      "total_tiles_est": 158,
+      "seasons": [
+        "summer"
+      ]
+    },
+    {
+      "n": 24,
+      "name": "mittelland_zentral",
+      "bbox_lv95": [
+        2640000,
+        1205000,
+        2685000,
+        1245000
+      ],
+      "desc": "Luzern, Zug, Aargau Sud, Rigi, Pilatus foreland",
+      "files": [],
+      "winter_files": [],
+      "summer_files": [
+        {
+          "name": "24_mittelland_zentral_summer_part_001.kmz",
+          "size_mb": 40.0
+        },
+        {
+          "name": "24_mittelland_zentral_summer_part_002.kmz",
+          "size_mb": 37.1
+        },
+        {
+          "name": "24_mittelland_zentral_summer_part_003.kmz",
+          "size_mb": 25.4
+        }
+      ],
+      "total_size_mb": 0,
+      "winter_size_mb": 0,
+      "summer_size_mb": 102.5,
+      "total_tiles_est": 180,
+      "seasons": [
+        "summer"
+      ]
+    },
+    {
+      "n": 25,
+      "name": "ostschweiz_thurgau",
+      "bbox_lv95": [
+        2715000,
+        1255000,
+        2765000,
+        1290000
+      ],
+      "desc": "Bodensee, Thurgau, St Gallen lowland, Appenzeller Vorland",
+      "files": [],
+      "winter_files": [],
+      "summer_files": [
+        {
+          "name": "25_ostschweiz_thurgau_summer_part_001.kmz",
+          "size_mb": 32.0
+        },
+        {
+          "name": "25_ostschweiz_thurgau_summer_part_002.kmz",
+          "size_mb": 32.2
+        },
+        {
+          "name": "25_ostschweiz_thurgau_summer_part_003.kmz",
+          "size_mb": 11.6
+        }
+      ],
+      "total_size_mb": 0,
+      "winter_size_mb": 0,
+      "summer_size_mb": 75.8,
+      "total_tiles_est": 175,
+      "seasons": [
+        "summer"
+      ]
+    },
+    {
+      "n": 26,
+      "name": "sottoceneri",
+      "bbox_lv95": [
+        2700000,
+        1075000,
+        2750000,
+        1115000
+      ],
+      "desc": "Lugano, Mendrisio, Monte Bre, Monte San Salvatore",
+      "files": [],
+      "winter_files": [],
+      "summer_files": [
+        {
+          "name": "26_sottoceneri_summer_part_001.kmz",
+          "size_mb": 43.8
+        },
+        {
+          "name": "26_sottoceneri_summer_part_002.kmz",
+          "size_mb": 38.3
+        },
+        {
+          "name": "26_sottoceneri_summer_part_003.kmz",
+          "size_mb": 3.6
+        }
+      ],
+      "total_size_mb": 0,
+      "winter_size_mb": 0,
+      "summer_size_mb": 85.7,
+      "total_tiles_est": 200,
+      "seasons": [
+        "summer"
+      ]
+    }
+  ]
+}
