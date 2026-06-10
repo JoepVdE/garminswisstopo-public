@@ -245,10 +245,12 @@
       if (input) setSeason(input.value);
     }));
 
-  setSeason('winter');
-
   // ---------------------------------------------------------------------
-  // Legend (bottom-right) — mirrors the route palette baked into the KMZ.
+  // Legend (bottom-right) — must be set up BEFORE setSeason('winter') so the
+  // first renderLegend() call doesn't crash on `legendDiv` being in the
+  // temporal dead zone of its `let` declaration. (That used to silently kill
+  // the script and prevent the drop-handler wiring at the bottom from
+  // registering.)
   // ---------------------------------------------------------------------
   const legendCtl = L.control({ position: 'bottomright' });
   let legendDiv = null;
@@ -257,6 +259,8 @@
     return legendDiv;
   };
   legendCtl.addTo(map);
+
+  setSeason('winter');
 
   function renderLegend() {
     if (!legendDiv) return;
