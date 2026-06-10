@@ -1264,11 +1264,21 @@
         return;
       }
       let msg = `⚠ Build refused: ${resp.status} ${body.error || ""}`;
-      if (resp.status >= 500) {
+      if (resp.status === 502 && body.github_status === 404) {
+        msg = `⚠ The build dispatch token cannot reach the build repo.
+               (HTTP 502, GitHub 404). The maintainer's fine-grained PAT in
+               the Cloudflare Worker (<code>GITHUB_TOKEN</code>) is most likely
+               expired, was rotated, or was created without explicit access to
+               the private build repo. Fix: rotate the PAT and run
+               <code>wrangler secret put GITHUB_TOKEN</code>.`;
+      } else if (resp.status === 502) {
+        msg = `⚠ The build service couldn't reach GitHub (HTTP 502, GitHub
+               ${body.github_status || "?"}). Try again in a few minutes; if
+               it keeps failing, the maintainer needs to check the worker
+               token. ${body.error || ""}`;
+      } else if (resp.status >= 500) {
         msg = `⚠ The build service is temporarily unavailable (${resp.status}).
-               This usually means the GitHub Actions dispatch failed. Try again
-               in a few minutes. If it keeps failing, the maintainer needs to
-               check the worker token. ${body.error || ""}`;
+               Try again in a few minutes. ${body.error || ""}`;
       }
       progEl.innerHTML = `<div class="stat-box warn">${msg}</div>`;
       return;
