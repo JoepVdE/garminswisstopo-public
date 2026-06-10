@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <title>Swisstopo for Garmin watches</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="description" content="Free Swisstopo LK25 maps with slope shading and ski/hiking routes for Garmin Epix and Fenix watches.">
+<meta name="description" content="Swisstopo LK25 maps with slope shading and ski/hiking route overlay for Garmin Epix and Fenix watches.">
 <style>
   :root {
     --bg: #faf8f3;
@@ -12,7 +12,7 @@
     --ink: #1a1d21;
     --muted: #5b6470;
     --line: #e7e3d8;
-    --accent: #d4351c;        /* Swiss red */
+    --accent: #d4351c;
     --accent-dark: #a82a16;
     --winter: #3870b6;
     --winter-bg: #e6eef8;
@@ -37,7 +37,6 @@
   a { color: var(--accent-dark); }
   .wrap { max-width: 960px; margin: 0 auto; padding: 0 1.1rem; }
 
-  /* Top bar */
   .topbar {
     border-bottom: 1px solid var(--line);
     position: sticky; top: 0; z-index: 10;
@@ -73,7 +72,6 @@
     background: var(--ink); color: #fff; border-color: var(--ink);
   }
 
-  /* Hero */
   .hero {
     padding: 2.6rem 0 1.5rem;
     display: grid; gap: 2rem;
@@ -132,7 +130,6 @@
     letter-spacing: 0.02em;
   }
 
-  /* Generic section */
   section { padding: 2.4rem 0; }
   section + section { border-top: 1px solid var(--line); }
   h2 {
@@ -140,7 +137,6 @@
   }
   .section-lead { color: var(--muted); margin: 0 0 1.4rem; max-width: 68ch; }
 
-  /* Zone map */
   .zone-card {
     background: var(--surface); border: 1px solid var(--line);
     border-radius: 12px; padding: 1.4rem 1.5rem 1.2rem;
@@ -148,19 +144,26 @@
   }
   .zone-svg-wrap {
     width: 100%;
-    background: linear-gradient(180deg, #f6f3ea 0%, #efece1 100%);
-    border-radius: 8px;
-    border: 1px solid #ebe6d6;
-    padding: 0.6rem;
+    background: #f3efe2;
+    background-image:
+      radial-gradient(ellipse at 30% 35%, rgba(255,255,255,0.6) 0%, transparent 60%),
+      radial-gradient(ellipse at 80% 65%, rgba(220,210,180,0.5) 0%, transparent 60%);
+    border-radius: 10px;
+    border: 1px solid #ddd6c1;
+    padding: 0.4rem;
   }
   .zone-svg { width: 100%; height: auto; display: block; }
+  .zone-svg .ch-fill { fill: #fbfaf3; stroke: #b9b09a; stroke-width: 1.2; stroke-linejoin: round; }
+  .zone-svg .ch-outline-shadow {
+    fill: none; stroke: rgba(60,50,30,0.15); stroke-width: 4; stroke-linejoin: round;
+  }
   .zone-svg .zone-rect {
-    fill-opacity: 0.55;
-    stroke-width: 1;
+    fill-opacity: 0.5;
+    stroke-width: 0.9;
     transition: fill-opacity 0.15s, stroke-width 0.15s;
     cursor: default;
   }
-  .zone-svg .zone-rect:hover { fill-opacity: 0.82; stroke-width: 1.6; }
+  .zone-svg .zone-rect:hover { fill-opacity: 0.82; stroke-width: 1.5; }
   .zone-svg .zone-label {
     font: 600 11px -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
     fill: #fff;
@@ -168,7 +171,7 @@
     text-anchor: middle;
     dominant-baseline: central;
     paint-order: stroke;
-    stroke: rgba(0,0,0,0.25);
+    stroke: rgba(0,0,0,0.3);
     stroke-width: 2.5;
     stroke-linejoin: round;
   }
@@ -184,7 +187,6 @@
   .legend-swatch.winter { background: var(--winter); }
   .legend-swatch.summer { background: var(--summer); }
 
-  /* How to find your region */
   .pick-grid {
     display: grid; gap: 0.85rem;
     grid-template-columns: 1fr;
@@ -218,7 +220,6 @@
   .pick h3 { margin: 0; font-size: 1.05rem; }
   .pick p { margin: 0; color: var(--muted); font-size: 0.9rem; line-height: 1.45; }
 
-  /* Pros / cons */
   .pc-grid {
     display: grid; gap: 0.9rem;
     grid-template-columns: 1fr;
@@ -248,9 +249,8 @@
     font-weight: 700;
   }
   .pc.pros li::before { content: "✓"; color: var(--good); }
-  .pc.cons li::before { content: "—"; color: var(--warn); }
+  .pc.cons li::before { content: "·"; color: var(--warn); font-size: 1.4em; line-height: 1; top: -0.1em; }
 
-  /* Disclaimer */
   .disclaimer {
     border: 1px solid #f1c8c1; background: #faeae6;
     color: #6b1d10;
@@ -265,6 +265,10 @@
     color: var(--muted); font-size: 0.86rem;
   }
   footer a { color: var(--muted); }
+  .legal {
+    margin-top: 0.6rem; font-size: 0.78rem; color: #888;
+    max-width: 75ch; line-height: 1.5;
+  }
 </style>
 </head>
 <body>
@@ -292,36 +296,36 @@
         <span data-i18n="hero.title1">Swiss topo maps</span>
         <span class="accent" data-i18n="hero.title2">on your Garmin watch.</span>
       </h1>
-      <p class="lead" data-i18n="hero.lead">Free, pre-built map packs of Switzerland — official LK25 cartography, 4-class slope shading, and graded ski-tour and hiking routes — sized to fit your watch's tile limit.</p>
+      <p class="lead" data-i18n="hero.lead">Pre-built map packs of Switzerland for Garmin watches. LK25 raster cartography with a slope-shading and ski/hiking route overlay, sized to fit your watch's tile limit.</p>
       <div class="cta-row">
         <a class="btn btn-primary" href="install.html"><span data-i18n="hero.cta_install">Get started</span> →</a>
         <a class="btn btn-ghost" href="gpx_pack_picker.html" data-i18n="hero.cta_picker">Find maps for my tour</a>
       </div>
     </div>
     <figure class="hero-figure">
-      <img src="preview_map.jpg" alt="LK25 with slope shading and ski-tour routes" loading="eager" width="900" height="900">
-      <figcaption data-i18n="hero.caption">LK25 + slope shading + SAC ski routes (Nendaz / Siviez)</figcaption>
+      <img src="preview_map.jpg" alt="LK25 cartography with slope-shading overlay near Verbier" loading="eager" width="900" height="900">
+      <figcaption data-i18n="hero.caption">LK25 with slope-shading overlay near Verbier / Bagnes</figcaption>
     </figure>
   </section>
 
   <section>
     <h2 data-i18n="what.heading">What is this?</h2>
-    <p class="section-lead" data-i18n="what.lead">A free way to put real Swiss topographic maps on your Garmin watch — the same LK25 cartography as the paper Swisstopo map or SchweizMobil, plus a slope-angle overlay and graded routes. No app. Just files you copy to the watch over USB.</p>
+    <p class="section-lead" data-i18n="what.lead">A way to put Swiss topographic maps on your Garmin watch. Same LK25 cartography you'd see on a paper Swisstopo map or in SchweizMobil, with a slope-angle and route overlay on top. Not an app. Just files you copy to the watch over USB.</p>
     <div class="pc-grid">
       <div style="background:var(--winter-bg); border:1px solid #cddff0; border-radius:10px; padding:1rem 1.2rem;">
         <h3 style="margin:0 0 0.5rem; color:var(--winter); font-size:1.05rem;">❄ <span data-i18n="what.winter_title">Winter</span></h3>
-        <p style="margin:0; font-size:0.95rem;" data-i18n="what.winter_body">LK25 Winter raster + 4-class slope shading + SAC ski tours coloured by difficulty (blue / red / black).</p>
+        <p style="margin:0; font-size:0.95rem;" data-i18n="what.winter_body">LK25 Winter base, with a 4-class slope-shading overlay and SAC ski tours coloured by difficulty (blue, red, black).</p>
       </div>
       <div style="background:var(--summer-bg); border:1px solid #cce0c4; border-radius:10px; padding:1rem 1.2rem;">
         <h3 style="margin:0 0 0.5rem; color:var(--summer); font-size:1.05rem;">☀ <span data-i18n="what.summer_title">Summer</span></h3>
-        <p style="margin:0; font-size:0.95rem;" data-i18n="what.summer_body">LK25 Summer raster + slope shading + official Wanderwege coloured by category (yellow / red / blue).</p>
+        <p style="margin:0; font-size:0.95rem;" data-i18n="what.summer_body">LK25 Summer base, with the slope overlay and the Wanderwege network coloured by category (yellow, red, blue).</p>
       </div>
     </div>
   </section>
 
   <section>
     <h2 data-i18n="zones.heading">Switzerland is split into 26 regions</h2>
-    <p class="section-lead" data-i18n="zones.lead">Your Garmin watch can only hold one regional pack at a time (plus the always-on all-Switzerland overview). Pick the region that covers your trip, copy it over, and you're set. Before the next outing, swap it for another one.</p>
+    <p class="section-lead" data-i18n="zones.lead">A Garmin watch can hold one regional pack at a time (plus the always-on Switzerland overview). Pick the region that covers your trips, copy it across, and use it as long as your trips fall inside it. Swap only when you move to a different region.</p>
     <div class="zone-card">
       <div class="zone-svg-wrap">
         <svg id="zonesSvg" class="zone-svg" viewBox="0 0 800 500" role="img" aria-labelledby="zonesTitle">
@@ -329,56 +333,51 @@
         </svg>
       </div>
       <div class="legend">
-        <span class="legend-item"><span class="legend-swatch winter"></span> <span data-i18n="zones.legend_winter">Winter + summer regions (1–21)</span></span>
-        <span class="legend-item"><span class="legend-swatch summer"></span> <span data-i18n="zones.legend_summer">Summer-only regions (22–26)</span></span>
+        <span class="legend-item"><span class="legend-swatch winter"></span> <span data-i18n="zones.legend_winter">Winter and summer regions (1 to 21)</span></span>
+        <span class="legend-item"><span class="legend-swatch summer"></span> <span data-i18n="zones.legend_summer">Summer-only regions (22 to 26)</span></span>
       </div>
     </div>
   </section>
 
   <section>
-    <h2 data-i18n="pick.heading">Three ways to find the right pack</h2>
-    <p class="section-lead" data-i18n="pick.lead">Don't know which of the 26 regions covers your destination? Pick the workflow that fits.</p>
-    <div class="pick-grid">
-      <a class="pick" href="gpx_pack_picker.html">
-        <span class="pick-num">1</span>
-        <div class="pick-icon">📍</div>
-        <h3 data-i18n="pick.gpx_title">Drop your GPX</h3>
-        <p data-i18n="pick.gpx_desc">If you already have a tour file (from SchweizMobil, Komoot, Strava…), drop it here. We tell you exactly which regional pack covers it — usually one file.</p>
+    <h2 data-i18n="pick.heading">Two ways to find the right pack</h2>
+    <p class="section-lead" data-i18n="pick.lead">Not sure which of the 26 regions covers your destination? Pick the workflow that fits.</p>
+    <div class="pick-grid" style="grid-template-columns: 1fr;">
+      <a class="pick" href="gpx_pack_picker.html" style="display:grid; grid-template-columns: auto 1fr; gap: 1rem; align-items: start;">
+        <div class="pick-icon" style="margin: 0;">📍</div>
+        <div>
+          <h3 data-i18n="pick.gpx_title">Drop your GPX (or browse the map)</h3>
+          <p data-i18n="pick.gpx_desc">Drop a tour file (from SchweizMobil, Komoot, Strava, etc.) and we'll tell you which regional pack covers it, usually a single file. No GPX? Open the picker and you can see all 26 regions on a Swisstopo basemap and download the one you need.</p>
+        </div>
       </a>
-      <a class="pick" href="gpx_pack_picker.html#search">
-        <span class="pick-num">2</span>
-        <div class="pick-icon">🔎</div>
-        <h3 data-i18n="pick.search_title">Search by place</h3>
-        <p data-i18n="pick.search_desc">Know the name of a peak, valley or resort? Search and we'll show which regional pack to download.</p>
-      </a>
-      <a class="pick" href="tile_picker.html">
-        <span class="pick-num">3</span>
-        <div class="pick-icon">🎨</div>
-        <h3 data-i18n="pick.custom_title">Paint a custom area</h3>
-        <p data-i18n="pick.custom_desc">Going somewhere that crosses two regions, or want a single pack focused on the spots you actually visit? Draw the area you need. We build a custom pack — typically delivered by email within an hour, occasionally longer when the build queue is busy.</p>
+      <a class="pick" href="tile_picker.html" style="display:grid; grid-template-columns: auto 1fr; gap: 1rem; align-items: start;">
+        <div class="pick-icon" style="margin: 0;">🎨</div>
+        <div>
+          <h3 data-i18n="pick.custom_title">Paint a custom area</h3>
+          <p data-i18n="pick.custom_desc">Going somewhere that crosses two regions, or want a single pack focused on the spots you actually visit? Draw the area you need. We build a custom pack and email it to you, usually within an hour, occasionally longer when the build queue is busy.</p>
+        </div>
       </a>
     </div>
   </section>
 
   <section>
-    <h2 data-i18n="pc.heading">Advantages &amp; limitations</h2>
-    <p class="section-lead" data-i18n="pc.lead">Read this before you start — it'll save you time later.</p>
+    <h2 data-i18n="pc.heading">Advantages and limitations</h2>
+    <p class="section-lead" data-i18n="pc.lead">Worth reading before you start.</p>
     <div class="pc-grid">
       <div class="pc pros">
         <h3>👍 <span data-i18n="pc.pros_title">What you get</span></h3>
         <ul>
-          <li data-i18n="pc.pros.1">Genuine Swisstopo LK25 cartography — the actual paper-map look, not a generic vector approximation.</li>
-          <li data-i18n="pc.pros.2">4-class slope shading (≥30° / ≥35° / ≥40° / ≥45°) for backcountry awareness.</li>
+          <li data-i18n="pc.pros.1">Real Swisstopo LK25 cartography, the same look as the paper map, not a generic vector approximation.</li>
+          <li data-i18n="pc.pros.2">4-class slope-shading overlay (≥30°, ≥35°, ≥40°, ≥45°) for backcountry awareness.</li>
           <li data-i18n="pc.pros.3">Ski tours coloured by SAC difficulty, hiking trails coloured by category.</li>
-          <li data-i18n="pc.pros.4">Completely free — no subscription, no Garmin BirdsEye, no Connect IQ.</li>
-          <li data-i18n="pc.pros.5">Works fully offline once copied to the watch.</li>
-          <li data-i18n="pc.pros.6">Pick a region by GPX or name, or paint a custom area.</li>
+          <li data-i18n="pc.pros.4">Works fully offline once copied to the watch.</li>
+          <li data-i18n="pc.pros.5">Pick a region by GPX or name, or paint a custom area.</li>
         </ul>
       </div>
       <div class="pc cons">
         <h3>⚠ <span data-i18n="pc.cons_title">What to know first</span></h3>
         <ul>
-          <li data-i18n="pc.cons.1">The watch can only show one regional pack at a time, plus the all-Switzerland overview. You swap regions before each trip.</li>
+          <li data-i18n="pc.cons.1">The watch can only show one regional pack at a time, plus the Switzerland overview. If your next outing is in a different region, you swap before you go.</li>
           <li data-i18n="pc.cons.2">Swapping happens by plugging the watch into a computer over USB. There's no in-watch toggle for individual map packs.</li>
           <li data-i18n="pc.cons.3">These are raster maps. They look great but don't give turn-by-turn re-routing the way Garmin's own TopoActive does.</li>
           <li data-i18n="pc.cons.4">Slope shading is advisory only. It does not replace the daily SLF avalanche bulletin or your own judgement on the day.</li>
@@ -402,6 +401,7 @@
     <span data-i18n="footer.data">Map data © swisstopo.</span>
     <a href="https://github.com/JoepVdE/garminswisstopo-public">GitHub</a>
     · <a href="https://www.swisstopo.admin.ch">swisstopo.admin.ch</a>
+    <div class="legal" data-i18n="footer.legal">An independent community project. Not affiliated with, endorsed by, or sponsored by Garmin Ltd. or swisstopo. "Garmin", "Epix" and "Fenix" are trademarks of Garmin Ltd. "Swisstopo" is a trademark of the Swiss Federal Office of Topography. All trademarks belong to their respective owners.</div>
   </div>
 </footer>
 
@@ -413,190 +413,203 @@
       "brand": "Swisstopo for Garmin",
       "hero.title1": "Swiss topo maps",
       "hero.title2": "on your Garmin watch.",
-      "hero.lead": "Free, pre-built map packs of Switzerland — official LK25 cartography, 4-class slope shading, and graded ski-tour and hiking routes — sized to fit your watch's tile limit.",
+      "hero.lead": "Pre-built map packs of Switzerland for Garmin watches. LK25 raster cartography with a slope-shading and ski/hiking route overlay, sized to fit your watch's tile limit.",
       "hero.cta_install": "Get started",
       "hero.cta_picker": "Find maps for my tour",
-      "hero.caption": "LK25 + slope shading + SAC ski routes (Nendaz / Siviez)",
+      "hero.caption": "LK25 with slope-shading overlay near Verbier / Bagnes",
       "what.heading": "What is this?",
-      "what.lead": "A free way to put real Swiss topographic maps on your Garmin watch — the same LK25 cartography as the paper Swisstopo map or SchweizMobil, plus a slope-angle overlay and graded routes. No app. Just files you copy to the watch over USB.",
+      "what.lead": "A way to put Swiss topographic maps on your Garmin watch. Same LK25 cartography you'd see on a paper Swisstopo map or in SchweizMobil, with a slope-angle and route overlay on top. Not an app. Just files you copy to the watch over USB.",
       "what.winter_title": "Winter",
-      "what.winter_body": "LK25 Winter raster + 4-class slope shading + SAC ski tours coloured by difficulty (blue / red / black).",
+      "what.winter_body": "LK25 Winter base, with a 4-class slope-shading overlay and SAC ski tours coloured by difficulty (blue, red, black).",
       "what.summer_title": "Summer",
-      "what.summer_body": "LK25 Summer raster + slope shading + official Wanderwege coloured by category (yellow / red / blue).",
+      "what.summer_body": "LK25 Summer base, with the slope overlay and the Wanderwege network coloured by category (yellow, red, blue).",
       "zones.heading": "Switzerland is split into 26 regions",
-      "zones.lead": "Your Garmin watch can only hold one regional pack at a time (plus the always-on all-Switzerland overview). Pick the region that covers your trip, copy it over, and you're set. Before the next outing, swap it for another one.",
+      "zones.lead": "A Garmin watch can hold one regional pack at a time (plus the always-on Switzerland overview). Pick the region that covers your trips, copy it across, and use it as long as your trips fall inside it. Swap only when you move to a different region.",
       "zones.svg_title": "Map of Switzerland divided into 26 regional packs",
-      "zones.legend_winter": "Winter + summer regions (1–21)",
-      "zones.legend_summer": "Summer-only regions (22–26)",
-      "pick.heading": "Three ways to find the right pack",
-      "pick.lead": "Don't know which of the 26 regions covers your destination? Pick the workflow that fits.",
-      "pick.gpx_title": "Drop your GPX",
-      "pick.gpx_desc": "If you already have a tour file (from SchweizMobil, Komoot, Strava…), drop it here. We tell you exactly which regional pack covers it — usually one file.",
-      "pick.search_title": "Search by place",
-      "pick.search_desc": "Know the name of a peak, valley or resort? Search and we'll show which regional pack to download.",
+      "zones.legend_winter": "Winter and summer regions (1 to 21)",
+      "zones.legend_summer": "Summer-only regions (22 to 26)",
+      "pick.heading": "Two ways to find the right pack",
+      "pick.lead": "Not sure which of the 26 regions covers your destination? Pick the workflow that fits.",
+      "pick.gpx_title": "Drop your GPX (or browse the map)",
+      "pick.gpx_desc": "Drop a tour file (from SchweizMobil, Komoot, Strava, etc.) and we'll tell you which regional pack covers it, usually a single file. No GPX? Open the picker and you can see all 26 regions on a Swisstopo basemap and download the one you need.",
       "pick.custom_title": "Paint a custom area",
-      "pick.custom_desc": "Going somewhere that crosses two regions, or want a single pack focused on the spots you actually visit? Draw the area you need. We build a custom pack — typically delivered by email within an hour, occasionally longer when the build queue is busy.",
-      "pc.heading": "Advantages & limitations",
-      "pc.lead": "Read this before you start — it'll save you time later.",
+      "pick.custom_desc": "Going somewhere that crosses two regions, or want a single pack focused on the spots you actually visit? Draw the area you need. We build a custom pack and email it to you, usually within an hour, occasionally longer when the build queue is busy.",
+      "pc.heading": "Advantages and limitations",
+      "pc.lead": "Worth reading before you start.",
       "pc.pros_title": "What you get",
-      "pc.pros.1": "Genuine Swisstopo LK25 cartography — the actual paper-map look, not a generic vector approximation.",
-      "pc.pros.2": "4-class slope shading (≥30° / ≥35° / ≥40° / ≥45°) for backcountry awareness.",
+      "pc.pros.1": "Real Swisstopo LK25 cartography, the same look as the paper map, not a generic vector approximation.",
+      "pc.pros.2": "4-class slope-shading overlay (≥30°, ≥35°, ≥40°, ≥45°) for backcountry awareness.",
       "pc.pros.3": "Ski tours coloured by SAC difficulty, hiking trails coloured by category.",
-      "pc.pros.4": "Completely free — no subscription, no Garmin BirdsEye, no Connect IQ.",
-      "pc.pros.5": "Works fully offline once copied to the watch.",
-      "pc.pros.6": "Pick a region by GPX or name, or paint a custom area.",
+      "pc.pros.4": "Works fully offline once copied to the watch.",
+      "pc.pros.5": "Pick a region by GPX or name, or paint a custom area.",
       "pc.cons_title": "What to know first",
-      "pc.cons.1": "The watch can only show one regional pack at a time, plus the all-Switzerland overview. You swap regions before each trip.",
+      "pc.cons.1": "The watch can only show one regional pack at a time, plus the Switzerland overview. If your next outing is in a different region, you swap before you go.",
       "pc.cons.2": "Swapping happens by plugging the watch into a computer over USB. There's no in-watch toggle for individual map packs.",
       "pc.cons.3": "These are raster maps. They look great but don't give turn-by-turn re-routing the way Garmin's own TopoActive does.",
       "pc.cons.4": "Slope shading is advisory only. It does not replace the daily SLF avalanche bulletin or your own judgement on the day.",
       "pc.cons.5": "Setup is a manual file copy. The guide is step-by-step, but plan 15 minutes the first time.",
       "disclaimer.title": "Safety:",
       "disclaimer.body": "slope shading is derived from the 10 m elevation model and is for awareness only. It does not replace the daily SLF avalanche bulletin, route planning, or on-site judgement. Backcountry travel has inherent risks.",
-      "footer.data": "Map data © swisstopo."
+      "footer.data": "Map data © swisstopo.",
+      "footer.legal": "An independent community project. Not affiliated with, endorsed by, or sponsored by Garmin Ltd. or swisstopo. \"Garmin\", \"Epix\" and \"Fenix\" are trademarks of Garmin Ltd. \"Swisstopo\" is a trademark of the Swiss Federal Office of Topography. All trademarks belong to their respective owners."
     },
     de: {
       "brand": "Swisstopo für Garmin",
       "hero.title1": "Schweizer Landeskarten",
       "hero.title2": "auf deiner Garmin-Uhr.",
-      "hero.lead": "Kostenlose, fertige Kartenpakete der Schweiz — offizielle LK25-Kartografie, 4-stufige Hangneigung und klassierte Ski- und Wanderrouten — passend für die Kachelgrenze deiner Uhr.",
+      "hero.lead": "Fertige Kartenpakete der Schweiz für Garmin-Uhren. LK25-Rasterkartografie mit einem Hangneigungs- und Routen-Overlay (Ski / Wandern), passend für die Kachelgrenze deiner Uhr.",
       "hero.cta_install": "Loslegen",
       "hero.cta_picker": "Karten für meine Tour finden",
-      "hero.caption": "LK25 + Hangneigung + SAC-Skitouren (Nendaz / Siviez)",
+      "hero.caption": "LK25 mit Hangneigungs-Overlay bei Verbier / Bagnes",
       "what.heading": "Was ist das?",
-      "what.lead": "Ein kostenloser Weg, echte Schweizer Landeskarten auf eine Garmin-Uhr zu bringen — dieselbe LK25-Kartografie wie auf der Papierkarte oder in SchweizMobil, plus Hangneigungs-Overlay und klassierte Routen. Keine App. Nur Dateien, die du per USB auf die Uhr kopierst.",
+      "what.lead": "Ein Weg, Schweizer Landeskarten auf eine Garmin-Uhr zu bringen. Gleiche LK25-Kartografie wie auf der Papier-Swisstopo oder in SchweizMobil, darauf ein Hangneigungs- und Routen-Overlay. Keine App. Nur Dateien, die du per USB auf die Uhr kopierst.",
       "what.winter_title": "Winter",
-      "what.winter_body": "LK25 Winter + 4-stufige Hangneigung + SAC-Skitouren nach Schwierigkeit gefärbt (Blau / Rot / Schwarz).",
+      "what.winter_body": "LK25 Winter als Basis, dazu ein 4-stufiges Hangneigungs-Overlay und SAC-Skitouren nach Schwierigkeit gefärbt (Blau, Rot, Schwarz).",
       "what.summer_title": "Sommer",
-      "what.summer_body": "LK25 Sommer + Hangneigung + offizielle Wanderwege nach Kategorie gefärbt (Gelb / Rot / Blau).",
+      "what.summer_body": "LK25 Sommer als Basis, dazu das Hangneigungs-Overlay und die Wanderwege nach Kategorie gefärbt (Gelb, Rot, Blau).",
       "zones.heading": "Die Schweiz ist in 26 Regionen aufgeteilt",
-      "zones.lead": "Deine Garmin-Uhr kann immer nur ein Regionalpaket aufs Mal anzeigen (plus die immer aktive Schweiz-Übersicht). Wähl die Region, die deine Tour abdeckt, kopier sie auf die Uhr — fertig. Vor der nächsten Tour tauschst du sie gegen eine andere.",
+      "zones.lead": "Eine Garmin-Uhr kann ein Regionalpaket aufs Mal aufnehmen (plus die immer aktive Schweiz-Übersicht). Wähl die Region, die deine Touren abdeckt, kopier sie rüber und nutz sie, solange deine Touren in dieser Region liegen. Wechseln musst du nur, wenn du in eine andere Region gehst.",
       "zones.svg_title": "Karte der Schweiz, aufgeteilt in 26 Regionalpakete",
-      "zones.legend_winter": "Winter- und Sommerregionen (1–21)",
-      "zones.legend_summer": "Reine Sommerregionen (22–26)",
-      "pick.heading": "Drei Wege, das passende Paket zu finden",
+      "zones.legend_winter": "Winter- und Sommerregionen (1 bis 21)",
+      "zones.legend_summer": "Reine Sommerregionen (22 bis 26)",
+      "pick.heading": "Zwei Wege, das passende Paket zu finden",
       "pick.lead": "Du weisst nicht, welche der 26 Regionen dein Ziel abdeckt? Wähl den Weg, der zu dir passt.",
-      "pick.gpx_title": "GPX hochladen",
-      "pick.gpx_desc": "Hast du schon eine Tourdatei (z. B. aus SchweizMobil, Komoot, Strava)? Zieh sie hier rein. Wir sagen dir genau, welches Regionalpaket sie abdeckt — meistens eine einzige Datei.",
-      "pick.search_title": "Nach Ort suchen",
-      "pick.search_desc": "Du kennst den Namen eines Gipfels, Tals oder Skigebiets? Such danach und wir zeigen dir, welches Regionalpaket du brauchst.",
+      "pick.gpx_title": "GPX hochladen (oder Karte durchstöbern)",
+      "pick.gpx_desc": "Zieh eine Tourdatei rein (aus SchweizMobil, Komoot, Strava, etc.) und wir sagen dir, welches Regionalpaket sie abdeckt, meistens eine einzige Datei. Kein GPX zur Hand? Im Picker siehst du alle 26 Regionen auf einer Swisstopo-Karte und lädst die richtige direkt herunter.",
       "pick.custom_title": "Eigenes Gebiet zeichnen",
-      "pick.custom_desc": "Deine Tour liegt zwischen zwei Regionen, oder du willst ein einziges Paket genau für die Orte, an die du wirklich gehst? Zeichne das Gebiet selbst. Wir bauen ein eigenes Paket — meist per E-Mail innerhalb einer Stunde, bei hoher Auslastung auch etwas länger.",
-      "pc.heading": "Vorteile & Einschränkungen",
-      "pc.lead": "Lies das, bevor du anfängst — spart dir später Zeit.",
+      "pick.custom_desc": "Deine Tour liegt zwischen zwei Regionen, oder du willst ein einziges Paket genau für die Orte, an die du wirklich gehst? Zeichne das Gebiet selber. Wir bauen ein eigenes Paket und schicken es dir per Mail, meist innerhalb einer Stunde, bei hoher Auslastung auch etwas länger.",
+      "pc.heading": "Vorteile und Einschränkungen",
+      "pc.lead": "Lies das, bevor du anfängst.",
       "pc.pros_title": "Was du bekommst",
-      "pc.pros.1": "Echte Swisstopo-LK25-Karten — der gewohnte Papierkarten-Look, keine generische Vektor-Annäherung.",
-      "pc.pros.2": "4-stufige Hangneigung (≥30° / ≥35° / ≥40° / ≥45°) für Lawinen-Awareness im Gelände.",
+      "pc.pros.1": "Echte Swisstopo-LK25-Karten, der gewohnte Papierkarten-Look, keine generische Vektor-Annäherung.",
+      "pc.pros.2": "4-stufiges Hangneigungs-Overlay (≥30°, ≥35°, ≥40°, ≥45°) für Lawinen-Awareness im Gelände.",
       "pc.pros.3": "Skitouren nach SAC-Schwierigkeit gefärbt, Wanderwege nach Kategorie.",
-      "pc.pros.4": "Komplett kostenlos — kein Abo, kein Garmin BirdsEye, keine Connect-IQ-App.",
-      "pc.pros.5": "Funktioniert offline, sobald die Dateien auf der Uhr sind.",
-      "pc.pros.6": "Region per GPX oder Namen wählen, oder eigenes Gebiet zeichnen.",
+      "pc.pros.4": "Funktioniert offline, sobald die Dateien auf der Uhr sind.",
+      "pc.pros.5": "Region per GPX oder Namen wählen, oder eigenes Gebiet zeichnen.",
       "pc.cons_title": "Was du wissen solltest",
-      "pc.cons.1": "Die Uhr kann immer nur ein Regionalpaket aufs Mal anzeigen, plus die Schweiz-Übersicht. Vor jeder Tour wechselst du die Region.",
+      "pc.cons.1": "Die Uhr zeigt immer nur ein Regionalpaket aufs Mal, plus die Schweiz-Übersicht. Wenn deine nächste Tour in einer anderen Region liegt, wechselst du vorher.",
       "pc.cons.2": "Der Wechsel passiert per USB am Computer. Es gibt keine Menüoption auf der Uhr, um einzelne Karten an-/auszuschalten.",
       "pc.cons.3": "Es sind Rasterkarten. Sie sehen sehr gut aus, ermöglichen aber keine Turn-by-Turn-Neuberechnung wie Garmins eigene TopoActive.",
       "pc.cons.4": "Die Hangneigung ist nur ein Hinweis. Sie ersetzt nicht das tägliche SLF-Lawinenbulletin oder dein Urteil vor Ort.",
-      "pc.cons.5": "Die Einrichtung ist manuelles Datei-Kopieren. Die Anleitung führt dich Schritt für Schritt durch — plane das erste Mal 15 Minuten ein.",
+      "pc.cons.5": "Die Einrichtung ist manuelles Datei-Kopieren. Die Anleitung führt dich Schritt für Schritt durch, plane das erste Mal 15 Minuten ein.",
       "disclaimer.title": "Sicherheit:",
       "disclaimer.body": "Die Hangneigung basiert auf dem 10-m-Höhenmodell und dient nur der Awareness. Sie ersetzt nicht das tägliche SLF-Lawinenbulletin, die Tourenplanung oder deine Beurteilung vor Ort. Touren im Gelände sind mit inhärenten Risiken verbunden.",
-      "footer.data": "Kartendaten © swisstopo."
+      "footer.data": "Kartendaten © swisstopo.",
+      "footer.legal": "Ein unabhängiges Community-Projekt. Nicht von Garmin Ltd. oder swisstopo betrieben, autorisiert oder gesponsert. „Garmin\", „Epix\" und „Fenix\" sind Marken von Garmin Ltd. „Swisstopo\" ist eine Marke des Bundesamts für Landestopografie. Alle Marken gehören den jeweiligen Inhabern."
     },
     fr: {
       "brand": "Swisstopo pour Garmin",
       "hero.title1": "Cartes topo suisses",
       "hero.title2": "sur ta montre Garmin.",
-      "hero.lead": "Packs cartographiques gratuits et prêts à l'emploi de la Suisse — cartographie officielle LK25, ombrage des pentes en 4 classes et itinéraires ski/rando classés — calibrés pour la limite de tuiles de ta montre.",
+      "hero.lead": "Packs cartographiques de la Suisse, prêts à l'emploi, pour montres Garmin. Cartographie raster LK25 avec un overlay d'ombrage des pentes et d'itinéraires ski / rando, dimensionnés pour la limite de tuiles de ta montre.",
       "hero.cta_install": "Commencer",
       "hero.cta_picker": "Trouver les cartes de ma sortie",
-      "hero.caption": "LK25 + ombrage des pentes + itinéraires CAS (Nendaz / Siviez)",
+      "hero.caption": "LK25 avec ombrage des pentes en overlay, secteur Verbier / Bagnes",
       "what.heading": "C'est quoi ?",
-      "what.lead": "Un moyen gratuit de mettre de vraies cartes topographiques suisses sur une montre Garmin — la même cartographie LK25 que sur la carte papier Swisstopo ou dans SuisseMobile, plus une couche d'inclinaison de pente et des itinéraires classés. Pas une appli. Juste des fichiers à copier sur la montre via USB.",
+      "what.lead": "Une façon de mettre des cartes topographiques suisses sur une montre Garmin. Même cartographie LK25 que sur la carte papier Swisstopo ou dans SuisseMobile, avec un overlay d'inclinaison de pente et d'itinéraires par-dessus. Pas une appli. Juste des fichiers à copier sur la montre via USB.",
       "what.winter_title": "Hiver",
-      "what.winter_body": "LK25 Hiver + ombrage 4 classes + itinéraires de ski CAS colorés selon la difficulté (bleu / rouge / noir).",
+      "what.winter_body": "LK25 Hiver comme base, avec un overlay d'ombrage 4 classes et les itinéraires de ski CAS colorés selon la difficulté (bleu, rouge, noir).",
       "what.summer_title": "Été",
-      "what.summer_body": "LK25 Été + ombrage des pentes + chemins de randonnée officiels colorés selon la catégorie (jaune / rouge / bleu).",
+      "what.summer_body": "LK25 Été comme base, avec l'overlay d'ombrage et le réseau Wanderwege coloré par catégorie (jaune, rouge, bleu).",
       "zones.heading": "La Suisse est divisée en 26 régions",
-      "zones.lead": "Ta montre Garmin ne peut afficher qu'un seul pack régional à la fois (plus l'aperçu de toute la Suisse, toujours actif). Choisis la région qui couvre ta sortie, copie-la sur la montre — c'est fait. Avant la prochaine sortie, tu en mets une autre.",
+      "zones.lead": "Une montre Garmin peut contenir un seul pack régional à la fois (plus l'aperçu de toute la Suisse, toujours actif). Choisis la région qui couvre tes sorties, copie-la une fois, et utilise-la tant que tes sorties restent dans cette région. Tu ne changes que si tu passes dans une région différente.",
       "zones.svg_title": "Carte de la Suisse divisée en 26 packs régionaux",
-      "zones.legend_winter": "Régions hiver + été (1–21)",
-      "zones.legend_summer": "Régions uniquement été (22–26)",
-      "pick.heading": "Trois façons de trouver le bon pack",
+      "zones.legend_winter": "Régions hiver et été (1 à 21)",
+      "zones.legend_summer": "Régions uniquement été (22 à 26)",
+      "pick.heading": "Deux façons de trouver le bon pack",
       "pick.lead": "Tu ne sais pas laquelle des 26 régions couvre ta destination ? Choisis la méthode qui te convient.",
-      "pick.gpx_title": "Déposer ton GPX",
-      "pick.gpx_desc": "Si tu as déjà un fichier de tour (SuisseMobile, Komoot, Strava…), dépose-le ici. On te dit exactement quel pack régional le couvre — en général un seul fichier.",
-      "pick.search_title": "Rechercher un lieu",
-      "pick.search_desc": "Tu connais le nom d'un sommet, d'une vallée ou d'une station ? Cherche et on te montre quel pack télécharger.",
+      "pick.gpx_title": "Déposer ton GPX (ou parcourir la carte)",
+      "pick.gpx_desc": "Dépose un fichier de tour (SuisseMobile, Komoot, Strava, etc.) et on te dit quel pack régional le couvre, en général un seul fichier. Pas de GPX ? Ouvre le sélecteur, tu verras les 26 régions sur fond Swisstopo et tu télécharges celle qu'il te faut.",
       "pick.custom_title": "Dessiner une zone sur mesure",
-      "pick.custom_desc": "Ta sortie est à cheval sur deux régions, ou tu veux un seul pack centré sur les lieux que tu fréquentes vraiment ? Dessine ta zone. On construit un pack personnalisé — généralement envoyé par e-mail en moins d'une heure, parfois davantage quand la file d'attente est chargée.",
-      "pc.heading": "Avantages & limites",
-      "pc.lead": "À lire avant de te lancer — ça t'évitera des allers-retours.",
+      "pick.custom_desc": "Ta sortie est à cheval sur deux régions, ou tu veux un seul pack centré sur les lieux que tu fréquentes vraiment ? Dessine ta zone. On construit un pack personnalisé et on te l'envoie par mail, généralement en moins d'une heure, parfois davantage quand la file d'attente est chargée.",
+      "pc.heading": "Avantages et limites",
+      "pc.lead": "À lire avant de te lancer.",
       "pc.pros_title": "Ce que tu obtiens",
-      "pc.pros.1": "Vraie cartographie Swisstopo LK25 — le rendu de la carte papier, pas une approximation vectorielle générique.",
-      "pc.pros.2": "Ombrage des pentes en 4 classes (≥30° / ≥35° / ≥40° / ≥45°) pour la conscience du terrain.",
+      "pc.pros.1": "Vraie cartographie Swisstopo LK25, le même rendu que la carte papier, pas une approximation vectorielle générique.",
+      "pc.pros.2": "Overlay d'ombrage des pentes en 4 classes (≥30°, ≥35°, ≥40°, ≥45°) pour la conscience du terrain.",
       "pc.pros.3": "Itinéraires de ski colorés selon la difficulté CAS, chemins de rando selon la catégorie.",
-      "pc.pros.4": "Entièrement gratuit — pas d'abonnement, pas de Garmin BirdsEye, pas de Connect IQ.",
-      "pc.pros.5": "Fonctionne hors-ligne une fois les fichiers copiés sur la montre.",
-      "pc.pros.6": "Choisis une région avec un GPX ou un nom, ou dessine ta propre zone.",
+      "pc.pros.4": "Fonctionne hors-ligne une fois les fichiers copiés sur la montre.",
+      "pc.pros.5": "Choisis une région avec un GPX ou un nom, ou dessine ta propre zone.",
       "pc.cons_title": "À savoir avant de commencer",
-      "pc.cons.1": "La montre n'affiche qu'un pack régional à la fois, plus l'aperçu national. Tu changes de région avant chaque sortie.",
+      "pc.cons.1": "La montre n'affiche qu'un pack régional à la fois, plus l'aperçu national. Si ta prochaine sortie est dans une région différente, tu en changes avant de partir.",
       "pc.cons.2": "Le changement se fait en branchant la montre à un ordinateur via USB. Pas de bascule dans le menu de la montre pour activer un pack individuel.",
       "pc.cons.3": "Ce sont des cartes raster. Très belles à l'œil, mais elles ne permettent pas le recalcul d'itinéraire tour-à-tour comme la TopoActive de Garmin.",
       "pc.cons.4": "L'ombrage des pentes est indicatif. Il ne remplace pas le bulletin d'avalanches SLF du jour ni ton jugement sur le terrain.",
-      "pc.cons.5": "L'installation est une copie manuelle de fichiers. Le guide est détaillé pas-à-pas — prévois 15 minutes la première fois.",
+      "pc.cons.5": "L'installation est une copie manuelle de fichiers. Le guide est détaillé pas à pas, prévois 15 minutes la première fois.",
       "disclaimer.title": "Sécurité :",
       "disclaimer.body": "l'ombrage des pentes est dérivé du modèle altimétrique 10 m et n'est qu'une indication. Il ne remplace ni le bulletin SLF du jour, ni la planification d'itinéraire, ni ton jugement sur place. Les sorties hors-piste comportent des risques.",
-      "footer.data": "Données cartographiques © swisstopo."
+      "footer.data": "Données cartographiques © swisstopo.",
+      "footer.legal": "Projet indépendant de la communauté. Non affilié à, soutenu par ou sponsorisé par Garmin Ltd. ou swisstopo. « Garmin », « Epix » et « Fenix » sont des marques de Garmin Ltd. « Swisstopo » est une marque de l'Office fédéral de topographie. Toutes les marques appartiennent à leurs propriétaires respectifs."
     },
     it: {
       "brand": "Swisstopo per Garmin",
       "hero.title1": "Carte topografiche svizzere",
       "hero.title2": "sul tuo orologio Garmin.",
-      "hero.lead": "Pacchetti cartografici gratuiti e già pronti per la Svizzera — cartografia ufficiale LK25, ombreggiatura delle pendenze in 4 classi e itinerari sci/escursionismo classificati — dimensionati per il limite di tile dell'orologio.",
+      "hero.lead": "Pacchetti cartografici della Svizzera già pronti per orologi Garmin. Cartografia raster LK25 con un overlay di ombreggiatura delle pendenze e di itinerari sci / escursionismo, dimensionati per il limite di tile dell'orologio.",
       "hero.cta_install": "Inizia",
       "hero.cta_picker": "Trova le mappe per il mio giro",
-      "hero.caption": "LK25 + ombreggiatura pendenze + itinerari sci CAS (Nendaz / Siviez)",
+      "hero.caption": "LK25 con overlay di ombreggiatura pendenze, zona Verbier / Bagnes",
       "what.heading": "Che cos'è?",
-      "what.lead": "Un modo gratuito di avere vere carte topografiche svizzere sull'orologio Garmin — la stessa cartografia LK25 della carta cartacea Swisstopo o di SvizzeraMobile, più un overlay di pendenza e itinerari classificati. Non è un'app. Solo file che copi sull'orologio tramite USB.",
+      "what.lead": "Un modo per portare carte topografiche svizzere sul tuo orologio Garmin. Stessa cartografia LK25 della carta cartacea Swisstopo o di SvizzeraMobile, con un overlay di pendenza e itinerari sopra. Non è un'app. Solo file che copi sull'orologio tramite USB.",
       "what.winter_title": "Inverno",
-      "what.winter_body": "LK25 Inverno + ombreggiatura in 4 classi + itinerari sci CAS colorati per difficoltà (blu / rosso / nero).",
+      "what.winter_body": "LK25 Inverno come base, con un overlay di ombreggiatura in 4 classi e itinerari sci CAS colorati per difficoltà (blu, rosso, nero).",
       "what.summer_title": "Estate",
-      "what.summer_body": "LK25 Estate + ombreggiatura pendenze + sentieri ufficiali colorati per categoria (giallo / rosso / blu).",
+      "what.summer_body": "LK25 Estate come base, con l'overlay di ombreggiatura e la rete dei sentieri colorata per categoria (giallo, rosso, blu).",
       "zones.heading": "La Svizzera è divisa in 26 regioni",
-      "zones.lead": "Il tuo orologio Garmin può contenere un solo pacchetto regionale alla volta (più la panoramica nazionale sempre attiva). Scegli la regione che copre il tuo giro, copiala sull'orologio — fatto. Prima della prossima uscita, la sostituisci con un'altra.",
+      "zones.lead": "Un orologio Garmin può contenere un solo pacchetto regionale alla volta (più la panoramica nazionale sempre attiva). Scegli la regione che copre i tuoi giri, copiala una volta e usala finché i tuoi giri restano in quella regione. Cambi solo quando ti sposti in una regione diversa.",
       "zones.svg_title": "Mappa della Svizzera divisa in 26 pacchetti regionali",
-      "zones.legend_winter": "Regioni inverno + estate (1–21)",
-      "zones.legend_summer": "Regioni solo estate (22–26)",
-      "pick.heading": "Tre modi per trovare il pacchetto giusto",
+      "zones.legend_winter": "Regioni inverno ed estate (1 a 21)",
+      "zones.legend_summer": "Regioni solo estate (22 a 26)",
+      "pick.heading": "Due modi per trovare il pacchetto giusto",
       "pick.lead": "Non sai quale delle 26 regioni copre la tua destinazione? Scegli il metodo che preferisci.",
-      "pick.gpx_title": "Carica il tuo GPX",
-      "pick.gpx_desc": "Hai già un file del giro (SvizzeraMobile, Komoot, Strava…)? Trascinalo qui. Ti diciamo esattamente quale pacchetto regionale lo copre — di solito un solo file.",
-      "pick.search_title": "Cerca per luogo",
-      "pick.search_desc": "Conosci il nome di una cima, valle o stazione? Cerca e ti mostriamo quale pacchetto regionale scaricare.",
+      "pick.gpx_title": "Carica il tuo GPX (o sfoglia la mappa)",
+      "pick.gpx_desc": "Trascina un file del giro (SvizzeraMobile, Komoot, Strava, ecc.) e ti diciamo quale pacchetto regionale lo copre, di solito un solo file. Niente GPX? Apri il selettore: vedi tutte le 26 regioni su base Swisstopo e scarichi quella che ti serve.",
       "pick.custom_title": "Disegna un'area su misura",
-      "pick.custom_desc": "Il tuo giro è a cavallo tra due regioni, o vuoi un pacchetto unico centrato sui posti che frequenti davvero? Disegna la zona che ti serve. Costruiamo un pacchetto personalizzato — di solito inviato via e-mail entro un'ora, a volte di più nei momenti di code lunghe.",
-      "pc.heading": "Vantaggi & limiti",
-      "pc.lead": "Leggi prima di iniziare — risparmi tempo dopo.",
+      "pick.custom_desc": "Il tuo giro è a cavallo tra due regioni, o vuoi un pacchetto unico centrato sui posti che frequenti davvero? Disegna la zona che ti serve. Costruiamo un pacchetto personalizzato e te lo inviamo via mail, di solito entro un'ora, a volte di più nei momenti di code lunghe.",
+      "pc.heading": "Vantaggi e limiti",
+      "pc.lead": "Da leggere prima di iniziare.",
       "pc.pros_title": "Cosa ottieni",
-      "pc.pros.1": "Vera cartografia Swisstopo LK25 — l'aspetto della carta cartacea, non un'approssimazione vettoriale generica.",
-      "pc.pros.2": "Ombreggiatura pendenze in 4 classi (≥30° / ≥35° / ≥40° / ≥45°) per la consapevolezza in fuoripista.",
+      "pc.pros.1": "Vera cartografia Swisstopo LK25, lo stesso aspetto della carta cartacea, non un'approssimazione vettoriale generica.",
+      "pc.pros.2": "Overlay di ombreggiatura pendenze in 4 classi (≥30°, ≥35°, ≥40°, ≥45°) per la consapevolezza in fuoripista.",
       "pc.pros.3": "Itinerari sci colorati per difficoltà CAS, sentieri per categoria.",
-      "pc.pros.4": "Completamente gratuito — nessun abbonamento, niente Garmin BirdsEye, niente Connect IQ.",
-      "pc.pros.5": "Funziona offline una volta copiati i file sull'orologio.",
-      "pc.pros.6": "Scegli una regione tramite GPX o nome, oppure disegna la tua zona.",
+      "pc.pros.4": "Funziona offline una volta copiati i file sull'orologio.",
+      "pc.pros.5": "Scegli una regione tramite GPX o nome, oppure disegna la tua zona.",
       "pc.cons_title": "Cosa sapere prima",
-      "pc.cons.1": "L'orologio mostra un solo pacchetto regionale alla volta, più la panoramica nazionale. Cambi regione prima di ogni uscita.",
+      "pc.cons.1": "L'orologio mostra un solo pacchetto regionale alla volta, più la panoramica nazionale. Se la prossima uscita è in una regione diversa, lo cambi prima di partire.",
       "pc.cons.2": "Il cambio avviene collegando l'orologio al computer via USB. Non c'è un interruttore nel menu dell'orologio per i singoli pacchetti.",
       "pc.cons.3": "Sono mappe raster. Sono molto belle ma non permettono il ricalcolo curva-per-curva come la TopoActive di Garmin.",
       "pc.cons.4": "L'ombreggiatura delle pendenze è solo indicativa. Non sostituisce il bollettino valanghe SLF giornaliero né il tuo giudizio sul posto.",
-      "pc.cons.5": "L'installazione è una copia manuale di file. La guida è passo passo — calcola 15 minuti la prima volta.",
+      "pc.cons.5": "L'installazione è una copia manuale di file. La guida è passo passo, calcola 15 minuti la prima volta.",
       "disclaimer.title": "Sicurezza:",
       "disclaimer.body": "l'ombreggiatura delle pendenze è derivata dal modello altimetrico 10 m ed è solo indicativa. Non sostituisce il bollettino valanghe SLF, la pianificazione del giro o il giudizio sul posto. Le uscite in fuoripista comportano rischi.",
-      "footer.data": "Dati cartografici © swisstopo."
+      "footer.data": "Dati cartografici © swisstopo.",
+      "footer.legal": "Progetto indipendente della community. Non affiliato a, sostenuto o sponsorizzato da Garmin Ltd. o swisstopo. «Garmin», «Epix» e «Fenix» sono marchi di Garmin Ltd. «Swisstopo» è un marchio dell'Ufficio federale di topografia. Tutti i marchi appartengono ai rispettivi proprietari."
     }
   };
 
+  // ───────────── Switzerland silhouette (LV95) ─────────────
+  // ~40 hand-picked vertices, clockwise from Geneva. Coarse but recognisable.
+  const CH_OUTLINE_LV95 = [
+    [2493000, 1118000], [2502000, 1126000], [2510000, 1145000],
+    [2517000, 1170000], [2535000, 1195000], [2557000, 1212000],
+    [2580000, 1235000], [2605000, 1255000], [2620000, 1268000],
+    [2643000, 1272000], [2665000, 1278000], [2685000, 1283000],
+    [2695000, 1295000], [2710000, 1294000], [2735000, 1280000],
+    [2755000, 1268000], [2770000, 1262000], [2770000, 1247000],
+    [2763000, 1235000], [2762000, 1218000], [2765000, 1207000],
+    [2772000, 1197000], [2785000, 1198000], [2812000, 1190000],
+    [2832000, 1175000], [2832000, 1167000], [2820000, 1150000],
+    [2802000, 1137000], [2784000, 1135000], [2762000, 1138000],
+    [2740000, 1135000], [2727000, 1122000], [2723000, 1095000],
+    [2722000, 1077000], [2705000, 1080000], [2683000, 1090000],
+    [2670000, 1097000], [2658000, 1093000], [2645000, 1095000],
+    [2628000, 1086000], [2615000, 1086000], [2600000, 1083000],
+    [2580000, 1080000], [2570000, 1082000], [2562000, 1098000],
+    [2557000, 1117000], [2555000, 1133000], [2525000, 1134000],
+    [2510000, 1130000]
+  ];
+
   // ───────────── 26-zone overview map ─────────────
-  // bbox = [E_min, N_min, E_max, N_max] in LV95 (EPSG:2056).
   const ZONES = [
     {n:1,  bbox:[2540000,1110000,2590000,1160000], name:"Waadtländer Alpen",      season:"both"},
     {n:2,  bbox:[2575000,1080000,2625000,1130000], name:"Wallis West",            season:"both"},
@@ -630,17 +643,15 @@
     const svg = document.getElementById("zonesSvg");
     if (!svg) return;
     const vbW = 800, vbH = 500, pad = 14;
-    // CH LV95 extents from zone data; padded slightly to centre.
+    // Use country outline bbox to keep CH centred even when zones don't
+    // quite reach the borders.
     let eMin = Infinity, eMax = -Infinity, nMin = Infinity, nMax = -Infinity;
-    for (const z of ZONES) {
-      if (z.bbox[0] < eMin) eMin = z.bbox[0];
-      if (z.bbox[2] > eMax) eMax = z.bbox[2];
-      if (z.bbox[1] < nMin) nMin = z.bbox[1];
-      if (z.bbox[3] > nMax) nMax = z.bbox[3];
+    for (const [e, n] of CH_OUTLINE_LV95) {
+      if (e < eMin) eMin = e; if (e > eMax) eMax = e;
+      if (n < nMin) nMin = n; if (n > nMax) nMax = n;
     }
     const innerW = vbW - 2 * pad;
     const innerH = vbH - 2 * pad;
-    // Keep aspect ratio so the country doesn't look distorted.
     const sx = innerW / (eMax - eMin);
     const sy = innerH / (nMax - nMin);
     const s = Math.min(sx, sy);
@@ -651,13 +662,27 @@
     function toSvg(e, n) {
       return [offX + (e - eMin) * s, offY + (nMax - n) * s];
     }
-    // Sort: large rectangles first, small on top (so labels readable).
+    const ns = "http://www.w3.org/2000/svg";
+
+    // 1. Country shadow (slight outer glow effect via thicker stroke).
+    const shadowPoints = CH_OUTLINE_LV95.map(p => toSvg(p[0], p[1]).map(v => v.toFixed(1)).join(",")).join(" ");
+    const shadow = document.createElementNS(ns, "polygon");
+    shadow.setAttribute("class", "ch-outline-shadow");
+    shadow.setAttribute("points", shadowPoints);
+    svg.appendChild(shadow);
+
+    // 2. Country fill (cream / paper).
+    const ch = document.createElementNS(ns, "polygon");
+    ch.setAttribute("class", "ch-fill");
+    ch.setAttribute("points", shadowPoints);
+    svg.appendChild(ch);
+
+    // 3. Zone rectangles, big first so small ones stay readable on top.
     const sorted = ZONES.slice().sort(function (a, b) {
       const aA = (a.bbox[2] - a.bbox[0]) * (a.bbox[3] - a.bbox[1]);
       const bA = (b.bbox[2] - b.bbox[0]) * (b.bbox[3] - b.bbox[1]);
       return bA - aA;
     });
-    const ns = "http://www.w3.org/2000/svg";
     const rects = document.createDocumentFragment();
     const labels = document.createDocumentFragment();
     for (const z of sorted) {
@@ -677,7 +702,7 @@
       r.setAttribute("fill", fill);
       r.setAttribute("stroke", stroke);
       const ttl = document.createElementNS(ns, "title");
-      ttl.textContent = z.n + " — " + z.name;
+      ttl.textContent = z.n + " " + z.name;
       r.appendChild(ttl);
       rects.appendChild(r);
       const t = document.createElementNS(ns, "text");
