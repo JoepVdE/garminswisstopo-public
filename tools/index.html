@@ -152,15 +152,6 @@
       max-width: none;
       aspect-ratio: 770 / 611;
     }
-    /* The .watch-map top/height percentages are of stack height. With the
-       vertical viewBox crop "165 57 770 611", the oval lives at PNG
-       y ∈ [159, 541] which maps to (159-57)/611 = 16.69 % top and
-       382/611 = 62.52 % height. left/width track stack width and stay
-       at the desktop values since the horizontal crop didn't change. */
-    .watch-stack .watch-map {
-      top:    16.6940%;
-      height: 62.5205%;
-    }
   }
   /* Watch-frame PNG underneath: provides the bezel + opaque centre that the
      map ellipse sits on top of. */
@@ -188,6 +179,18 @@
     clip-path: ellipse(50% 50% at 50% 50%);
     -webkit-clip-path: ellipse(50% 50% at 50% 50%);
     z-index: 2;
+  }
+  /* Mobile override: with the vertical viewBox crop "165 57 770 611" the
+     stack height tracks 611 (not 733), so the oval at PNG y∈[159,541]
+     maps to (159-57)/611 = 16.69 % top and 382/611 = 62.52 % height.
+     Placed after the base rule so this wins on source order at the same
+     specificity. left/width are unchanged because the horizontal crop is
+     unchanged. */
+  @media (max-width: 819px) {
+    .watch-stack .watch-map {
+      top:    16.6940%;
+      height: 62.5205%;
+    }
   }
   /* The scale-bar text in a second overlay SVG that sits above the map. */
   .watch-stack .watch-scale {
