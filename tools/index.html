@@ -37,6 +37,9 @@
     color: var(--ink);
     line-height: 1.55;
     -webkit-font-smoothing: antialiased;
+    /* The mobile watch-hero stack uses negative margins to overflow .wrap's
+       side padding; clip that here so it doesn't add a horizontal scrollbar. */
+    overflow-x: hidden;
   }
   a { color: var(--accent-dark); }
   .wrap { max-width: 1140px; margin: 0 auto; padding: 0 1.1rem; }
@@ -131,15 +134,17 @@
     aspect-ratio: 770 / 733;
     display: block;
   }
-  /* Mobile: crop tighter so the oval fills the column with ~20 % margin
-     on each side instead of ~24 %. New viewBox = "218 0 663 733" (set on
-     the SVGs by JS to match this aspect-ratio). watch-map percentages
-     change to (350-218)/663 = 19.91 % left, 398/663 = 60.03 % width. */
+  /* Mobile: keep the desktop viewBox crop (so the bezel and scale bar
+     look the same as desktop), but let the stack overflow .wrap's 1.1rem
+     side padding so it spans ~20 % wider physically on typical phones.
+     overflow-x:hidden on body keeps the slight viewport overflow from
+     producing a horizontal scrollbar. */
   @media (max-width: 819px) {
-    .watch-stack { aspect-ratio: 663 / 733; }
-    .watch-stack .watch-map {
-      left:  19.9095%;
-      width: 60.0302%;
+    .watch-stack {
+      width: calc(100% + 4rem);
+      margin-left: -2rem;
+      margin-right: -2rem;
+      max-width: none;
     }
   }
   /* Watch-frame PNG underneath: provides the bezel + opaque centre that the
@@ -1211,23 +1216,10 @@
   drawZones();
   applyLang(detectLang());
 
-  // ───────────── Watch-frame viewBox: desktop vs mobile crop ─────────────
-  // Desktop crops the 1100-wide PNG to "165 0 770 733" (~24 % margin
-  // around the oval); mobile crops tighter to "218 0 663 733" (~20 %
-  // margin) so the watch fills the narrow column. Both .watch-stack
-  // SVGs and the scale-bar code below pick up the active viewBox width.
-  // Done here (not inside initWatchMap) so it applies before Leaflet
-  // finishes loading and the first paint already shows the correct crop.
-  const VB_DESKTOP = { x: 165, w: 770 };
-  const VB_MOBILE  = { x: 218, w: 663 };
-  const watchMQ = window.matchMedia("(max-width: 819px)");
-  function currentVB() { return watchMQ.matches ? VB_MOBILE : VB_DESKTOP; }
-  function applyWatchVB() {
-    const vb = currentVB();
-    const s = vb.x + " 0 " + vb.w + " 733";
-    document.querySelectorAll(".watch-stack svg").forEach(el => el.setAttribute("viewBox", s));
-  }
-  applyWatchVB();
+  // Watch SVGs use a single viewBox "165 0 770 733" on every viewport (mobile
+  // gets a wider physical stack via CSS negative margins instead of a tighter
+  // crop, so the bezel and scale-bar proportions match desktop).
+  const WATCH_VB_W = 770;
 
   // ───────────── Interactive Clariden map inside the watch screen ─────────────
   // Loads Leaflet lazily after the rest of the page; binds a swisstopo
@@ -1319,10 +1311,6 @@
       })
       .catch(err => console.warn("[watch-hero] ski routes load error:", err));
 
-    // Re-apply the desktop/mobile viewBox crop when the viewport crosses
-    // the 820 px breakpoint, and refresh the scale-bar geometry.
-    watchMQ.addEventListener("change", () => { applyWatchVB(); updateScale(); });
-
     // ─── Dynamic scale bar ──────────────────────────────────────────────
     // viewBox width depends on viewport (see above) → spans the rendered
     // stack width in CSS pixels. We pick a "nice" round meter value such
@@ -1347,7 +1335,7 @@
       if (!stack || !lineEl) return;
       const cssW = stack.clientWidth;
       if (!cssW) return;
-      const vbPerCss = currentVB().w / cssW;   // viewBox units per CSS pixel
+      const vbPerCss = WATCH_VB_W / cssW;      // viewBox units per CSS pixel
       // metres per CSS pixel at the map's current view
       const c   = map.getCenter();
       const pC  = map.latLngToContainerPoint(c);
