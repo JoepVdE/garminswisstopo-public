@@ -231,6 +231,40 @@
   .recommend .dl-all:hover { background: #266030; }
   .recommend .dl-all:active { transform: translateY(1px); }
   .recommend .dl-tip { font-size: 0.78rem; color: var(--muted); margin: 0.4rem 0 0; }
+
+  /* Multi-zone callout: when route spans 2+ zones, suggest the custom builder. */
+  .custom-suggest {
+    background: var(--surface);
+    border: 2px solid var(--winter);
+    border-radius: 12px;
+    padding: 0.85rem 1rem;
+    margin-top: 0.6rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.04), 0 8px 24px rgba(56,112,182,0.10);
+  }
+  .custom-suggest .cs-label {
+    display: inline-block;
+    background: var(--winter); color: #fff;
+    padding: 0.1rem 0.55rem; border-radius: 999px;
+    font-size: 0.7rem; font-weight: 700; letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-bottom: 0.4rem;
+  }
+  .custom-suggest h3 {
+    margin: 0 0 0.3rem; color: var(--ink); font-size: 1.05rem; font-weight: 700;
+    text-transform: none; letter-spacing: -0.01em;
+  }
+  .custom-suggest p { margin: 0.2rem 0 0.6rem; font-size: 0.88rem; color: var(--muted); }
+  .custom-suggest .cs-cta {
+    display: block; text-align: center;
+    width: 100%; padding: 0.6rem 0.85rem;
+    background: var(--winter); color: #fff; font-weight: 700;
+    border: none; border-radius: 8px; cursor: pointer;
+    font: inherit; font-size: 0.95rem; text-decoration: none;
+    transition: background 0.15s, transform 0.05s;
+  }
+  .custom-suggest .cs-cta:hover { background: #2c5a92; }
+  .custom-suggest .cs-cta:active { transform: translateY(1px); }
+
   .pack {
     padding: 0.55rem 0.7rem; border: 1px solid var(--line); border-radius: 6px;
     margin: 0.4rem 0; background: var(--surface);
@@ -306,7 +340,7 @@
         <rect x="8" y="13" width="8" height="2.5" fill="#fff" rx="0.4"/>
         <rect x="10.75" y="10.25" width="2.5" height="8" fill="#fff" rx="0.4"/>
       </svg>
-      <span data-i18n="brand">Swisstopo for Garmin</span>
+      <span data-i18n="brand">swisstopo for Garmin</span>
     </a>
     <nav class="langs" aria-label="Language">
       <button type="button" data-lang="en" aria-pressed="false">EN</button>
@@ -378,7 +412,7 @@
   // ───────────── i18n dictionary (EN / DE / FR / IT) ─────────────
   const I18N = {
     en: {
-      "brand": "Swisstopo for Garmin",
+      "brand": "swisstopo for Garmin",
       "page.title": "Find maps for my tour",
       "page.subtitle": "Drop your GPX. We tell you which regional pack to download.",
       "dz.title": "Drop GPX file here",
@@ -399,16 +433,21 @@
       "result.step1": "Step 1",
       "result.dl_title": "Download these files",
       "result.dl_all": "Download all {n} files",
-      "result.dl_zip": "Download one .zip ({mb} MB) — easiest",
+      "result.dl_zip": "Download one .zip ({mb} MB), easiest",
       "result.dl_zip_tip": "The zip bundles the overview + your region's pack files. Unzip, copy every .kmz inside to GARMIN/Garmin/CustomMaps/.",
       "result.dl_individual": "or download files individually",
       "result.dl_all_progress": "Downloading",
-      "result.dl_all_done": "Done — check your Downloads folder",
+      "result.dl_all_done": "Done, check your Downloads folder",
       "result.dl_tip": "If your browser asks 'Allow this site to download multiple files?' click Allow. Then copy them all to GARMIN/Garmin/CustomMaps/ on your watch.",
       "result.dl_body_1": "Your route is fully covered by",
       "result.dl_zone": "zone",
       "result.dl_zones": "zones",
       "result.dl_plus": "plus the Switzerland overview. Total",
+      "result.multi.label": "Better for multi-zone tours",
+      "result.multi.title": "Build a custom pack around your route",
+      "result.multi.body": "Your route crosses {n} zones, totalling {files} files and {mb} MB. That's a lot to copy onto a watch with a tile cap. With the custom map maker you paint just the area around your route — one smaller pack, sized to fit, emailed within an hour.",
+      "result.multi.cta": "Paint a custom area →",
+      "result.multi.fallback": "Or keep scrolling to download the full regional packs below.",
       "result.why_heading": "Why these",
       "result.why_lead": "Track points by zone. A zone shows here only if your route touches it.",
       "result.zone_pct": "of route inside this zone",
@@ -432,14 +471,14 @@
       "legend.skitour_red": "ZS / ZS+",
       "legend.skitour_black": "S / S+",
       "legend.wanderwege": "Wanderwege",
-      "legend.ww_yellow": "Wanderweg (T1–T2)",
+      "legend.ww_yellow": "Wanderweg (T1-T2)",
       "legend.ww_red": "Bergwanderweg (T3)",
       "legend.ww_blue": "Alpinwanderweg (T4+)",
       "footer.data": "Map data © swisstopo.",
       "footer.legal": "An independent community project. Not affiliated with Garmin Ltd. or swisstopo. \"Garmin\", \"Epix\" and \"Fenix\" are trademarks of Garmin Ltd."
     },
     de: {
-      "brand": "Swisstopo für Garmin",
+      "brand": "swisstopo für Garmin",
       "page.title": "Karten für meine Tour finden",
       "page.subtitle": "Zieh deine GPX rein. Wir sagen dir, welches Regionalpaket du brauchst.",
       "dz.title": "GPX-Datei hier ablegen",
@@ -460,7 +499,7 @@
       "result.step1": "Schritt 1",
       "result.dl_title": "Diese Dateien herunterladen",
       "result.dl_all": "Alle {n} Dateien herunterladen",
-      "result.dl_zip": "Eine .zip herunterladen ({mb} MB) — am einfachsten",
+      "result.dl_zip": "Eine .zip herunterladen ({mb} MB), am einfachsten",
       "result.dl_zip_tip": "Die ZIP enthält die Schweiz-Übersicht und dein Regionalpaket. Entpacken, alle .kmz nach GARMIN/Garmin/CustomMaps/ kopieren.",
       "result.dl_individual": "oder einzelne Dateien laden",
       "result.dl_all_progress": "Lädt herunter",
@@ -470,6 +509,11 @@
       "result.dl_zone": "Region",
       "result.dl_zones": "Regionen",
       "result.dl_plus": "plus die Schweiz-Übersicht. Total",
+      "result.multi.label": "Besser für Touren über mehrere Regionen",
+      "result.multi.title": "Eigenes Paket entlang deiner Route bauen",
+      "result.multi.body": "Deine Route durchquert {n} Regionen, zusammen {files} Dateien und {mb} MB. Das ist viel für eine Uhr mit Tile-Limit. Im Custom Map Maker malst du nur die Fläche um deine Route — ein kleineres Paket, passend zugeschnitten, per Mail in etwa einer Stunde.",
+      "result.multi.cta": "Eigene Fläche malen →",
+      "result.multi.fallback": "Oder scroll weiter, um die kompletten Regionalpakete unten zu laden.",
       "result.why_heading": "Warum diese",
       "result.why_lead": "Track-Punkte pro Region. Eine Region erscheint hier nur, wenn deine Route sie berührt.",
       "result.zone_pct": "der Route in dieser Region",
@@ -493,14 +537,14 @@
       "legend.skitour_red": "ZS / ZS+",
       "legend.skitour_black": "S / S+",
       "legend.wanderwege": "Wanderwege",
-      "legend.ww_yellow": "Wanderweg (T1–T2)",
+      "legend.ww_yellow": "Wanderweg (T1-T2)",
       "legend.ww_red": "Bergwanderweg (T3)",
       "legend.ww_blue": "Alpinwanderweg (T4+)",
       "footer.data": "Kartendaten © swisstopo.",
       "footer.legal": "Ein unabhängiges Community-Projekt. Nicht von Garmin Ltd. oder swisstopo betrieben. „Garmin\", „Epix\" und „Fenix\" sind Marken von Garmin Ltd."
     },
     fr: {
-      "brand": "Swisstopo pour Garmin",
+      "brand": "swisstopo pour Garmin",
       "page.title": "Trouver les cartes de ma sortie",
       "page.subtitle": "Dépose ton GPX. On te dit quel pack régional télécharger.",
       "dz.title": "Dépose ton fichier GPX ici",
@@ -521,7 +565,7 @@
       "result.step1": "Étape 1",
       "result.dl_title": "Télécharge ces fichiers",
       "result.dl_all": "Tout télécharger ({n} fichiers)",
-      "result.dl_zip": "Télécharger un .zip ({mb} MB) — le plus simple",
+      "result.dl_zip": "Télécharger un .zip ({mb} MB), le plus simple",
       "result.dl_zip_tip": "Le zip contient l'aperçu suisse et ton pack régional. Décompresse, copie tous les .kmz dans GARMIN/Garmin/CustomMaps/.",
       "result.dl_individual": "ou télécharger les fichiers un par un",
       "result.dl_all_progress": "Téléchargement",
@@ -531,6 +575,11 @@
       "result.dl_zone": "région",
       "result.dl_zones": "régions",
       "result.dl_plus": "plus l'aperçu national. Total",
+      "result.multi.label": "Mieux pour les sorties multi-régions",
+      "result.multi.title": "Construis un pack sur mesure autour de ton tracé",
+      "result.multi.body": "Ton tracé traverse {n} régions, soit {files} fichiers et {mb} MB. Beaucoup pour une montre avec un quota de tuiles. Avec le custom map maker tu peins seulement la zone autour de ton tracé — un pack plus petit, taillé sur mesure, envoyé par e-mail en une heure environ.",
+      "result.multi.cta": "Peindre une zone sur mesure →",
+      "result.multi.fallback": "Ou continue à dérouler pour télécharger les packs régionaux complets ci-dessous.",
       "result.why_heading": "Pourquoi celles-ci",
       "result.why_lead": "Points du tracé par région. Une région n'apparaît ici que si ton parcours la touche.",
       "result.zone_pct": "du tracé dans cette région",
@@ -554,14 +603,14 @@
       "legend.skitour_red": "AD / AD+",
       "legend.skitour_black": "D / D+",
       "legend.wanderwege": "Chemins de randonnée",
-      "legend.ww_yellow": "Chemin de rando (T1–T2)",
+      "legend.ww_yellow": "Chemin de rando (T1-T2)",
       "legend.ww_red": "Chemin de montagne (T3)",
       "legend.ww_blue": "Chemin alpin (T4+)",
       "footer.data": "Données cartographiques © swisstopo.",
       "footer.legal": "Projet indépendant de la communauté. Non affilié à Garmin Ltd. ou swisstopo. « Garmin », « Epix » et « Fenix » sont des marques de Garmin Ltd."
     },
     it: {
-      "brand": "Swisstopo per Garmin",
+      "brand": "swisstopo per Garmin",
       "page.title": "Trova le mappe per il mio giro",
       "page.subtitle": "Trascina il tuo GPX. Ti diciamo quale pacchetto regionale scaricare.",
       "dz.title": "Trascina qui il file GPX",
@@ -582,7 +631,7 @@
       "result.step1": "Passo 1",
       "result.dl_title": "Scarica questi file",
       "result.dl_all": "Scarica tutti i {n} file",
-      "result.dl_zip": "Scarica un .zip ({mb} MB) — il più semplice",
+      "result.dl_zip": "Scarica un .zip ({mb} MB), il più semplice",
       "result.dl_zip_tip": "Lo zip contiene la panoramica nazionale e il tuo pacchetto regionale. Estrai e copia tutti i .kmz in GARMIN/Garmin/CustomMaps/.",
       "result.dl_individual": "o scarica i file uno alla volta",
       "result.dl_all_progress": "Sto scaricando",
@@ -592,6 +641,11 @@
       "result.dl_zone": "regione",
       "result.dl_zones": "regioni",
       "result.dl_plus": "più la panoramica nazionale. Totale",
+      "result.multi.label": "Meglio per giri su più regioni",
+      "result.multi.title": "Costruisci un pacchetto su misura attorno al tuo giro",
+      "result.multi.body": "Il tuo tracciato attraversa {n} regioni, in totale {files} file e {mb} MB. Troppo per un orologio con limite di tile. Con il custom map maker dipingi solo la zona attorno al tuo tracciato — un pacchetto più piccolo, tagliato su misura, inviato per e-mail entro un'ora circa.",
+      "result.multi.cta": "Dipingi un'area su misura →",
+      "result.multi.fallback": "Oppure scorri verso il basso per scaricare i pacchetti regionali completi.",
       "result.why_heading": "Perché queste",
       "result.why_lead": "Punti del tracciato per regione. Una regione appare qui solo se il tuo giro la tocca.",
       "result.zone_pct": "del tracciato in questa regione",
@@ -615,7 +669,7 @@
       "legend.skitour_red": "AD / AD+",
       "legend.skitour_black": "D / D+",
       "legend.wanderwege": "Sentieri",
-      "legend.ww_yellow": "Sentiero (T1–T2)",
+      "legend.ww_yellow": "Sentiero (T1-T2)",
       "legend.ww_red": "Sentiero di montagna (T3)",
       "legend.ww_blue": "Sentiero alpino (T4+)",
       "footer.data": "Dati cartografici © swisstopo.",
@@ -971,7 +1025,27 @@
     const zipUrl = zipObj ? fileDownloadUrl(zipObj.name) : null;
     const zipMb = zipObj ? zipObj.size_mb : null;
 
-    let html = `
+    let html = "";
+    // Multi-zone callout: a route that needs 2+ regional packs is a lot of
+    // bytes for a watch with a tile cap. Suggest the custom map maker, which
+    // lets the user paint just the area around the route. Keep the regional
+    // download box below as a fallback for users who prefer the canned packs.
+    if (finalRecommended.length >= 2) {
+      const totalFiles = dl.files.length;
+      const totalMb = (totalRecMb + overviewMb).toFixed(0);
+      html += `
+        <div class="custom-suggest">
+          <span class="cs-label">${T("result.multi.label")}</span>
+          <h3>${T("result.multi.title")}</h3>
+          <p>${T("result.multi.body")
+              .replace("{n}", finalRecommended.length)
+              .replace("{files}", totalFiles)
+              .replace("{mb}", totalMb)}</p>
+          <a class="cs-cta" href="tile_picker.html">${T("result.multi.cta")}</a>
+          <p style="margin:0.55rem 0 0; font-size:0.78rem">${T("result.multi.fallback")}</p>
+        </div>`;
+    }
+    html += `
       <div class="recommend">
         <span class="step-label">${T("result.step1")}</span>
         <h3 class="r-title">${T("result.dl_title")}</h3>
