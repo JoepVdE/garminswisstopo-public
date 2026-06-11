@@ -116,9 +116,38 @@
     display: flex; flex-direction: column; align-items: center;
     gap: 0.6rem;
   }
-  .hero-figure svg {
-    width: 100%; max-width: 500px; height: auto; display: block;
+  /* watch-stack: relative box that holds the live Leaflet map and a transparent
+     SVG overlay (watch frame + scale bar) on top. The Leaflet map is a plain
+     HTML div (NOT inside a foreignObject) — Leaflet's vector renderer reliably
+     paints into a normal HTML container; inside an SVG foreignObject the
+     overlay panes were getting clipped/sized to 0 px on the deployed page. */
+  .watch-stack {
+    position: relative;
+    width: 100%;
+    max-width: 560px;
+    aspect-ratio: 1100 / 733;
+    display: block;
   }
+  .watch-stack .watch-map {
+    position: absolute;
+    /* Match the ellipse in viewBox 0 0 1100 733: cx=549 cy=350 rx=199 ry=191 */
+    left:   31.7273%;   /* (549-199)/1100 */
+    top:    21.6917%;   /* (350-191)/733  */
+    width:  36.1818%;   /* 398/1100 */
+    height: 52.1146%;   /* 382/733 */
+    background: #e8eef5;
+    clip-path: ellipse(50% 50% at 50% 50%);
+    -webkit-clip-path: ellipse(50% 50% at 50% 50%);
+    z-index: 1;
+  }
+  .watch-stack .watch-overlay {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;   /* clicks fall through to the map below */
+    z-index: 2;
+  }
+  /* Re-enable pointer events on the zoom buttons specifically */
+  .watch-stack .leaflet-control-container { pointer-events: auto; }
   .hero-figure figcaption {
     color: var(--muted); font-size: 0.85rem;
     text-align: center; max-width: 32ch;
@@ -355,49 +384,30 @@
       </div>
     </div>
     <figure class="hero-figure">
-      <svg viewBox="0 0 1100 733" xmlns="http://www.w3.org/2000/svg"
-           role="img" aria-labelledby="watchTitle">
-        <title id="watchTitle">Interactive Garmin watch mockup showing live swisstopo LK25 + slope shading + ski-tour routes, centred on the Clariden</title>
-        <defs>
-          <!-- Screen is a slightly wide ellipse matching the watch_frame.png
-               bezel, centred at (549, 350) with rx=199 ry=191. -->
-          <clipPath id="screenClip">
-            <ellipse cx="549" cy="350" rx="199" ry="191"/>
-          </clipPath>
-        </defs>
+      <div class="watch-stack" role="img" aria-label="Interactive Garmin watch mockup showing live swisstopo LK25 + slope shading + ski-tour routes, centred on the Clariden">
+        <!-- Live swisstopo Leaflet map; plain HTML div, clipped to the watch
+             screen ellipse via CSS. Sits underneath the watch-frame PNG. -->
+        <div id="watchMap" class="watch-map"></div>
 
-        <!-- Watch frame UNDERNEATH the interactive map. -->
-        <image href="watch_frame.png"
-               x="0" y="0" width="1100" height="733"/>
-
-        <!-- Live swisstopo Leaflet map INSIDE the screen. CSS clip-path on
-             the inner div (NOT SVG clipPath on the foreignObject) so
-             Leaflet's drag / pinch-zoom events keep working — Chrome and
-             Firefox drop pointer events through SVG clipPath on
-             foreignObject. -->
-        <foreignObject x="350" y="159" width="398" height="382">
-          <div xmlns="http://www.w3.org/1999/xhtml"
-               id="watchMap"
-               style="width:100%; height:100%; background:#e8eef5;
-                      clip-path: ellipse(50% 50% at 50% 50%);
-                      -webkit-clip-path: ellipse(50% 50% at 50% 50%);"></div>
-        </foreignObject>
-
-        <!-- Scale bar at the bottom of the screen oval. -->
-        <g clip-path="url(#screenClip)" style="pointer-events:none">
-          <line x1="525" y1="537" x2="573" y2="537"
-                stroke="#fff" stroke-width="2.2" stroke-linecap="butt" />
-          <line x1="525" y1="537" x2="525" y2="530"
-                stroke="#fff" stroke-width="2.2" stroke-linecap="butt" />
-          <line x1="573" y1="537" x2="573" y2="530"
-                stroke="#fff" stroke-width="2.2" stroke-linecap="butt" />
-          <text x="549" y="526" text-anchor="middle"
-                font-family="-apple-system,Segoe UI,sans-serif"
-                font-size="11" font-weight="700"
-                fill="#fff" stroke="#000" stroke-width="0.5"
-                paint-order="stroke fill">300 m</text>
-        </g>
-      </svg>
+        <!-- Watch frame + scale bar on top. pointer-events:none so the user
+             can still drag / pinch / zoom the map underneath. -->
+        <svg class="watch-overlay" viewBox="0 0 1100 733" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <image href="watch_frame.png" x="0" y="0" width="1100" height="733"/>
+          <g>
+            <line x1="525" y1="537" x2="573" y2="537"
+                  stroke="#fff" stroke-width="2.2" stroke-linecap="butt" />
+            <line x1="525" y1="537" x2="525" y2="530"
+                  stroke="#fff" stroke-width="2.2" stroke-linecap="butt" />
+            <line x1="573" y1="537" x2="573" y2="530"
+                  stroke="#fff" stroke-width="2.2" stroke-linecap="butt" />
+            <text x="549" y="526" text-anchor="middle"
+                  font-family="-apple-system,Segoe UI,sans-serif"
+                  font-size="11" font-weight="700"
+                  fill="#fff" stroke="#000" stroke-width="0.5"
+                  paint-order="stroke fill">300 m</text>
+          </g>
+        </svg>
+      </div>
       <figcaption data-i18n="hero.caption">Swiss topo, on your Garmin.</figcaption>
     </figure>
   </section>
