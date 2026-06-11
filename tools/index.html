@@ -78,9 +78,12 @@
     display: grid; gap: 2rem;
     grid-template-columns: 1fr;
     align-items: center;
+    /* Allow the hero to use the full page width up to ~1100px so the watch
+       can render larger than the rest of the .wrap's 960px max. */
+    max-width: 1100px; margin: 0 auto;
   }
   @media (min-width: 820px) {
-    .hero { grid-template-columns: 1.1fr 1fr; gap: 2.6rem; padding-top: 3.2rem; }
+    .hero { grid-template-columns: 1fr 1.7fr; gap: 2.4rem; padding-top: 3.2rem; }
   }
   .hero h1 {
     font-size: clamp(1.95rem, 4vw, 2.7rem);
@@ -150,6 +153,16 @@
   dialog#zonePrompt .zp-btn > :first-child { flex: 1; font-weight: 600; }
   dialog#zonePrompt .zp-btn .zp-size { color: var(--muted); font-size: 0.82rem; }
   dialog#zonePrompt .zp-btn .zp-arrow { color: var(--good); font-weight: 700; }
+  dialog#zonePrompt .zp-btn.zp-batch {
+    background: var(--good); color: #fff; border-color: var(--good);
+    font-weight: 700; cursor: pointer;
+  }
+  dialog#zonePrompt .zp-btn.zp-batch:hover { background: #266030; border-color: #266030; }
+  dialog#zonePrompt .zp-btn.zp-batch .zp-size,
+  dialog#zonePrompt .zp-btn.zp-batch .zp-arrow { color: #fff; }
+  dialog#zonePrompt .zp-tip {
+    font-size: 0.78rem; color: var(--muted); margin: 0.4rem 0 0.2rem;
+  }
   dialog#zonePrompt .zp-close {
     appearance: none; border: none; background: transparent;
     color: var(--muted); font-size: 0.88rem; cursor: pointer;
@@ -550,6 +563,10 @@
       "zones.dlg_zip_winter": "Download winter .zip",
       "zones.dlg_zip_summer": "Download summer .zip",
       "zones.dlg_none": "No published download for this zone yet.",
+      "zones.dlg_batch": "Download all {n} files",
+      "zones.dlg_batch_tip": "Click \"Allow\" if your browser asks to download multiple files. After they land, copy every .kmz to GARMIN/Garmin/CustomMaps/ on your watch.",
+      "zones.dlg_batch_progress": "Downloading",
+      "zones.dlg_batch_done": "Done — check your Downloads folder",
       "zones.dlg_close": "Close",
       "footer.data": "Map data © swisstopo.",
       "footer.legal": "An independent community project. Not affiliated with, endorsed by, or sponsored by Garmin Ltd. or swisstopo. \"Garmin\", \"Epix\" and \"Fenix\" are trademarks of Garmin Ltd. \"Swisstopo\" is a trademark of the Swiss Federal Office of Topography. All trademarks belong to their respective owners."
@@ -600,6 +617,10 @@
       "zones.dlg_zip_winter": "Winter-.zip herunterladen",
       "zones.dlg_zip_summer": "Sommer-.zip herunterladen",
       "zones.dlg_none": "Für diese Region ist noch kein Download veröffentlicht.",
+      "zones.dlg_batch": "Alle {n} Dateien herunterladen",
+      "zones.dlg_batch_tip": "Wenn dein Browser fragt, mehrere Dateien zu erlauben, klick auf „Erlauben\". Nach dem Download alle .kmz nach GARMIN/Garmin/CustomMaps/ auf der Uhr kopieren.",
+      "zones.dlg_batch_progress": "Lädt herunter",
+      "zones.dlg_batch_done": "Fertig, schau in deinen Downloads-Ordner",
       "zones.dlg_close": "Schliessen",
       "footer.data": "Kartendaten © swisstopo.",
       "footer.legal": "Ein unabhängiges Community-Projekt. Nicht von Garmin Ltd. oder swisstopo betrieben, autorisiert oder gesponsert. „Garmin\", „Epix\" und „Fenix\" sind Marken von Garmin Ltd. „Swisstopo\" ist eine Marke des Bundesamts für Landestopografie. Alle Marken gehören den jeweiligen Inhabern."
@@ -892,17 +913,37 @@
          <span class="zp-size">${f.size_mb} MB</span>
          <span class="zp-arrow">↓</span>
        </a>`;
-    const seasons = [];
-    if (zone.winter_zip)  seasons.push(["winter", link(zone.winter_zip, T("zones.dlg_zip_winter"))]);
-    if (zone.summer_zip)  seasons.push(["summer", link(zone.summer_zip, T("zones.dlg_zip_summer"))]);
-    // Fall back to individual KMZ files if no zip is published yet.
-    if (!seasons.length) {
-      const wp = (zone.winter_files || []);
-      const sp = (zone.summer_files || []);
-      if (wp.length) seasons.push(["winter", wp.map(f => link(f, f.name)).join("")]);
-      if (sp.length) seasons.push(["summer", sp.map(f => link(f, f.name)).join("")]);
+    const overview = (HOME_MANIFEST.overview && HOME_MANIFEST.overview.winter_files) || [];
+    const sections = [];
+
+    // For each season: if a zip exists -> show single-click .zip link.
+    // Otherwise show a SINGLE "Download N files (XX MB)" batch button that
+    // fires the overview + that season's KMZ parts via hidden iframes (the
+    // same Chrome-Allow-multi-downloads pattern the GPX picker uses).
+    function buildSeason(label, zipObj, fileList) {
+      if (zipObj) {
+        return link(zipObj, T("zones.dlg_zip_" + label));
+      }
+      if (!fileList || !fileList.length) return "";
+      const all = [...overview, ...fileList];
+      const sizeMb = all.reduce((a, f) => a + (f.size_mb || 0), 0).toFixed(0);
+      const id = "zp-batch-" + label + "-" + n;
+      // Stash on a global so the click handler can find the file list.
+      window.__zpBatch = window.__zpBatch || {};
+      window.__zpBatch[id] = all;
+      return `<button class="zp-btn zp-batch" data-batch="${id}">
+        <span>${T("zones.dlg_batch").replace("{n}", all.length)}</span>
+        <span class="zp-size">${sizeMb} MB</span>
+        <span class="zp-arrow">↓</span>
+      </button>
+      <div class="zp-tip">${T("zones.dlg_batch_tip")}</div>`;
     }
-    const body = seasons.map(([s, html]) =>
+    const winterHtml = buildSeason("winter", zone.winter_zip, zone.winter_files);
+    const summerHtml = buildSeason("summer", zone.summer_zip, zone.summer_files);
+    if (winterHtml) sections.push(["winter", winterHtml]);
+    if (summerHtml) sections.push(["summer", summerHtml]);
+
+    const body = sections.map(([s, html]) =>
       `<div class="zp-section"><div class="zp-section-title">${T("zones.dlg_" + s)}</div>${html}</div>`
     ).join("") || `<p>${T("zones.dlg_none")}</p>`;
     dlg.querySelector(".zp-name").textContent =
@@ -918,11 +959,39 @@
     const dict = I18N[document.documentElement.lang] || I18N.en;
     return dict[key] != null ? dict[key] : (I18N.en[key] || key);
   }
-  // Close handlers.
+  // Close + batch-download handlers.
   const dlg = document.getElementById("zonePrompt");
   if (dlg) {
     dlg.addEventListener("click", (e) => {
       if (e.target === dlg) dlg.close();   // click on backdrop
+      // Delegated batch-download: each .zp-batch button has a data-batch key
+      // into window.__zpBatch. Fires one hidden iframe per file with 1.4 s
+      // stagger so Chrome's allow-multi prompt doesn't drop siblings.
+      const btn = e.target.closest && e.target.closest(".zp-batch");
+      if (btn) {
+        e.preventDefault();
+        const files = (window.__zpBatch || {})[btn.dataset.batch] || [];
+        if (!files.length) return;
+        btn.disabled = true;
+        files.forEach((f, i) => {
+          setTimeout(() => {
+            const ifr = document.createElement("iframe");
+            ifr.style.display = "none";
+            ifr.src = HOME_MANIFEST.asset_url_template
+                       .replace("{name}", encodeURIComponent(f.name));
+            document.body.appendChild(ifr);
+            setTimeout(() => { try { document.body.removeChild(ifr); } catch (_) {} }, 10000);
+            btn.querySelector("span").textContent =
+              T("zones.dlg_batch_progress") + " (" + (i + 1) + "/" + files.length + ")";
+            if (i === files.length - 1) {
+              setTimeout(() => {
+                btn.querySelector("span").textContent = T("zones.dlg_batch_done");
+                btn.disabled = false;
+              }, 1500);
+            }
+          }, i * 1400);
+        });
+      }
     });
     const closeBtn = dlg.querySelector(".zp-close");
     if (closeBtn) closeBtn.addEventListener("click", () => dlg.close());
@@ -973,12 +1042,28 @@
     const map = L.map(el, {
       center: [46.84055, 8.87883],   // Clariden 3267 m
       zoom: 14,
-      zoomControl: false,
+      // Compact +/- zoom buttons inside the screen so users see how to
+      // zoom out without having to discover scroll-wheel.
+      zoomControl: true,
       attributionControl: false,
-      scrollWheelZoom: false,        // don't hijack page scroll
+      // Scroll-wheel zoom is enabled but only AFTER the user clicks/taps
+      // the map (Leaflet's "click to wake" pattern). Stops the hero from
+      // hijacking the page scroll the moment a visitor scrolls past it.
+      scrollWheelZoom: false,
       dragging: true,
+      touchZoom: true,
       tap: true,
     });
+    // After first interaction with the map, allow wheel zoom too.
+    function wakeWheel() {
+      map.scrollWheelZoom.enable();
+      el.removeEventListener("click", wakeWheel);
+      el.removeEventListener("touchstart", wakeWheel);
+    }
+    el.addEventListener("click", wakeWheel);
+    el.addEventListener("touchstart", wakeWheel, { passive: true });
+
+    map.zoomControl.setPosition("topright");
     const wmts = (layer, ext, opacity) => L.tileLayer(
       `https://wmts{s}.geo.admin.ch/1.0.0/${layer}/default/current/3857/{z}/{x}/{y}.${ext}`,
       { subdomains: ["10","11","12","13","14"], maxZoom: 18, minZoom: 8,
