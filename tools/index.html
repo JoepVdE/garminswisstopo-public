@@ -134,17 +134,23 @@
     aspect-ratio: 770 / 733;
     display: block;
   }
-  /* Mobile: keep the desktop viewBox crop (so the bezel and scale bar
-     look the same as desktop), but let the stack overflow .wrap's 1.1rem
-     side padding so it spans ~20 % wider physically on typical phones.
-     overflow-x:hidden on body keeps the slight viewport overflow from
-     producing a horizontal scrollbar. */
+  /* Mobile: let the stack overflow .wrap's 1.1rem side padding so it
+     spans wider physically (calc(100% + 9rem) / -4.5rem margins ≈
+     40–45 % wider than the column on a 360–414 px viewport). To keep
+     the stack from also getting that much taller (which would shift
+     the oval down on the page), we drop the aspect-ratio from
+     770/733 to 770/611 — a vertical crop the JS applies to the SVG
+     viewBox ("165 57 770 611"). The crop is centred so the oval
+     lands at the same fraction of stack height as desktop, and the
+     stack ends up nearly the same physical height as before.
+     overflow-x:hidden on body absorbs the slight viewport overflow. */
   @media (max-width: 819px) {
     .watch-stack {
-      width: calc(100% + 4rem);
-      margin-left: -2rem;
-      margin-right: -2rem;
+      width: calc(100% + 9rem);
+      margin-left: -4.5rem;
+      margin-right: -4.5rem;
       max-width: none;
+      aspect-ratio: 770 / 611;
     }
   }
   /* Watch-frame PNG underneath: provides the bezel + opaque centre that the
@@ -1216,10 +1222,22 @@
   drawZones();
   applyLang(detectLang());
 
-  // Watch SVGs use a single viewBox "165 0 770 733" on every viewport (mobile
-  // gets a wider physical stack via CSS negative margins instead of a tighter
-  // crop, so the bezel and scale-bar proportions match desktop).
+  // Watch SVGs: same horizontal crop on every viewport (PNG x=165..935 →
+  // viewBox width 770), but mobile crops vertically to "165 57 770 611"
+  // so the wider mobile stack stays roughly the same physical height as
+  // before and the oval doesn't shift down. The vertical offset 57 is
+  // chosen so the oval (PNG cy=350) lands at the same fraction of stack
+  // height as on desktop ((350-57)/611 ≈ 47.9 %, matches 350/733). The
+  // scale bar lives at viewBox y=537 which is well inside both crops.
   const WATCH_VB_W = 770;
+  const watchMQ = window.matchMedia("(max-width: 819px)");
+  function watchVB() { return watchMQ.matches ? "165 57 770 611" : "165 0 770 733"; }
+  function applyWatchVB() {
+    const vb = watchVB();
+    document.querySelectorAll(".watch-stack svg").forEach(el => el.setAttribute("viewBox", vb));
+  }
+  applyWatchVB();
+  watchMQ.addEventListener("change", applyWatchVB);
 
   // ───────────── Interactive Clariden map inside the watch screen ─────────────
   // Loads Leaflet lazily after the rest of the page; binds a swisstopo
