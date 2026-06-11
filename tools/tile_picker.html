@@ -428,7 +428,8 @@
 
     <div id="status" class="stat-box neutral">
       <div class="stat-line"><strong>0 <span data-i18n="status.cells">cells</span></strong> <span data-i18n="status.selected">selected</span></div>
-      <div class="stat-line">~<strong id="tileEst">0</strong> <span data-i18n="status.tiles_of">tiles /</span> <strong id="tileCapLbl">500</strong> <span data-i18n="status.cap">cap</span></div>
+      <div class="stat-line">~<strong id="tileEst">0</strong> + ~<strong id="tileEstOv">0</strong> <span data-i18n="status.tiles_of">tiles /</span> <strong id="tileCapLbl">500</strong> <span data-i18n="status.cap">cap</span></div>
+      <div class="stat-line" style="font-size:0.78em; color:var(--muted, #777); margin-top:2px"><span data-i18n="status.tier_breakdown">detail + overview (T2/T3/T4)</span></div>
     </div>
 
     <h3 style="margin-top:0.6rem" data-i18n="gpx.heading">Auto-select from GPX</h3>
@@ -606,10 +607,28 @@
   // Per-zone overview tiers (T2 pk100 + T3 pk500 + T4 pk500 down-warped) bundle
   // into a single `<pack>_overview.kmz`. Tile count scales with bbox size: ~3-5
   // for a small pick, ~25 for a 50 km zone, ~85 for a full Mittelland chunk.
-  // We carve a 30-tile reserve out of the detail budget as a typical-case
-  // headroom estimate.
+  // OVERVIEW_RESERVE stays as a static fallback used in the build-output
+  // messaging (we don't know the bbox there); the live status box uses
+  // estimateOverviewTiles() to show the actual predicted count.
   const OVERVIEW_RESERVE = 30;
   const TILE_BUDGET_REGIONAL = TILE_CAP - OVERVIEW_RESERVE;
+
+  // Estimate the per-zone overview KMZ tile count from the selection.
+  //   T2 (pk100 @ 10 m/px, 10.24 km/tile): cell-aligned, ~1 tile per picked
+  //     10x10 km cell. cells-json drops overview tiles whose centre falls
+  //     outside the picked cells, so scattered selections don't pay for empty
+  //     air in the union bbox.
+  //   T3 (pk500 @ 50 m/px, 51.2 km/tile): scales with union bbox area.
+  //   T4 (pk500 @ 150 m/px, 153.6 km/tile): typically 1 tile, rarely 2.
+  function estimateOverviewTiles(cellCount, unionBbox) {
+    if (cellCount === 0 || !unionBbox) return 0;
+    const bw_km = (unionBbox[2] - unionBbox[0]) / 1000;
+    const bh_km = (unionBbox[3] - unionBbox[1]) / 1000;
+    const t2 = cellCount;
+    const t3 = Math.ceil(bw_km / 51.2) * Math.ceil(bh_km / 51.2);
+    const t4 = Math.ceil(bw_km / 153.6) * Math.ceil(bh_km / 153.6);
+    return t2 + t3 + t4;
+  }
 
   function lv95ToLatLng(e, n) {
     const [lon, lat] = proj4("EPSG:2056", "EPSG:4326", [e, n]);
@@ -1179,19 +1198,21 @@
       unionBbox = [eMin, nMin, eMax, nMax];
       est = sel.length * TILES_PER_CELL_KEPT;
     }
+    const estOv = estimateOverviewTiles(sel.length, unionBbox);
 
     const statusEl = document.getElementById('status');
     statusEl.querySelector('.stat-line strong').textContent = sel.length;
     document.getElementById('tileEst').textContent = est;
+    document.getElementById('tileEstOv').textContent = estOv;
 
-    // Live cap is whatever the user picked in the device dropdown.
+    // Live cap is whatever the user picked in the device dropdown. Use the
+    // ACTUAL estimated overview count (vs the static OVERVIEW_RESERVE) for the
+    // warn threshold so small selections aren't artificially gated.
     const cap = deviceProfile.tileCap;
+    const total = est + estOv;
     if (est === 0) {
       statusEl.className = 'stat-box neutral';
-    } else if (est > cap) {
-      statusEl.className = 'stat-box warn';
-    } else if (cap >= 500 && est > cap - OVERVIEW_RESERVE) {
-      // Detail-tile budget after carving out the per-zone overview reserve.
+    } else if (total > cap) {
       statusEl.className = 'stat-box warn';
     } else {
       statusEl.className = 'stat-box ok';
@@ -1199,7 +1220,7 @@
 
     document.getElementById('exportBtn').disabled = sel.length === 0;
     document.getElementById('buildBtn').disabled  = sel.length === 0;
-    return { unionBbox, est, count: sel.length };
+    return { unionBbox, est, estOv, count: sel.length };
   }
 
   document.getElementById('deviceSel').addEventListener('change', readDeviceProfile);
@@ -1338,17 +1359,18 @@
   }
 
   document.getElementById('buildBtn').addEventListener('click', () => {
-    const { est, count } = updateStatus();
+    const { est, estOv, count } = updateStatus();
     const sel = selectedCells();
     if (!sel.length) return;
-    if (est > TILE_CAP) {
-      if (!confirm(`Selection is ~${est} tiles, over the 500-cap. Build anyway?`)) return;
+    const total = est + estOv;
+    if (total > TILE_CAP) {
+      if (!confirm(`Selection is ~${est} detail + ~${estOv} overview = ~${total} tiles, over the ${TILE_CAP}-cap. Build anyway?`)) return;
     }
     buildHosted(sel.map(c => c.lv95));
   });
 
   document.getElementById('exportBtn').addEventListener('click', () => {
-    const { unionBbox, est, count } = updateStatus();
+    const { unionBbox, est, estOv, count } = updateStatus();
     if (!unionBbox) return;
     const bboxStr = unionBbox.join(',');
     const sel = selectedCells();
@@ -1357,23 +1379,25 @@
       union_bbox_lv95: unionBbox,
       cell_count: count,
       estimated_tiles_kept: est,
+      estimated_overview_tiles: estOv,
       tile_cap_total: TILE_CAP,
       tile_cap_alongside_overview: TILE_BUDGET_REGIONAL,
       generated: new Date().toISOString()
     };
 
     const out = document.getElementById('output');
+    const total = est + estOv;
     let warn = '';
     if (est > TILE_CAP) {
-      warn = `<div class="stat-box warn">⚠ Estimated ${est} tiles exceeds 500-cap.
-              The watch will silently drop tiles. Trim the selection.</div>`;
-    } else if (est > TILE_BUDGET_REGIONAL) {
-      warn = `<div class="stat-box warn">⚠ Estimated ${est} tiles plus the per-zone overview
-              (~${OVERVIEW_RESERVE} tiles) may push past the ${TILE_CAP}-cap. Trim or build
-              without overview using <code>-SkipOverviewTiers</code>.</div>`;
+      warn = `<div class="stat-box warn">⚠ Estimated ${est} detail tiles exceeds the
+              ${TILE_CAP}-cap. The watch will silently drop tiles. Trim the selection.</div>`;
+    } else if (total > TILE_CAP) {
+      warn = `<div class="stat-box warn">⚠ Estimated ${est} detail + ~${estOv} overview =
+              ~${total} tiles may push past the ${TILE_CAP}-cap. Trim, or build without
+              overview using <code>-SkipOverviewTiers</code>.</div>`;
     } else {
-      warn = `<div class="stat-box ok">✓ Estimated ${est} tiles, fits the ${TILE_CAP}-cap
-              with ${TILE_BUDGET_REGIONAL - est} tiles to spare for the per-zone overview.</div>`;
+      warn = `<div class="stat-box ok">✓ Estimated ${est} detail + ~${estOv} overview =
+              ~${total} tiles, fits the ${TILE_CAP}-cap with ${TILE_CAP - total} to spare.</div>`;
     }
 
     out.innerHTML = `
@@ -1436,6 +1460,7 @@
       "layers.note": "Base map and routes toggle independently. Mix any combination. Both seasons ship 26 prebuilt zones; custom shapes go through the build queue at the bottom of the panel.",
       "slope.tip": "⚠ Slope classes are indicative only. Derived from the swissALTI3D 10 m elevation model. They do not replace the SLF avalanche bulletin or sound on-site tour planning. Use at your own risk. Full disclaimer in the install guide.",
       "status.cells": "cells",
+      "status.tier_breakdown": "detail + overview (T2/T3/T4)",
       "status.selected": "selected",
       "status.tiles_of": "tiles /",
       "status.cap": "cap",
@@ -1489,6 +1514,7 @@
       "layers.note": "Grundkarte und Routen lassen sich unabhängig umschalten. Beide Saisons liefern 26 vorgebaute Regionen; eigene Formen laufen über die Build-Queue unten im Panel.",
       "slope.tip": "⚠ Hangneigungsklassen sind nur indikativ. Aus dem swissALTI3D-Höhenmodell (10 m) abgeleitet. Sie ersetzen weder das SLF-Lawinenbulletin noch eine seriöse Tourenplanung vor Ort. Nutzung auf eigene Verantwortung. Vollständiger Haftungsausschluss in der Installationsanleitung.",
       "status.cells": "Zellen",
+      "status.tier_breakdown": "Detail + Übersicht (T2/T3/T4)",
       "status.selected": "ausgewählt",
       "status.tiles_of": "Kacheln /",
       "status.cap": "Limit",
@@ -1542,6 +1568,7 @@
       "layers.note": "Carte de base et itinéraires se basculent indépendamment. Les deux saisons proposent 26 régions prêtes ; les formes sur mesure passent par la file d'attente en bas du panneau.",
       "slope.tip": "⚠ Les classes de pente sont indicatives. Dérivées du modèle altimétrique swissALTI3D 10 m. Elles ne remplacent ni le bulletin d'avalanches SLF, ni une planification sérieuse sur le terrain. À tes risques et périls. Avertissement complet dans le guide d'installation.",
       "status.cells": "cellules",
+      "status.tier_breakdown": "détail + aperçu (T2/T3/T4)",
       "status.selected": "sélectionnées",
       "status.tiles_of": "tuiles /",
       "status.cap": "limite",
@@ -1595,6 +1622,7 @@
       "layers.note": "Mappa di base e itinerari si attivano in modo indipendente. Entrambe le stagioni offrono 26 regioni precostruite; le forme personalizzate passano dalla coda di build in fondo al pannello.",
       "slope.tip": "⚠ Le classi di pendenza sono solo indicative. Derivate dal modello altimetrico swissALTI3D 10 m. Non sostituiscono il bollettino valanghe SLF né una pianificazione seria sul posto. Uso a proprio rischio. Avvertenza completa nella guida all'installazione.",
       "status.cells": "celle",
+      "status.tier_breakdown": "dettaglio + panoramica (T2/T3/T4)",
       "status.selected": "selezionate",
       "status.tiles_of": "tile /",
       "status.cap": "limite",
