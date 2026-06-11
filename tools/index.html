@@ -128,21 +128,20 @@
     position: relative;
     width: 100%;
     max-width: 760px;
-    /* SVG viewBox crops the watch_frame.png horizontally: keep only the
-       middle 70 % (165–935 of the 1100-wide source) so the wide black
-       margins on the sides go away and the watch fills the column. */
-    aspect-ratio: 770 / 733;
+    /* SVG viewBox crops the watch_frame.png both ways: horizontally to
+       the middle 70 % (PNG x ∈ [165, 935]) and vertically to y ∈
+       [92, 632] so the empty space above the upper lug and below the
+       lower lug doesn't waste hero real estate. y_start=92 keeps the
+       oval (PNG cy=350) at (350-92)/540 ≈ 47.8 % of stack height,
+       matching the original 350/733 ≈ 47.7 %, so the oval stays in
+       the same spot relative to the stack. Applied to both desktop
+       and mobile so the watch shape is consistent across viewports. */
+    aspect-ratio: 770 / 540;
     display: block;
   }
   /* Mobile: let the stack overflow .wrap's 1.1rem side padding so it
      spans wider physically (calc(100% + 9rem) / -4.5rem margins ≈
-     40–45 % wider than the column on a 360–414 px viewport). To keep
-     the stack from also getting that much taller (which would shift
-     the oval down on the page), we drop the aspect-ratio from
-     770/733 to 770/611 — a vertical crop the JS applies to the SVG
-     viewBox ("165 57 770 611"). The crop is centred so the oval
-     lands at the same fraction of stack height as desktop, and the
-     stack ends up nearly the same physical height as before.
+     40–45 % wider than the column on a 360–414 px viewport).
      overflow-x:hidden on body absorbs the slight viewport overflow. */
   @media (max-width: 819px) {
     .watch-stack {
@@ -150,7 +149,6 @@
       margin-left: -4.5rem;
       margin-right: -4.5rem;
       max-width: none;
-      aspect-ratio: 770 / 611;
     }
   }
   /* Watch-frame PNG underneath: provides the bezel + opaque centre that the
@@ -161,36 +159,23 @@
     pointer-events: none;
     z-index: 1;
   }
-  /* Live map ON TOP of the frame, clipped to the screen ellipse so only the
-     screen window shows it. Ellipse in the source PNG is cx=549 cy=350
-     rx=199 ry=191; with the 15 % side crop the new visible box is
-     x ∈ [165, 935] (width 770) × y ∈ [0, 733], so:
+  /* Live map ON TOP of the frame, clipped to the screen ellipse so only
+     the screen window shows it. Ellipse in the source PNG is cx=549,
+     cy=350, rx=199, ry=191. With the viewBox crop "165 92 770 540":
        left   = (549-199-165) / 770 = 24.026 %
-       top    = (350-191)     / 733 = 21.692 %
+       top    = (350-191-92)  / 540 = 12.407 %
        width  =  398          / 770 = 51.688 %
-       height =  382          / 733 = 52.115 %  */
+       height =  382          / 540 = 70.741 %  */
   .watch-stack .watch-map {
     position: absolute;
     left:   24.0260%;
-    top:    21.6917%;
+    top:    12.4074%;
     width:  51.6883%;
-    height: 52.1146%;
+    height: 70.7407%;
     background: #e8eef5;
     clip-path: ellipse(50% 50% at 50% 50%);
     -webkit-clip-path: ellipse(50% 50% at 50% 50%);
     z-index: 2;
-  }
-  /* Mobile override: with the vertical viewBox crop "165 57 770 611" the
-     stack height tracks 611 (not 733), so the oval at PNG y∈[159,541]
-     maps to (159-57)/611 = 16.69 % top and 382/611 = 62.52 % height.
-     Placed after the base rule so this wins on source order at the same
-     specificity. left/width are unchanged because the horizontal crop is
-     unchanged. */
-  @media (max-width: 819px) {
-    .watch-stack .watch-map {
-      top:    16.6940%;
-      height: 62.5205%;
-    }
   }
   /* The scale-bar text in a second overlay SVG that sits above the map. */
   .watch-stack .watch-scale {
@@ -491,7 +476,7 @@
       <div class="watch-stack" role="img" aria-label="Interactive Garmin watch mockup showing live swisstopo LK25 + slope shading + ski-tour routes, centred on the Clariden">
         <!-- Watch frame PNG underneath. pointer-events:none lets clicks pass
              through to the map sitting on top. -->
-        <svg class="watch-overlay" viewBox="165 0 770 733" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <svg class="watch-overlay" viewBox="165 92 770 540" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
           <image href="watch_frame.png" x="0" y="0" width="1100" height="733"/>
         </svg>
 
@@ -502,7 +487,7 @@
         <!-- Scale bar floats above the map. Bar width + label are updated by
              JS on every map zoom/move so the indicated distance is honest.
              Black on the light LK25 base reads better than white-with-stroke. -->
-        <svg class="watch-scale" viewBox="165 0 770 733" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <svg class="watch-scale" viewBox="165 92 770 540" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
           <g id="scaleBarGroup">
             <line id="scaleBar-bar" x1="525" y1="537" x2="573" y2="537"
                   stroke="#000" stroke-width="2.2" stroke-linecap="butt" />
@@ -1234,22 +1219,11 @@
   drawZones();
   applyLang(detectLang());
 
-  // Watch SVGs: same horizontal crop on every viewport (PNG x=165..935 →
-  // viewBox width 770), but mobile crops vertically to "165 57 770 611"
-  // so the wider mobile stack stays roughly the same physical height as
-  // before and the oval doesn't shift down. The vertical offset 57 is
-  // chosen so the oval (PNG cy=350) lands at the same fraction of stack
-  // height as on desktop ((350-57)/611 ≈ 47.9 %, matches 350/733). The
-  // scale bar lives at viewBox y=537 which is well inside both crops.
+  // Watch SVGs share one viewBox "165 92 770 540" across desktop and
+  // mobile: PNG x=[165, 935] horizontally, y=[92, 632] vertically. The
+  // scale bar (drawn at viewBox y=537) is inside this crop. Width 770
+  // is the unit the scale-bar code below uses for vbPerCss.
   const WATCH_VB_W = 770;
-  const watchMQ = window.matchMedia("(max-width: 819px)");
-  function watchVB() { return watchMQ.matches ? "165 57 770 611" : "165 0 770 733"; }
-  function applyWatchVB() {
-    const vb = watchVB();
-    document.querySelectorAll(".watch-stack svg").forEach(el => el.setAttribute("viewBox", vb));
-  }
-  applyWatchVB();
-  watchMQ.addEventListener("change", applyWatchVB);
 
   // ───────────── Interactive Clariden map inside the watch screen ─────────────
   // Loads Leaflet lazily after the rest of the page; binds a swisstopo
