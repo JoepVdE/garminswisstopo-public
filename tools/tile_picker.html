@@ -603,7 +603,12 @@
   }
   // Replaces the old constants throughout: code below reads `deviceProfile.tileCap`.
   const TILE_CAP = 500;          // kept for one comment string below — dynamic in logic
-  const OVERVIEW_RESERVE = 89;
+  // Per-zone overview tiers (T2 pk100 + T3 pk500 + T4 pk500 down-warped) bundle
+  // into a single `<pack>_overview.kmz`. Tile count scales with bbox size: ~3-5
+  // for a small pick, ~25 for a 50 km zone, ~85 for a full Mittelland chunk.
+  // We carve a 30-tile reserve out of the detail budget as a typical-case
+  // headroom estimate.
+  const OVERVIEW_RESERVE = 30;
   const TILE_BUDGET_REGIONAL = TILE_CAP - OVERVIEW_RESERVE;
 
   function lv95ToLatLng(e, n) {
@@ -1186,7 +1191,7 @@
     } else if (est > cap) {
       statusEl.className = 'stat-box warn';
     } else if (cap >= 500 && est > cap - OVERVIEW_RESERVE) {
-      // Only the 500-tile tier ships an overview today; below that, no reserve.
+      // Detail-tile budget after carving out the per-zone overview reserve.
       statusEl.className = 'stat-box warn';
     } else {
       statusEl.className = 'stat-box ok';
@@ -1363,12 +1368,12 @@
       warn = `<div class="stat-box warn">⚠ Estimated ${est} tiles exceeds 500-cap.
               The watch will silently drop tiles. Trim the selection.</div>`;
     } else if (est > TILE_BUDGET_REGIONAL) {
-      warn = `<div class="stat-box warn">⚠ Estimated ${est} tiles exceeds the
-              ${TILE_BUDGET_REGIONAL}-tile alongside-overview budget. You'll need
-              to deploy this pack with <code>-NoOverview</code>.</div>`;
+      warn = `<div class="stat-box warn">⚠ Estimated ${est} tiles plus the per-zone overview
+              (~${OVERVIEW_RESERVE} tiles) may push past the ${TILE_CAP}-cap. Trim or build
+              without overview using <code>-SkipOverviewTiers</code>.</div>`;
     } else {
-      warn = `<div class="stat-box ok">✓ Estimated ${est} tiles, fits 500-cap with
-              ${TILE_BUDGET_REGIONAL - est} tiles to spare alongside the all-CH overview.</div>`;
+      warn = `<div class="stat-box ok">✓ Estimated ${est} tiles, fits the ${TILE_CAP}-cap
+              with ${TILE_BUDGET_REGIONAL - est} tiles to spare for the per-zone overview.</div>`;
     }
 
     out.innerHTML = `
@@ -1376,18 +1381,19 @@
       <p><strong>1. Save the selection:</strong></p>
       <p><button id="downloadBtn">Download selection.json</button></p>
       <p><small>Put it somewhere the build script can find it (e.g. the repo root).</small></p>
-      <p><strong>2. Build the pack (cell-precise):</strong></p>
-      <pre>.\\build_kmz_packs.ps1 -CustomCellsJson selection.json -CustomName "my_pack" -SkipOverview</pre>
+      <p><strong>2. Build the pack (cell-precise, detail + overview tiers):</strong></p>
+      <pre>.\\build_kmz_packs.ps1 -CustomCellsJson selection.json -CustomName "my_pack"</pre>
       <p><small>Tiles outside your picked cells are skipped, so scattered selections
-      don't waste budget. Output: <code>out\\packs\\99_my_pack[_part_NNN].kmz</code>.</small></p>
+      don't waste budget. Output: detail at <code>out\\packs\\99_my_pack[_part_NNN].kmz</code>
+      plus zoom-out overview at <code>out\\packs\\99_my_pack_overview.kmz</code>.</small></p>
       <p><strong>3. Activate after build:</strong></p>
       <pre>.\\activate_pack.ps1 -SyncLibrary
-.\\activate_pack.ps1 -Zone my_pack${est > TILE_BUDGET_REGIONAL ? ' -NoOverview' : ''}</pre>
+.\\activate_pack.ps1 -Zone my_pack${est > TILE_BUDGET_REGIONAL ? ' -SkipOverviewTiers' : ''}</pre>
       <details style="margin-top:0.5rem">
         <summary><small>Alt: legacy single-bbox build (every non-blank tile in the rectangle below)</small></summary>
         <p><strong>Union bbox (LV95):</strong></p>
         <pre>${bboxStr}</pre>
-        <pre>.\\build_kmz_packs.ps1 -CustomBbox "${bboxStr}" -CustomName "my_pack" -SkipOverview</pre>
+        <pre>.\\build_kmz_packs.ps1 -CustomBbox "${bboxStr}" -CustomName "my_pack"</pre>
       </details>
     `;
 

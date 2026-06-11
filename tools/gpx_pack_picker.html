@@ -436,7 +436,7 @@
       "result.dl_title": "Download these files",
       "result.dl_all": "Download all {n} files",
       "result.dl_zip": "Download one .zip ({mb} MB), easiest",
-      "result.dl_zip_tip": "The zip bundles the overview + your region's pack files. Unzip, copy every .kmz inside to GARMIN/Garmin/CustomMaps/.",
+      "result.dl_zip_tip": "The zip bundles your region's pack files. Unzip, copy every .kmz inside to GARMIN/Garmin/CustomMaps/.",
       "result.dl_individual": "or download files individually",
       "result.dl_all_progress": "Downloading",
       "result.dl_all_done": "Done, check your Downloads folder",
@@ -444,7 +444,7 @@
       "result.dl_body_1": "Your route is fully covered by",
       "result.dl_zone": "zone",
       "result.dl_zones": "zones",
-      "result.dl_plus": "plus the Switzerland overview. Total",
+      "result.dl_plus": "total",
       "result.multi.label": "Better for multi-zone tours",
       "result.multi.title": "Build a custom pack around your route",
       "result.multi.body": "Your route crosses {n} zones, totalling {files} files and {mb} MB. That's not a lot — that's too much. It's above your watch's tile cap. With the custom map maker, paint just the area around your route: one smaller pack, sized to fit, emailed within an hour.",
@@ -504,7 +504,7 @@
       "result.dl_title": "Diese Dateien herunterladen",
       "result.dl_all": "Alle {n} Dateien herunterladen",
       "result.dl_zip": "Eine .zip herunterladen ({mb} MB), am einfachsten",
-      "result.dl_zip_tip": "Die ZIP enthält die Schweiz-Übersicht und dein Regionalpaket. Entpacken, alle .kmz nach GARMIN/Garmin/CustomMaps/ kopieren.",
+      "result.dl_zip_tip": "Die ZIP enthält dein Regionalpaket. Entpacken, alle .kmz nach GARMIN/Garmin/CustomMaps/ kopieren.",
       "result.dl_individual": "oder einzelne Dateien laden",
       "result.dl_all_progress": "Lädt herunter",
       "result.dl_all_done": "Fertig, schau in deinen Downloads-Ordner",
@@ -512,7 +512,7 @@
       "result.dl_body_1": "Deine Route ist vollständig abgedeckt durch",
       "result.dl_zone": "Region",
       "result.dl_zones": "Regionen",
-      "result.dl_plus": "plus die Schweiz-Übersicht. Total",
+      "result.dl_plus": "insgesamt",
       "result.multi.label": "Besser für Touren über mehrere Regionen",
       "result.multi.title": "Eigenes Paket entlang deiner Route bauen",
       "result.multi.body": "Deine Route durchquert {n} Regionen — zusammen {files} Dateien und {mb} MB. Das ist nicht viel — das ist zu viel. Das überschreitet das Tile-Limit deiner Uhr. Im Custom Map Maker malst du nur die Fläche um deine Route: ein kleineres Paket, passend zugeschnitten, per Mail in etwa einer Stunde.",
@@ -572,7 +572,7 @@
       "result.dl_title": "Télécharge ces fichiers",
       "result.dl_all": "Tout télécharger ({n} fichiers)",
       "result.dl_zip": "Télécharger un .zip ({mb} MB), le plus simple",
-      "result.dl_zip_tip": "Le zip contient l'aperçu suisse et ton pack régional. Décompresse, copie tous les .kmz dans GARMIN/Garmin/CustomMaps/.",
+      "result.dl_zip_tip": "Le zip contient ton pack régional. Décompresse, copie tous les .kmz dans GARMIN/Garmin/CustomMaps/.",
       "result.dl_individual": "ou télécharger les fichiers un par un",
       "result.dl_all_progress": "Téléchargement",
       "result.dl_all_done": "Terminé, regarde dans ton dossier Téléchargements",
@@ -580,7 +580,7 @@
       "result.dl_body_1": "Ta sortie est entièrement couverte par",
       "result.dl_zone": "région",
       "result.dl_zones": "régions",
-      "result.dl_plus": "plus l'aperçu national. Total",
+      "result.dl_plus": "total",
       "result.multi.label": "Mieux pour les sorties multi-régions",
       "result.multi.title": "Construis un pack sur mesure autour de ton tracé",
       "result.multi.body": "Ton tracé traverse {n} régions, soit {files} fichiers et {mb} MB. Ce n'est pas beaucoup — c'est trop. C'est au-dessus du quota de tuiles de ta montre. Avec le custom map maker, peins seulement la zone autour de ton tracé : un pack plus petit, taillé sur mesure, envoyé par e-mail en une heure environ.",
@@ -640,7 +640,7 @@
       "result.dl_title": "Scarica questi file",
       "result.dl_all": "Scarica tutti i {n} file",
       "result.dl_zip": "Scarica un .zip ({mb} MB), il più semplice",
-      "result.dl_zip_tip": "Lo zip contiene la panoramica nazionale e il tuo pacchetto regionale. Estrai e copia tutti i .kmz in GARMIN/Garmin/CustomMaps/.",
+      "result.dl_zip_tip": "Lo zip contiene il tuo pacchetto regionale. Estrai e copia tutti i .kmz in GARMIN/Garmin/CustomMaps/.",
       "result.dl_individual": "o scarica i file uno alla volta",
       "result.dl_all_progress": "Sto scaricando",
       "result.dl_all_done": "Fatto, controlla la cartella Download",
@@ -648,7 +648,7 @@
       "result.dl_body_1": "Il tuo giro è interamente coperto da",
       "result.dl_zone": "regione",
       "result.dl_zones": "regioni",
-      "result.dl_plus": "più la panoramica nazionale. Totale",
+      "result.dl_plus": "totale",
       "result.multi.label": "Meglio per giri su più regioni",
       "result.multi.title": "Costruisci un pacchetto su misura attorno al tuo giro",
       "result.multi.body": "Il tuo tracciato attraversa {n} regioni, in totale {files} file e {mb} MB. Non è tanto — è troppo. È oltre il limite di tile del tuo orologio. Con il custom map maker dipingi solo la zona attorno al tuo tracciato: un pacchetto più piccolo, tagliato su misura, inviato per e-mail entro un'ora circa.",
@@ -890,11 +890,11 @@
     if (season === 'summer') return zone.summer_files || [];
     return zone.winter_files || zone.files || [];
   }
-  function overviewFilesForSeason(season) {
-    const o = MANIFEST && MANIFEST.overview;
-    if (!o) return [];
-    if (season === 'summer') return o.summer_files || [];
-    return o.winter_files || o.files || [];
+  // Per-zone overview KMZ (T2/T3/T4 zoom-out tiers, replaces the retired
+  // all-CH 00_overview_ch.kmz). Returns one file record or null.
+  function overviewFileForZone(zone, season) {
+    if (season === 'summer') return zone.summer_overview || null;
+    return zone.winter_overview || null;
   }
   function zonesForSeason(season) {
     return ZONES.filter(z => filesForSeason(z, season).length > 0);
@@ -955,15 +955,16 @@
   }
 
   // Returns { html: string, files: array } so the caller can wire a
-  // single "Download all" trigger.
+  // single "Download all" trigger. The `includeOverview` flag is honoured for
+  // backwards-compat with callers; when true (default) each zone's per-zone
+  // overview KMZ is added alongside its detail parts.
   function buildDownloads(zones, includeOverview) {
     const files = [];
-    if (includeOverview) {
-      overviewFilesForSeason(activeSeason).forEach(f => files.push({
-        ...f, url: fileDownloadUrl(f.name),
-      }));
-    }
     for (const z of zones) {
+      if (includeOverview) {
+        const ov = overviewFileForZone(z, activeSeason);
+        if (ov) files.push({ ...ov, url: fileDownloadUrl(ov.name) });
+      }
       filesForSeason(z, activeSeason).forEach(f => files.push({
         ...f, url: fileDownloadUrl(f.name),
       }));
@@ -978,7 +979,6 @@
     ).join("");
     return { html, files };
   }
-  // Backwards-compat wrapper for any caller that still wants the HTML only.
   function renderDownloadsForZones(zones, includeOverview) {
     return buildDownloads(zones, includeOverview).html;
   }
@@ -1023,10 +1023,10 @@
 
     const totalRecMb = finalRecommended.reduce((a, r) => {
       const f = filesForSeason(r.zone, activeSeason);
-      return a + f.reduce((aa, x) => aa + (x.size_mb || 0), 0);
+      const ov = overviewFileForZone(r.zone, activeSeason);
+      const ovMb = ov ? (ov.size_mb || 0) : 0;
+      return a + f.reduce((aa, x) => aa + (x.size_mb || 0), 0) + ovMb;
     }, 0);
-    const overviewFiles = overviewFilesForSeason(activeSeason);
-    const overviewMb = overviewFiles.reduce((a, f) => a + (f.size_mb || 0), 0);
     const zoneWord = finalRecommended.length === 1 ? T("result.dl_zone") : T("result.dl_zones");
 
     const dl = buildDownloads(finalRecommended.map(r => r.zone), true);
@@ -1045,7 +1045,7 @@
     // download box below as a fallback for users who prefer the canned packs.
     if (finalRecommended.length >= 2) {
       const totalFiles = dl.files.length;
-      const totalMb = (totalRecMb + overviewMb).toFixed(0);
+      const totalMb = totalRecMb.toFixed(0);
       html += `
         <div class="custom-suggest">
           <span class="cs-label">${T("result.multi.label")}</span>
@@ -1062,7 +1062,7 @@
       <div class="recommend">
         <span class="step-label">${T("result.step1")}</span>
         <h3 class="r-title">${T("result.dl_title")}</h3>
-        <p>${T("result.dl_body_1")} <strong>${finalRecommended.length} ${zoneWord}</strong> ${T("result.dl_plus")} <strong>${(totalRecMb + overviewMb).toFixed(0)} MB</strong>.</p>
+        <p>${T("result.dl_body_1")} <strong>${finalRecommended.length} ${zoneWord}</strong> (${T("result.dl_plus")} <strong>${totalRecMb.toFixed(0)} MB</strong>).</p>
         ${zipUrl
           ? `<a class="dl-all" href="${zipUrl}" download>⬇ ${T("result.dl_zip").replace("{mb}", zipMb)}</a>
              <p class="dl-tip">${T("result.dl_zip_tip")}</p>

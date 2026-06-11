@@ -33,9 +33,9 @@ for you and gives you a download link.
 
 Either way you end up with one or more `.kmz` files to download.
 
-> **Always also download `00_overview_ch.kmz`** (the GPX picker links to it
-> automatically). This is the all-of-Switzerland background that stays enabled
-> at all times.
+> Each regional pack now includes its own `<zone>_overview.kmz` (zoom-out
+> coverage to about 12 km). The picker bundles it automatically; you don't
+> need a separate all-Switzerland background file any more.
 
 ---
 
@@ -95,8 +95,9 @@ When in doubt: **only delete files ending in `.kmz`**, and **only inside
 
 ## Step 5. Copy the new `.kmz` files in
 
-Drag every `.kmz` you downloaded in Step 1 into `Garmin/CustomMaps/`. The
-overview pack and the regional pack(s) all go in the same folder.
+Drag every `.kmz` you downloaded in Step 1 into `Garmin/CustomMaps/`. A
+regional pack is a small bundle: a few detail files plus its overview file.
+They all go in the same folder.
 
 A typical install ends up looking like this:
 
@@ -104,16 +105,17 @@ A typical install ends up looking like this:
 GARMIN/
 └── Garmin/
     └── CustomMaps/
-        ├── 00_overview_ch.kmz
         ├── 02_wallis_west_part_001.kmz
         ├── 02_wallis_west_part_002.kmz
         ├── 02_wallis_west_part_003.kmz
-        └── 02_wallis_west_part_004.kmz
+        ├── 02_wallis_west_part_004.kmz
+        └── 02_wallis_west_overview.kmz
 ```
 
 > **Don't mix zones.** The watch can render about 500 tiles total across all
-> the KMZ files in `CustomMaps/`. One overview + one regional zone fills almost
-> exactly that. Anything extra will be silently dropped by the watch.
+> the KMZ files in `CustomMaps/`. One regional bundle (detail parts plus its
+> overview file) fills almost exactly that. Anything extra will be silently
+> dropped by the watch.
 
 ---
 
@@ -157,7 +159,7 @@ Same flow as the first install:
 
 1. Plug the watch into the computer.
 2. Open `Garmin/CustomMaps/`.
-3. Delete the old regional `.kmz` files (keep `00_overview_ch.kmz`).
+3. Delete every `.kmz` from the old region (detail parts and the `_overview.kmz`).
 4. Copy the new region's `.kmz` files in.
 5. Eject, reboot.
 

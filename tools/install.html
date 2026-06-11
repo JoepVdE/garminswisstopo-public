@@ -93,7 +93,7 @@
   <li data-i18n="step1.gpx"><strong><a href="gpx_pack_picker.html">GPX picker</a></strong>, drop a GPX of your tour and get direct download links for the right regional pack.</li>
   <li data-i18n="step1.tile"><strong><a href="tile_picker.html">Custom builder</a></strong>, paint your own area and have a tailor-made pack built (typically within an hour).</li>
 </ul>
-<p data-i18n="step1.always">Always also download <code>00_overview_ch.kmz</code> (the all-Switzerland background). The GPX picker links to it automatically.</p>
+<p data-i18n="step1.always">Each regional pack now includes its own <code>&lt;zone&gt;_overview.kmz</code> (zoom-out coverage to about 12 km). The picker bundles it automatically — you don't need a separate all-Switzerland background file any more.</p>
 
 <h2 data-i18n="step2.heading">Step 2. Plug the watch into your computer</h2>
 <p data-i18n="step2.body">Use the USB cable that came with the watch. A phone-charging cable will not work, those only carry power, not data. The watch appears as a USB drive named <strong>GARMIN</strong>.</p>
@@ -115,16 +115,16 @@
 <p data-i18n="step4.rule">Rule of thumb: <strong>only delete files ending in <code>.kmz</code></strong>, and <strong>only inside <code>Garmin/CustomMaps/</code></strong>.</p>
 
 <h2 data-i18n="step5.heading">Step 5. Copy the new <code>.kmz</code> files in</h2>
-<p data-i18n="step5.intro">Drag every <code>.kmz</code> you downloaded into <code>Garmin/CustomMaps/</code>. The Switzerland overview and your regional pack go in the same folder.</p>
+<p data-i18n="step5.intro">Drag every <code>.kmz</code> you downloaded into <code>Garmin/CustomMaps/</code>. A regional pack is a small bundle: a few detail files plus its overview file. They all go in the same folder.</p>
 <pre>GARMIN/
 └── Garmin/
     └── CustomMaps/
-        ├── 00_overview_ch.kmz
         ├── 02_wallis_west_part_001.kmz
         ├── 02_wallis_west_part_002.kmz
         ├── 02_wallis_west_part_003.kmz
-        └── 02_wallis_west_part_004.kmz</pre>
-<div class="callout warn"><strong data-i18n="step5.warn_label">Copy one region at a time.</strong> <span data-i18n="step5.warn_body">Your watch has a limit on how many map pieces it can show at once. The Switzerland overview plus one regional pack already uses almost the whole budget. If you copy more, the watch will quietly leave some out, and you don't get to choose which.</span></div>
+        ├── 02_wallis_west_part_004.kmz
+        └── 02_wallis_west_overview.kmz</pre>
+<div class="callout warn"><strong data-i18n="step5.warn_label">Copy one region at a time.</strong> <span data-i18n="step5.warn_body">Your watch has a limit on how many map pieces it can show at once. Each regional bundle (detail parts plus its overview file) is sized to fit. If you copy more than one region, the watch will quietly leave some pieces out, and you don't get to choose which.</span></div>
 
 <h2 data-i18n="step6.heading">Step 6. Safely eject</h2>
 <ul>
@@ -145,14 +145,14 @@
 <h2 data-i18n="switch.heading">Switching regions later</h2>
 <ol>
   <li data-i18n="switch.s1">Plug in, open <code>Garmin/CustomMaps/</code>.</li>
-  <li data-i18n="switch.s2">Delete the old regional <code>.kmz</code> files (keep <code>00_overview_ch.kmz</code>).</li>
+  <li data-i18n="switch.s2">Delete every <code>.kmz</code> from the old region (detail parts and the <code>_overview.kmz</code>).</li>
   <li data-i18n="switch.s3">Copy the new region's <code>.kmz</code> in.</li>
   <li data-i18n="switch.s4">Eject, reboot.</li>
 </ol>
 
 <h2 data-i18n="trouble.heading">Troubleshooting</h2>
 <p><strong data-i18n="trouble.blank_q">Map looks blank.</strong> <span data-i18n="trouble.blank_a">Did you reboot? Did you enable Map Layers → Custom Maps? Are the <code>.kmz</code> files in <code>Garmin/CustomMaps/</code> and not <code>Garmin/Maps/</code>?</span></p>
-<p><strong data-i18n="trouble.partial_q">Only part of the region renders.</strong> <span data-i18n="trouble.partial_a">Over the tile limit, keep only one regional pack at a time, alongside the overview.</span></p>
+<p><strong data-i18n="trouble.partial_q">Only part of the region renders.</strong> <span data-i18n="trouble.partial_a">Over the tile limit. Keep only one regional pack at a time (detail parts plus its <code>_overview.kmz</code>).</span></p>
 <p><strong data-i18n="trouble.nomap_q">No standard Garmin map (TopoActive) any more.</strong> <span data-i18n="trouble.nomap_a">An <code>.img</code> file was deleted. Plug the watch in and reinstall the basemap via <a href="https://www.garmin.com/en-US/software/express/">Garmin Express</a>.</span></p>
 <p><strong data-i18n="trouble.hang_q">Watch hangs on boot.</strong> <span data-i18n="trouble.hang_a">Unplug, hold <em>Light</em> for 30 seconds, retry. If it persists, remove the most recently added <code>.kmz</code>.</span></p>
 
@@ -184,7 +184,7 @@
       "step1.heading": "Step 1. Pick which maps you want",
       "step1.gpx": "GPX picker, drop a GPX of your tour and get direct download links for the right regional pack.",
       "step1.tile": "Custom builder, paint your own area and have a tailor-made pack built (typically within an hour).",
-      "step1.always": "Always also download 00_overview_ch.kmz (the all-Switzerland background). The GPX picker links to it automatically.",
+      "step1.always": "Each regional pack now includes its own <zone>_overview.kmz (zoom-out coverage to about 12 km). The picker bundles it automatically — you don't need a separate all-Switzerland background file any more.",
       "step2.heading": "Step 2. Plug the watch into your computer",
       "step2.body": "Use the USB cable that came with the watch. A phone-charging cable will not work, those only carry power, not data. The watch appears as a USB drive named GARMIN.",
       "step3.heading": "Step 3. Open the Garmin/CustomMaps/ folder",
@@ -199,9 +199,9 @@
       "step4.other_ext": "anything containing .img, .gma, .unl, or .jnx",
       "step4.rule": "Rule of thumb: only delete files ending in .kmz, and only inside Garmin/CustomMaps/.",
       "step5.heading": "Step 5. Copy the new .kmz files in",
-      "step5.intro": "Drag every .kmz you downloaded into Garmin/CustomMaps/. The Switzerland overview and your regional pack go in the same folder.",
+      "step5.intro": "Drag every .kmz you downloaded into Garmin/CustomMaps/. A regional pack is a small bundle: a few detail files plus its overview file. They all go in the same folder.",
       "step5.warn_label": "Copy one region at a time.",
-      "step5.warn_body": "Your watch has a limit on how many map pieces it can show at once. The Switzerland overview plus one regional pack already uses almost the whole budget. If you copy more, the watch will quietly leave some out, and you don't get to choose which.",
+      "step5.warn_body": "Your watch has a limit on how many map pieces it can show at once. Each regional bundle (detail parts plus its overview file) is sized to fit. If you copy more than one region, the watch will quietly leave some pieces out, and you don't get to choose which.",
       "step6.heading": "Step 6. Safely eject",
       "step6.windows": "Windows: right-click GARMIN in This PC → Eject.",
       "step6.mac": "Mac: drag the drive to the Trash.",
@@ -214,14 +214,14 @@
       "step7.note": "⚠ On some Epix and Fenix firmware versions the individual KMZ files do show up in Map Manager and can be toggled on/off there. On others, they all render as a single combined Custom Maps layer with one toggle. Either way, the watch caps how many tiles render at once, so swapping regions is still done via USB file moves rather than the Map Manager toggle.",
       "switch.heading": "Switching regions later",
       "switch.s1": "Plug in, open Garmin/CustomMaps/.",
-      "switch.s2": "Delete the old regional .kmz files (keep 00_overview_ch.kmz).",
+      "switch.s2": "Delete every .kmz from the old region (detail parts and the _overview.kmz).",
       "switch.s3": "Copy the new region's .kmz in.",
       "switch.s4": "Eject, reboot.",
       "trouble.heading": "Troubleshooting",
       "trouble.blank_q": "Map looks blank.",
       "trouble.blank_a": "Did you reboot? Did you enable Map Layers → Custom Maps? Are the .kmz files in Garmin/CustomMaps/ and not Garmin/Maps/?",
       "trouble.partial_q": "Only part of the region renders.",
-      "trouble.partial_a": "Over the tile limit, keep only one regional pack at a time, alongside the overview.",
+      "trouble.partial_a": "Over the tile limit. Keep only one regional pack at a time (detail parts plus its _overview.kmz).",
       "trouble.nomap_q": "No standard Garmin map (TopoActive) any more.",
       "trouble.nomap_a": "An .img file was deleted. Plug the watch in and reinstall the basemap via Garmin Express.",
       "trouble.hang_q": "Watch hangs on boot.",
@@ -243,7 +243,7 @@
       "step1.heading": "Schritt 1. Wähle deine Karten",
       "step1.gpx": "GPX-Auswahl, GPX deiner Tour einlegen und direkte Download-Links zum passenden Regionalpaket erhalten.",
       "step1.tile": "Eigener Build, eigenes Gebiet zeichnen und ein massgeschneidertes Paket bauen lassen (meist innerhalb einer Stunde).",
-      "step1.always": "Lade immer auch 00_overview_ch.kmz herunter (die Schweiz-Übersicht). Die GPX-Auswahl verlinkt automatisch darauf.",
+      "step1.always": "Jedes Regionalpaket enthält neu seine eigene <zone>_overview.kmz (Übersichts-Zoom bis ca. 12 km). Die Auswahl packt sie automatisch dazu — eine separate Schweiz-Übersichtsdatei brauchst du nicht mehr.",
       "step2.heading": "Schritt 2. Uhr an den Computer anschliessen",
       "step2.body": "Nimm das USB-Kabel, das mit der Uhr geliefert wurde. Ein Handy-Ladekabel funktioniert nicht, die übertragen nur Strom, keine Daten. Die Uhr erscheint als USB-Laufwerk namens GARMIN.",
       "step3.heading": "Schritt 3. Den Ordner Garmin/CustomMaps/ öffnen",
@@ -258,9 +258,9 @@
       "step4.other_ext": "alles mit .img, .gma, .unl oder .jnx",
       "step4.rule": "Faustregel: nur Dateien löschen, die auf .kmz enden, und nur innerhalb von Garmin/CustomMaps/.",
       "step5.heading": "Schritt 5. Neue .kmz-Dateien hineinkopieren",
-      "step5.intro": "Zieh jede heruntergeladene .kmz nach Garmin/CustomMaps/. Die Schweiz-Übersicht und dein Regionalpaket kommen in den gleichen Ordner.",
+      "step5.intro": "Zieh jede heruntergeladene .kmz nach Garmin/CustomMaps/. Ein Regionalpaket ist ein kleines Bündel: ein paar Detail-Dateien plus die Übersichtsdatei. Alle kommen in den gleichen Ordner.",
       "step5.warn_label": "Immer nur eine Region aufs Mal kopieren.",
-      "step5.warn_body": "Deine Uhr hat eine Grenze, wie viele Kartenstücke sie gleichzeitig anzeigen kann. Die Schweiz-Übersicht plus ein Regionalpaket füllt das Budget fast komplett. Wenn du mehr kopierst, lässt die Uhr stillschweigend einige weg, und du kannst nicht beeinflussen, welche.",
+      "step5.warn_body": "Deine Uhr hat eine Grenze, wie viele Kartenstücke sie gleichzeitig anzeigen kann. Jedes Regional-Bündel (Detail-Teile plus Übersichtsdatei) ist so dimensioniert, dass es passt. Kopierst du mehr als eine Region, lässt die Uhr stillschweigend einige Stücke weg, und du kannst nicht beeinflussen, welche.",
       "step6.heading": "Schritt 6. Sicher auswerfen",
       "step6.windows": "Windows: rechtsklick auf GARMIN in Dieser PC → Auswerfen.",
       "step6.mac": "Mac: Laufwerk in den Papierkorb ziehen.",
@@ -273,14 +273,14 @@
       "step7.note": "⚠ Auf manchen Epix- und Fenix-Firmware-Versionen erscheinen die einzelnen KMZ-Dateien im Karten-Manager und lassen sich dort einzeln an-/ausschalten. Auf anderen erscheinen sie als eine kombinierte Custom-Maps-Ebene mit einem Schalter. So oder so: die Uhr hat eine Kachelgrenze, der Regionswechsel passiert also weiterhin per USB.",
       "switch.heading": "Später die Region wechseln",
       "switch.s1": "Anstecken, Garmin/CustomMaps/ öffnen.",
-      "switch.s2": "Die alten Regional-.kmz löschen (00_overview_ch.kmz behalten).",
+      "switch.s2": "Jede .kmz der alten Region löschen (Detail-Teile und die _overview.kmz).",
       "switch.s3": "Die .kmz der neuen Region hineinkopieren.",
       "switch.s4": "Auswerfen, neu starten.",
       "trouble.heading": "Fehlersuche",
       "trouble.blank_q": "Karte bleibt leer.",
       "trouble.blank_a": "Hast du neu gestartet? Kartenebenen → Custom Maps aktiviert? Liegen die .kmz in Garmin/CustomMaps/ und nicht in Garmin/Maps/?",
       "trouble.partial_q": "Nur ein Teil der Region wird angezeigt.",
-      "trouble.partial_a": "Du bist über dem Kachel-Limit, halt nur eine Region aufs Mal drauf, plus die Übersicht.",
+      "trouble.partial_a": "Du bist über dem Kachel-Limit. Halt nur eine Region aufs Mal drauf (Detail-Teile plus deren _overview.kmz).",
       "trouble.nomap_q": "Die Standard-Garmin-Karte (TopoActive) fehlt.",
       "trouble.nomap_a": "Eine .img wurde gelöscht. Uhr anstecken und Basiskarte über Garmin Express neu installieren.",
       "trouble.hang_q": "Die Uhr hängt beim Start.",
@@ -302,7 +302,7 @@
       "step1.heading": "Étape 1. Choisis les cartes",
       "step1.gpx": "Sélecteur GPX, dépose le GPX de ta sortie et obtiens des liens directs vers le pack régional adapté.",
       "step1.tile": "Build sur mesure, dessine ta zone et fais construire un pack personnalisé (généralement en moins d'une heure).",
-      "step1.always": "Télécharge toujours aussi 00_overview_ch.kmz (l'aperçu de toute la Suisse). Le sélecteur GPX y renvoie automatiquement.",
+      "step1.always": "Chaque pack régional inclut désormais sa propre <zone>_overview.kmz (vue dézoomée jusqu'à environ 12 km). Le sélecteur l'ajoute automatiquement — plus besoin d'un fichier d'aperçu national séparé.",
       "step2.heading": "Étape 2. Branche la montre à l'ordinateur",
       "step2.body": "Utilise le câble USB livré avec la montre. Un câble de recharge pour téléphone ne marchera pas, ces câbles ne transmettent que de l'alimentation, pas de données. La montre apparaît comme un disque USB nommé GARMIN.",
       "step3.heading": "Étape 3. Ouvre le dossier Garmin/CustomMaps/",
@@ -317,9 +317,9 @@
       "step4.other_ext": "tout ce qui contient .img, .gma, .unl ou .jnx",
       "step4.rule": "Règle : ne supprime que les fichiers .kmz, et uniquement dans Garmin/CustomMaps/.",
       "step5.heading": "Étape 5. Copier les nouveaux .kmz",
-      "step5.intro": "Glisse tous les .kmz téléchargés dans Garmin/CustomMaps/. L'aperçu suisse et ton pack régional vont dans le même dossier.",
+      "step5.intro": "Glisse tous les .kmz téléchargés dans Garmin/CustomMaps/. Un pack régional est un petit lot : quelques fichiers de détail et son fichier d'aperçu. Tous vont dans le même dossier.",
       "step5.warn_label": "Une seule région à la fois.",
-      "step5.warn_body": "Ta montre a une limite sur le nombre de morceaux de carte qu'elle peut afficher en même temps. L'aperçu suisse plus un pack régional remplit déjà presque tout le budget. Si tu en copies davantage, la montre en laissera silencieusement de côté, et tu ne choisis pas lesquels.",
+      "step5.warn_body": "Ta montre a une limite sur le nombre de morceaux de carte qu'elle peut afficher en même temps. Chaque lot régional (parties de détail plus son fichier d'aperçu) est dimensionné pour rentrer. Si tu copies plus d'une région, la montre en laissera silencieusement de côté, et tu ne choisis pas lesquels.",
       "step6.heading": "Étape 6. Éjecter proprement",
       "step6.windows": "Windows : clic droit sur GARMIN dans Ce PC → Éjecter.",
       "step6.mac": "Mac : glisser le disque dans la corbeille.",
@@ -332,14 +332,14 @@
       "step7.note": "⚠ Sur certaines versions du firmware Epix et Fenix, les fichiers KMZ individuels apparaissent dans le Map Manager et peuvent y être activés/désactivés un par un. Sur d'autres, ils s'affichent comme une seule couche Custom Maps avec un interrupteur. Dans tous les cas, la montre a une limite de tuiles ; le changement de région se fait toujours par déplacement de fichiers via USB.",
       "switch.heading": "Changer de région plus tard",
       "switch.s1": "Branche la montre, ouvre Garmin/CustomMaps/.",
-      "switch.s2": "Supprime les anciens .kmz régionaux (garde 00_overview_ch.kmz).",
+      "switch.s2": "Supprime chaque .kmz de l'ancienne région (parties de détail et _overview.kmz).",
       "switch.s3": "Copie les .kmz de la nouvelle région.",
       "switch.s4": "Éjecte, redémarre.",
       "trouble.heading": "Dépannage",
       "trouble.blank_q": "La carte est vide.",
       "trouble.blank_a": "As-tu redémarré ? As-tu activé Couches de la carte → Custom Maps ? Les .kmz sont-ils dans Garmin/CustomMaps/ et pas Garmin/Maps/ ?",
       "trouble.partial_q": "Seule une partie de la région s'affiche.",
-      "trouble.partial_a": "Tu dépasses la limite de tuiles, ne garde qu'un seul pack régional à la fois, plus l'aperçu.",
+      "trouble.partial_a": "Tu dépasses la limite de tuiles. Ne garde qu'un seul pack régional à la fois (parties de détail plus son _overview.kmz).",
       "trouble.nomap_q": "Plus de carte Garmin standard (TopoActive).",
       "trouble.nomap_a": "Un fichier .img a été supprimé. Branche la montre et réinstalle le fond de carte via Garmin Express.",
       "trouble.hang_q": "La montre plante au démarrage.",
@@ -361,7 +361,7 @@
       "step1.heading": "Passo 1. Scegli le mappe",
       "step1.gpx": "Selettore GPX, trascina il GPX del tuo giro e ottieni link diretti al pacchetto regionale giusto.",
       "step1.tile": "Build personalizzato, disegna la tua zona e fai costruire un pacchetto su misura (di solito entro un'ora).",
-      "step1.always": "Scarica sempre anche 00_overview_ch.kmz (la panoramica nazionale). Il selettore GPX rimanda automaticamente.",
+      "step1.always": "Ogni pacchetto regionale include ora il suo <zone>_overview.kmz (vista zoom-out fino a circa 12 km). Il selettore lo aggiunge automaticamente — non serve più un file panoramico nazionale separato.",
       "step2.heading": "Passo 2. Collega l'orologio al computer",
       "step2.body": "Usa il cavo USB fornito con l'orologio. Un cavo di ricarica del telefono non funziona, trasmette solo corrente, non dati. L'orologio compare come unità USB chiamata GARMIN.",
       "step3.heading": "Passo 3. Apri la cartella Garmin/CustomMaps/",
@@ -376,9 +376,9 @@
       "step4.other_ext": "qualsiasi cosa contenga .img, .gma, .unl o .jnx",
       "step4.rule": "Regola: elimina solo i file che finiscono in .kmz, e solo dentro Garmin/CustomMaps/.",
       "step5.heading": "Passo 5. Copia i nuovi .kmz",
-      "step5.intro": "Trascina tutti i .kmz scaricati in Garmin/CustomMaps/. La panoramica nazionale e il pacchetto regionale vanno nella stessa cartella.",
+      "step5.intro": "Trascina tutti i .kmz scaricati in Garmin/CustomMaps/. Un pacchetto regionale è un piccolo gruppo: alcuni file di dettaglio più il file di panoramica. Vanno tutti nella stessa cartella.",
       "step5.warn_label": "Copia una sola regione alla volta.",
-      "step5.warn_body": "Il tuo orologio ha un limite su quanti pezzi di mappa può mostrare contemporaneamente. La panoramica nazionale più un pacchetto regionale riempiono già quasi tutto il budget. Se copi di più, l'orologio ne lascia fuori alcuni in silenzio, e non puoi scegliere quali.",
+      "step5.warn_body": "Il tuo orologio ha un limite su quanti pezzi di mappa può mostrare contemporaneamente. Ogni gruppo regionale (parti di dettaglio più il file di panoramica) è dimensionato per entrare. Se copi più di una regione, l'orologio ne lascia fuori alcuni in silenzio, e non puoi scegliere quali.",
       "step6.heading": "Passo 6. Espelli in sicurezza",
       "step6.windows": "Windows: tasto destro su GARMIN in Questo PC → Espelli.",
       "step6.mac": "Mac: trascina l'unità nel Cestino.",
@@ -391,14 +391,14 @@
       "step7.note": "⚠ Su alcune versioni firmware di Epix e Fenix i singoli file KMZ compaiono nel Map Manager e possono essere attivati/disattivati uno alla volta. Su altre appaiono come un unico strato Custom Maps con un solo interruttore. In ogni caso l'orologio ha un limite di tile, quindi il cambio di regione si fa comunque spostando i file via USB.",
       "switch.heading": "Cambiare regione in seguito",
       "switch.s1": "Collega l'orologio, apri Garmin/CustomMaps/.",
-      "switch.s2": "Elimina i vecchi .kmz regionali (tieni 00_overview_ch.kmz).",
+      "switch.s2": "Elimina ogni .kmz della vecchia regione (parti di dettaglio e _overview.kmz).",
       "switch.s3": "Copia i .kmz della nuova regione.",
       "switch.s4": "Espelli, riavvia.",
       "trouble.heading": "Risoluzione problemi",
       "trouble.blank_q": "La mappa è vuota.",
       "trouble.blank_a": "Hai riavviato? Hai attivato Livelli mappa → Custom Maps? I .kmz sono in Garmin/CustomMaps/ e non in Garmin/Maps/?",
       "trouble.partial_q": "Si vede solo una parte della regione.",
-      "trouble.partial_a": "Sei oltre il limite di tile, tieni un solo pacchetto regionale alla volta, insieme alla panoramica.",
+      "trouble.partial_a": "Sei oltre il limite di tile. Tieni un solo pacchetto regionale alla volta (parti di dettaglio più il suo _overview.kmz).",
       "trouble.nomap_q": "La mappa Garmin standard (TopoActive) non c'è più.",
       "trouble.nomap_a": "È stato eliminato un file .img. Collega l'orologio e reinstalla la mappa di base tramite Garmin Express.",
       "trouble.hang_q": "L'orologio si blocca all'avvio.",

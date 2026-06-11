@@ -352,6 +352,57 @@
   }
   .disclaimer strong { color: #6b1d10; }
 
+  /* "Which watches?" three-bucket reference */
+  .watches-grid {
+    display: grid; gap: 0.9rem;
+    grid-template-columns: 1fr;
+  }
+  @media (min-width: 820px) {
+    .watches-grid { grid-template-columns: repeat(3, 1fr); align-items: start; }
+  }
+  .watches-grid details {
+    border-radius: 10px; padding: 1.05rem 1.2rem;
+    border: 1px solid var(--line);
+  }
+  .watches-grid details.w-yes { background: var(--good-bg); border-color: #cfe4d3; }
+  .watches-grid details.w-custom { background: var(--warn-bg); border-color: #ecdfb6; }
+  .watches-grid details.w-no { background: #f1efe7; border-color: #d9d4c2; }
+  .watches-grid summary {
+    cursor: pointer; list-style: none;
+    font-size: 1.02rem; font-weight: 600;
+    display: flex; align-items: center; gap: 0.45rem;
+    user-select: none;
+  }
+  .watches-grid summary::-webkit-details-marker { display: none; }
+  .watches-grid summary::after {
+    content: "▾"; margin-left: auto; color: var(--muted);
+    font-size: 0.85em; transition: transform 0.15s;
+  }
+  .watches-grid details[open] summary::after { transform: rotate(180deg); }
+  .watches-grid details.w-yes summary { color: var(--good); }
+  .watches-grid details.w-custom summary { color: var(--warn); }
+  .watches-grid details.w-no summary { color: var(--muted); }
+  .watches-grid .w-sub {
+    margin: 0.55rem 0 0.55rem; color: var(--muted); font-size: 0.86rem;
+    line-height: 1.45;
+  }
+  .watches-grid ul {
+    list-style: none; margin: 0; padding: 0;
+    font-size: 0.9rem; line-height: 1.55;
+  }
+  .watches-grid li {
+    position: relative; padding-left: 0.95rem; margin: 0.18rem 0;
+    color: var(--ink);
+  }
+  .watches-grid li::before {
+    content: "·"; position: absolute; left: 0.15rem; top: -0.2em;
+    color: var(--muted); font-weight: 700; font-size: 1.35em; line-height: 1;
+  }
+  .watches-note {
+    margin-top: 1rem; font-size: 0.82rem; color: var(--muted);
+    max-width: 72ch; line-height: 1.5;
+  }
+
   footer {
     border-top: 1px solid var(--line);
     margin-top: 1rem; padding: 1.5rem 0 2.5rem;
@@ -391,7 +442,7 @@
   <section class="hero">
     <div>
       <h1>
-        <span data-i18n="hero.title1">Swiss topo maps</span>
+        <span data-i18n="hero.title1">Swisstopo maps</span>
         <span class="accent" data-i18n="hero.title2">on your Garmin watch.</span>
       </h1>
       <p class="lead" data-i18n="hero.lead">Pre-built map packs of Switzerland for Garmin watches. LK25 raster cartography with a slope-shading and ski/hiking route overlay, sized to fit your watch's tile limit.</p>
@@ -430,7 +481,7 @@
           </g>
         </svg>
       </div>
-      <figcaption data-i18n="hero.caption">Swiss topo, on your Garmin.</figcaption>
+      <figcaption data-i18n="hero.caption">Swisstopo, on your Garmin.</figcaption>
     </figure>
   </section>
 
@@ -451,7 +502,7 @@
 
   <section>
     <h2 data-i18n="zones.heading">Switzerland is split into 26 regions</h2>
-    <p class="section-lead" data-i18n="zones.lead">A Garmin watch can hold one regional pack at a time (plus the always-on Switzerland overview). Pick the region that covers your trips, copy it across, and use it as long as your trips fall inside it. Swap only when you move to a different region.</p>
+    <p class="section-lead" data-i18n="zones.lead">A Garmin watch can hold one regional pack at a time. Pick the region that covers your trips, copy it across, and use it as long as your trips fall inside it. Swap only when you move to a different region.</p>
     <div class="zone-card">
       <div class="zone-svg-wrap" id="zoneMapWrap">
         <svg id="zonesSvg" class="zone-svg" viewBox="0 0 800 500" preserveAspectRatio="xMidYMid meet" role="img" aria-labelledby="zonesTitle">
@@ -494,7 +545,7 @@
       <div class="pc pros">
         <h3>👍 <span data-i18n="pc.pros_title">What you get</span></h3>
         <ul>
-          <li data-i18n="pc.pros.1">Real swisstopo LK25 cartography, the same look as the paper map, not a generic vector approximation.</li>
+          <li data-i18n="pc.pros.1">Real swisstopo LK25 cartography, the same look as the paper map.</li>
           <li data-i18n="pc.pros.2">4-class slope-shading overlay (≥30°, ≥35°, ≥40°, ≥45°) for backcountry awareness.</li>
           <li data-i18n="pc.pros.3">Ski tours coloured by SAC difficulty, hiking trails coloured by category.</li>
           <li data-i18n="pc.pros.4">Works fully offline once copied to the watch.</li>
@@ -504,7 +555,7 @@
       <div class="pc cons">
         <h3>⚠ <span data-i18n="pc.cons_title">What to know first</span></h3>
         <ul>
-          <li data-i18n="pc.cons.1">The watch can only show one regional pack at a time, plus the Switzerland overview. If your next outing is in a different region, you swap before you go.</li>
+          <li data-i18n="pc.cons.1">The watch can only show one regional pack at a time. If your next outing is in a different region, you swap before you go.</li>
           <li data-i18n="pc.cons.2">Swapping happens by plugging the watch into a computer over USB. There's no in-watch toggle for individual map packs.</li>
           <li data-i18n="pc.cons.3">These are raster maps. They look great but don't give turn-by-turn re-routing the way Garmin's own TopoActive does.</li>
           <li data-i18n="pc.cons.4">Slope shading is advisory only. It does not replace the daily SLF avalanche bulletin or your own judgement on the day.</li>
@@ -519,6 +570,61 @@
       <strong data-i18n="disclaimer.title">Safety:</strong>
       <span data-i18n="disclaimer.body">slope shading is derived from the 10 m elevation model and is for awareness only. It does not replace the daily SLF avalanche bulletin, route planning, or on-site judgement. Backcountry travel has inherent risks.</span>
     </div>
+  </section>
+
+  <section>
+    <h2 data-i18n="watches.heading">Which Garmin devices does this work on?</h2>
+    <p class="section-lead" data-i18n="watches.lead">Garmin's Custom Maps feature has a tile-count limit baked into the firmware, per device. The published regional packs target the 500-tile tier. If your device has a smaller cap, use the custom-area picker to paint a tighter zone.</p>
+    <div class="watches-grid">
+      <details class="w-yes" open>
+        <summary>✓ <span data-i18n="watches.standard_title">Standard regional packs work</span></summary>
+        <p class="w-sub" data-i18n="watches.standard_desc">Tile cap ≈ 500. Pick any region from the GPX picker and copy the .kmz files across.</p>
+        <ul>
+          <li>Epix 2 (Gen 2), Epix Pro 42 / 47 / 51 mm</li>
+          <li>Fenix 8 (43 / 47 / 51 mm AMOLED, Solar MIP)</li>
+          <li>Fenix 7 Pro / 7S Pro / 7X Pro</li>
+          <li>Fenix 5X (original)</li>
+          <li>Tactix 7 Pro AMOLED, MARQ Gen 2, Quatix 8</li>
+          <li>Forerunner 965</li>
+          <li>GPSMAP 64 / 65 / 66 / 67 family</li>
+          <li>Montana 600 / 650 / 680 / 700 / 700i / 750i</li>
+          <li>Oregon 600 / 650 / 650t</li>
+        </ul>
+      </details>
+
+      <details class="w-custom" open>
+        <summary>⚠ <span data-i18n="watches.custom_title">Custom area required (small tile cap)</span></summary>
+        <p class="w-sub" data-i18n="watches.custom_desc">Tile cap 100–250. A full region won't fit. Paint a small area around your tours and we email a tile-trimmed pack.</p>
+        <ul>
+          <li>Fenix 7 / 7S / 7X (non-Pro)</li>
+          <li>Fenix 6 / 6S / 6X (incl. Pro and Solar)</li>
+          <li>Fenix 5 Plus / 5S Plus / 5X Plus</li>
+          <li>Forerunner 945 / 955</li>
+          <li>Enduro 1 / 2 / 3</li>
+          <li>Tactix Delta, Tactix 7 (MIP), Quatix 7</li>
+          <li>MARQ (Gen 1)</li>
+          <li>Edge 1050 / 1040 / 1030 Plus (≈250 tiles, 4 files)</li>
+          <li>Edge 1030 (orig.), 840, 830, 540, 530, 810, 800</li>
+          <li>GPSMAP 62 family, 79 / 86 / 276Cx</li>
+          <li>Oregon 700 / 750, eTrex 20x / 22x / 32x / Touch</li>
+          <li>zumo XT / XT2 / 590 / 595</li>
+        </ul>
+      </details>
+
+      <details class="w-no">
+        <summary>✗ <span data-i18n="watches.unsupported_title">Not supported</span></summary>
+        <p class="w-sub" data-i18n="watches.unsupported_desc">Firmware doesn't read KMZ at all. There's no workaround.</p>
+        <ul>
+          <li>Epix (Gen 1, 2014)</li>
+          <li>Fenix 5 / 5S (no map)</li>
+          <li>Forerunner 935 and earlier</li>
+          <li>Instinct (all, incl. 2 / 2X / Crossover / 3)</li>
+          <li>Venu / Vivoactive (any)</li>
+          <li>Edge 510 / 520 / 520 Plus</li>
+        </ul>
+      </details>
+    </div>
+    <p class="watches-note" data-i18n="watches.note">The Epix 2 / Fenix 7 Pro / Fenix 8 family is grouped with the 500-tile tier based on the maintainer's empirical build (~489 tiles rendered fine on Epix 2). Public docs still quote 100. If your watch behaves as 100, switch to the custom-area picker.</p>
   </section>
 
 </main>
@@ -545,12 +651,12 @@
   const I18N = {
     en: {
       "brand": "swisstopo for Garmin",
-      "hero.title1": "Swiss topo maps",
+      "hero.title1": "Swisstopo maps",
       "hero.title2": "on your Garmin watch.",
       "hero.lead": "Pre-built map packs of Switzerland for Garmin watches. LK25 raster cartography with a slope-shading and ski/hiking route overlay, sized to fit your watch's tile limit.",
       "hero.cta_install": "How to install",
       "hero.cta_picker": "Find maps for my tour",
-      "hero.caption": "Swiss topo, on your Garmin.",
+      "hero.caption": "Swisstopo, on your Garmin.",
       "what.heading": "What is this?",
       "what.lead": "A way to put Swiss topographic maps on your Garmin watch. Same LK25 cartography you'd see on a paper map or in SchweizMobil, with a slope-angle and route overlay on top. Not an app. Just files you copy to the watch over USB.",
       "what.winter_title": "Winter",
@@ -558,7 +664,7 @@
       "what.summer_title": "Summer",
       "what.summer_body": "LK25 Summer base, with the slope overlay and the Wanderwege network coloured by category (yellow, red, blue).",
       "zones.heading": "Switzerland is split into 26 regions",
-      "zones.lead": "A Garmin watch can hold one regional pack at a time (plus the always-on Switzerland overview). Pick the region that covers your trips, copy it across, and use it as long as your trips fall inside it. Swap only when you move to a different region.",
+      "zones.lead": "A Garmin watch can hold one regional pack at a time. Pick the region that covers your trips, copy it across, and use it as long as your trips fall inside it. Swap only when you move to a different region.",
       "zones.svg_title": "Map of Switzerland divided into 26 regional packs",
       "zones.legend_winter": "Winter and summer regions (1 to 20)",
       "zones.legend_summer": "Summer-only regions (21 to 26)",
@@ -571,19 +677,28 @@
       "pc.heading": "Advantages and limitations",
       "pc.lead": "Worth reading before you start.",
       "pc.pros_title": "What you get",
-      "pc.pros.1": "Real swisstopo LK25 cartography, the same look as the paper map, not a generic vector approximation.",
+      "pc.pros.1": "Real swisstopo LK25 cartography, the same look as the paper map.",
       "pc.pros.2": "4-class slope-shading overlay (≥30°, ≥35°, ≥40°, ≥45°) for backcountry awareness.",
       "pc.pros.3": "Ski tours coloured by SAC difficulty, hiking trails coloured by category.",
       "pc.pros.4": "Works fully offline once copied to the watch.",
       "pc.pros.5": "Pick a region by GPX or name, or paint a custom area.",
       "pc.cons_title": "What to know first",
-      "pc.cons.1": "The watch can only show one regional pack at a time, plus the Switzerland overview. If your next outing is in a different region, you swap before you go.",
+      "pc.cons.1": "The watch can only show one regional pack at a time. If your next outing is in a different region, you swap before you go.",
       "pc.cons.2": "Swapping happens by plugging the watch into a computer over USB. There's no in-watch toggle for individual map packs.",
       "pc.cons.3": "These are raster maps. They look great but don't give turn-by-turn re-routing the way Garmin's own TopoActive does.",
       "pc.cons.4": "Slope shading is advisory only. It does not replace the daily SLF avalanche bulletin or your own judgement on the day.",
       "pc.cons.5": "Setup is a manual file copy. The guide is step-by-step, but plan 15 minutes the first time.",
       "disclaimer.title": "Safety:",
       "disclaimer.body": "Treat these watch maps as a supplement, not a primary navigation tool. Always carry a backup map, compass, and a dedicated GPS device. Slope shading is derived from the 10 m elevation model and is for awareness only; it does not replace the daily SLF avalanche bulletin, proper route planning, or on-site judgement. The authors and contributors accept no liability for any consequences of using these maps. Backcountry travel carries serious inherent risks.",
+      "watches.heading": "Which Garmin devices does this work on?",
+      "watches.lead": "Garmin's Custom Maps feature has a tile-count limit baked into the firmware, per device. The published regional packs target the 500-tile tier. If your device has a smaller cap, use the custom-area picker to paint a tighter zone.",
+      "watches.standard_title": "Standard regional packs work",
+      "watches.standard_desc": "Tile cap ≈ 500. Pick any region from the GPX picker and copy the .kmz files across.",
+      "watches.custom_title": "Custom area required (small tile cap)",
+      "watches.custom_desc": "Tile cap 100–250. A full region won't fit. Paint a small area around your tours and we email a tile-trimmed pack.",
+      "watches.unsupported_title": "Not supported",
+      "watches.unsupported_desc": "Firmware doesn't read KMZ at all. There's no workaround.",
+      "watches.note": "The Epix 2 / Fenix 7 Pro / Fenix 8 family is grouped with the 500-tile tier based on the maintainer's empirical build (≈489 tiles rendered fine on Epix 2). Public docs still quote 100. If your watch behaves as 100, switch to the custom-area picker.",
       "zones.dlg_winter": "Winter pack",
       "zones.dlg_summer": "Summer pack",
       "zones.dlg_zip_winter": "Download winter .zip",
@@ -599,12 +714,12 @@
     },
     de: {
       "brand": "swisstopo für Garmin",
-      "hero.title1": "swisstopo",
+      "hero.title1": "Swisstopo",
       "hero.title2": "auf deiner Garmin-Uhr.",
       "hero.lead": "Fertige Kartenpakete der Schweiz für Garmin-Uhren. LK25-Rasterkartografie mit einem Hangneigungs- und Routen-Overlay (Ski / Wandern), passend für die Kachelgrenze deiner Uhr.",
       "hero.cta_install": "Anleitung",
       "hero.cta_picker": "Karten finden",
-      "hero.caption": "Schweizer Topo, auf deiner Garmin.",
+      "hero.caption": "Swisstopo, auf deiner Garmin.",
       "what.heading": "Was ist das?",
       "what.lead": "Ein Weg, Schweizer Landeskarten auf eine Garmin-Uhr zu bringen. Gleiche LK25-Kartografie wie auf der Papierkarte oder in SchweizMobil, darauf ein Hangneigungs- und Routen-Overlay. Keine App. Nur Dateien, die du per USB auf die Uhr kopierst.",
       "what.winter_title": "Winter",
@@ -612,7 +727,7 @@
       "what.summer_title": "Sommer",
       "what.summer_body": "LK25 Sommer als Basis, dazu das Hangneigungs-Overlay und die Wanderwege nach Kategorie gefärbt (Gelb, Rot, Blau).",
       "zones.heading": "Die Schweiz ist in 26 Regionen aufgeteilt",
-      "zones.lead": "Eine Garmin-Uhr kann ein Regionalpaket aufs Mal aufnehmen (plus die immer aktive Schweiz-Übersicht). Wähl die Region, die deine Touren abdeckt, kopier sie rüber und nutz sie, solange deine Touren in dieser Region liegen. Wechseln musst du nur, wenn du in eine andere Region gehst.",
+      "zones.lead": "Eine Garmin-Uhr kann ein Regionalpaket aufs Mal aufnehmen. Wähl die Region, die deine Touren abdeckt, kopier sie rüber und nutz sie, solange deine Touren in dieser Region liegen. Wechseln musst du nur, wenn du in eine andere Region gehst.",
       "zones.svg_title": "Karte der Schweiz, aufgeteilt in 26 Regionalpakete",
       "zones.legend_winter": "Winter- und Sommerregionen (1 bis 21)",
       "zones.legend_summer": "Reine Sommerregionen (22 bis 26)",
@@ -625,19 +740,28 @@
       "pc.heading": "Vorteile und Einschränkungen",
       "pc.lead": "Lies das, bevor du anfängst.",
       "pc.pros_title": "Was du bekommst",
-      "pc.pros.1": "Echte swisstopo-LK25-Karten, der gewohnte Papierkarten-Look, keine generische Vektor-Annäherung.",
+      "pc.pros.1": "Echte swisstopo-LK25-Karten, der gewohnte Papierkarten-Look.",
       "pc.pros.2": "4-stufiges Hangneigungs-Overlay (≥30°, ≥35°, ≥40°, ≥45°) für Lawinen-Awareness im Gelände.",
       "pc.pros.3": "Skitouren nach SAC-Schwierigkeit gefärbt, Wanderwege nach Kategorie.",
       "pc.pros.4": "Funktioniert offline, sobald die Dateien auf der Uhr sind.",
       "pc.pros.5": "Region per GPX oder Namen wählen, oder eigenes Gebiet zeichnen.",
       "pc.cons_title": "Was du wissen solltest",
-      "pc.cons.1": "Die Uhr zeigt immer nur ein Regionalpaket aufs Mal, plus die Schweiz-Übersicht. Wenn deine nächste Tour in einer anderen Region liegt, wechselst du vorher.",
+      "pc.cons.1": "Die Uhr zeigt immer nur ein Regionalpaket aufs Mal. Wenn deine nächste Tour in einer anderen Region liegt, wechselst du vorher.",
       "pc.cons.2": "Der Wechsel passiert per USB am Computer. Es gibt keine Menüoption auf der Uhr, um einzelne Karten an-/auszuschalten.",
       "pc.cons.3": "Es sind Rasterkarten. Sie sehen sehr gut aus, ermöglichen aber keine Turn-by-Turn-Neuberechnung wie Garmins eigene TopoActive.",
       "pc.cons.4": "Die Hangneigung ist nur ein Hinweis. Sie ersetzt nicht das tägliche SLF-Lawinenbulletin oder dein Urteil vor Ort.",
       "pc.cons.5": "Die Einrichtung ist manuelles Datei-Kopieren. Die Anleitung führt dich Schritt für Schritt durch, plane das erste Mal 15 Minuten ein.",
       "disclaimer.title": "Sicherheit:",
       "disclaimer.body": "Betrachte diese Uhrenkarten als Ergänzung, nicht als primäres Navigationsmittel. Nimm immer eine Backup-Karte, Kompass und ein dediziertes GPS-Gerät mit. Die Hangneigung basiert auf dem 10-m-Höhenmodell und dient nur der Awareness, sie ersetzt nicht das tägliche SLF-Lawinenbulletin, die Tourenplanung oder deine Beurteilung vor Ort. Die Autoren und Mitwirkenden übernehmen keinerlei Haftung für Folgen aus der Nutzung. Touren im Gelände sind mit erheblichen inhärenten Risiken verbunden.",
+      "watches.heading": "Auf welchen Garmin-Geräten läuft das?",
+      "watches.lead": "Garmins Custom-Maps-Funktion hat ein gerätespezifisches Kachel-Limit in der Firmware. Die fertigen Regionalpakete sind auf die 500-Kachel-Klasse ausgelegt. Hat dein Gerät eine kleinere Grenze, zeichne mit dem Picker ein engeres Gebiet.",
+      "watches.standard_title": "Standard-Regionalpakete laufen",
+      "watches.standard_desc": "Kachel-Limit ≈ 500. Wähl eine Region im GPX-Picker und kopier die .kmz-Dateien rüber.",
+      "watches.custom_title": "Eigenes Gebiet nötig (kleines Kachel-Limit)",
+      "watches.custom_desc": "Kachel-Limit 100–250. Eine ganze Region passt nicht. Zeichne ein kleines Gebiet um deine Touren, wir mailen dir ein passendes Paket.",
+      "watches.unsupported_title": "Nicht unterstützt",
+      "watches.unsupported_desc": "Die Firmware liest KMZ nicht. Es gibt keinen Workaround.",
+      "watches.note": "Epix 2 / Fenix 7 Pro / Fenix 8 sind hier in der 500-Klasse, basierend auf dem empirischen Build des Maintainers (≈489 Kacheln laufen auf der Epix 2). Offizielle Doku spricht weiter von 100. Verhält sich deine Uhr wie 100, nimm den Picker für ein eigenes Gebiet.",
       "zones.dlg_winter": "Winter-Paket",
       "zones.dlg_summer": "Sommer-Paket",
       "zones.dlg_zip_winter": "Winter-.zip herunterladen",
@@ -653,12 +777,12 @@
     },
     fr: {
       "brand": "swisstopo pour Garmin",
-      "hero.title1": "Cartes topo suisses",
+      "hero.title1": "Swisstopo",
       "hero.title2": "sur ta montre Garmin.",
       "hero.lead": "Packs cartographiques de la Suisse, prêts à l'emploi, pour montres Garmin. Cartographie raster LK25 avec un overlay d'ombrage des pentes et d'itinéraires ski / rando, dimensionnés pour la limite de tuiles de ta montre.",
       "hero.cta_install": "Comment installer",
       "hero.cta_picker": "Trouver les cartes de ma sortie",
-      "hero.caption": "Topo suisse, sur ta Garmin.",
+      "hero.caption": "Swisstopo, sur ta Garmin.",
       "what.heading": "C'est quoi ?",
       "what.lead": "Une façon de mettre des cartes topographiques suisses sur une montre Garmin. Même cartographie LK25 que sur la carte papier ou dans SuisseMobile, avec un overlay d'inclinaison de pente et d'itinéraires par-dessus. Pas une appli. Juste des fichiers à copier sur la montre via USB.",
       "what.winter_title": "Hiver",
@@ -666,7 +790,7 @@
       "what.summer_title": "Été",
       "what.summer_body": "LK25 Été comme base, avec l'overlay d'ombrage et le réseau Wanderwege coloré par catégorie (jaune, rouge, bleu).",
       "zones.heading": "La Suisse est divisée en 26 régions",
-      "zones.lead": "Une montre Garmin peut contenir un seul pack régional à la fois (plus l'aperçu de toute la Suisse, toujours actif). Choisis la région qui couvre tes sorties, copie-la une fois, et utilise-la tant que tes sorties restent dans cette région. Tu ne changes que si tu passes dans une région différente.",
+      "zones.lead": "Une montre Garmin peut contenir un seul pack régional à la fois. Choisis la région qui couvre tes sorties, copie-la une fois, et utilise-la tant que tes sorties restent dans cette région. Tu ne changes que si tu passes dans une région différente.",
       "zones.svg_title": "Carte de la Suisse divisée en 26 packs régionaux",
       "zones.legend_winter": "Régions hiver et été (1 à 21)",
       "zones.legend_summer": "Régions uniquement été (22 à 26)",
@@ -679,19 +803,28 @@
       "pc.heading": "Avantages et limites",
       "pc.lead": "À lire avant de te lancer.",
       "pc.pros_title": "Ce que tu obtiens",
-      "pc.pros.1": "Vraie cartographie swisstopo LK25, le même rendu que la carte papier, pas une approximation vectorielle générique.",
+      "pc.pros.1": "Vraie cartographie swisstopo LK25, le même rendu que la carte papier.",
       "pc.pros.2": "Overlay d'ombrage des pentes en 4 classes (≥30°, ≥35°, ≥40°, ≥45°) pour la conscience du terrain.",
       "pc.pros.3": "Itinéraires de ski colorés selon la difficulté CAS, chemins de rando selon la catégorie.",
       "pc.pros.4": "Fonctionne hors-ligne une fois les fichiers copiés sur la montre.",
       "pc.pros.5": "Choisis une région avec un GPX ou un nom, ou dessine ta propre zone.",
       "pc.cons_title": "À savoir avant de commencer",
-      "pc.cons.1": "La montre n'affiche qu'un pack régional à la fois, plus l'aperçu national. Si ta prochaine sortie est dans une région différente, tu en changes avant de partir.",
+      "pc.cons.1": "La montre n'affiche qu'un pack régional à la fois. Si ta prochaine sortie est dans une région différente, tu en changes avant de partir.",
       "pc.cons.2": "Le changement se fait en branchant la montre à un ordinateur via USB. Pas de bascule dans le menu de la montre pour activer un pack individuel.",
       "pc.cons.3": "Ce sont des cartes raster. Très belles à l'œil, mais elles ne permettent pas le recalcul d'itinéraire tour-à-tour comme la TopoActive de Garmin.",
       "pc.cons.4": "L'ombrage des pentes est indicatif. Il ne remplace pas le bulletin d'avalanches SLF du jour ni ton jugement sur le terrain.",
       "pc.cons.5": "L'installation est une copie manuelle de fichiers. Le guide est détaillé pas à pas, prévois 15 minutes la première fois.",
       "disclaimer.title": "Sécurité :",
       "disclaimer.body": "Considère ces cartes sur la montre comme un complément, pas comme un outil de navigation principal. Emporte toujours une carte de secours, une boussole et un GPS dédié. L'ombrage des pentes est dérivé du modèle altimétrique 10 m et n'est qu'une indication : il ne remplace ni le bulletin SLF du jour, ni la planification d'itinéraire, ni ton jugement sur place. Les auteurs et contributeurs déclinent toute responsabilité pour les conséquences de l'utilisation de ces cartes. Les sorties hors-piste comportent des risques inhérents graves.",
+      "watches.heading": "Sur quelles montres Garmin ça marche ?",
+      "watches.lead": "La fonction Custom Maps de Garmin a une limite de tuiles ancrée dans le firmware, propre à chaque appareil. Les packs régionaux publiés visent la classe 500 tuiles. Si ton appareil a un plafond plus bas, dessine une zone plus serrée avec le sélecteur.",
+      "watches.standard_title": "Les packs régionaux standards fonctionnent",
+      "watches.standard_desc": "Plafond ≈ 500 tuiles. Choisis n'importe quelle région avec le sélecteur GPX et copie les .kmz.",
+      "watches.custom_title": "Zone sur mesure requise (plafond bas)",
+      "watches.custom_desc": "Plafond 100–250 tuiles. Une région complète ne tient pas. Dessine une petite zone autour de tes sorties et on t'envoie un pack ajusté.",
+      "watches.unsupported_title": "Non supporté",
+      "watches.unsupported_desc": "Le firmware ne lit pas les KMZ. Pas de contournement.",
+      "watches.note": "Epix 2 / Fenix 7 Pro / Fenix 8 sont placés en classe 500 sur la base du build empirique du mainteneur (≈489 tuiles affichées sur Epix 2). La doc officielle reste à 100. Si ta montre se comporte comme 100, passe au sélecteur de zone.",
       "zones.dlg_winter": "Pack hiver",
       "zones.dlg_summer": "Pack été",
       "zones.dlg_zip_winter": "Télécharger le .zip hiver",
@@ -703,12 +836,12 @@
     },
     it: {
       "brand": "swisstopo per Garmin",
-      "hero.title1": "Carte topografiche svizzere",
+      "hero.title1": "Swisstopo",
       "hero.title2": "sul tuo orologio Garmin.",
       "hero.lead": "Pacchetti cartografici della Svizzera già pronti per orologi Garmin. Cartografia raster LK25 con un overlay di ombreggiatura delle pendenze e di itinerari sci / escursionismo, dimensionati per il limite di tile dell'orologio.",
       "hero.cta_install": "Come installare",
       "hero.cta_picker": "Trova le mappe per il mio giro",
-      "hero.caption": "Topo svizzera, sul tuo Garmin.",
+      "hero.caption": "Swisstopo, sul tuo Garmin.",
       "what.heading": "Che cos'è?",
       "what.lead": "Un modo per portare carte topografiche svizzere sul tuo orologio Garmin. Stessa cartografia LK25 della carta cartacea o di SvizzeraMobile, con un overlay di pendenza e itinerari sopra. Non è un'app. Solo file che copi sull'orologio tramite USB.",
       "what.winter_title": "Inverno",
@@ -716,7 +849,7 @@
       "what.summer_title": "Estate",
       "what.summer_body": "LK25 Estate come base, con l'overlay di ombreggiatura e la rete dei sentieri colorata per categoria (giallo, rosso, blu).",
       "zones.heading": "La Svizzera è divisa in 26 regioni",
-      "zones.lead": "Un orologio Garmin può contenere un solo pacchetto regionale alla volta (più la panoramica nazionale sempre attiva). Scegli la regione che copre i tuoi giri, copiala una volta e usala finché i tuoi giri restano in quella regione. Cambi solo quando ti sposti in una regione diversa.",
+      "zones.lead": "Un orologio Garmin può contenere un solo pacchetto regionale alla volta. Scegli la regione che copre i tuoi giri, copiala una volta e usala finché i tuoi giri restano in quella regione. Cambi solo quando ti sposti in una regione diversa.",
       "zones.svg_title": "Mappa della Svizzera divisa in 26 pacchetti regionali",
       "zones.legend_winter": "Regioni inverno ed estate (1 a 21)",
       "zones.legend_summer": "Regioni solo estate (22 a 26)",
@@ -729,19 +862,28 @@
       "pc.heading": "Vantaggi e limiti",
       "pc.lead": "Da leggere prima di iniziare.",
       "pc.pros_title": "Cosa ottieni",
-      "pc.pros.1": "Vera cartografia swisstopo LK25, lo stesso aspetto della carta cartacea, non un'approssimazione vettoriale generica.",
+      "pc.pros.1": "Vera cartografia swisstopo LK25, lo stesso aspetto della carta cartacea.",
       "pc.pros.2": "Overlay di ombreggiatura pendenze in 4 classi (≥30°, ≥35°, ≥40°, ≥45°) per la consapevolezza in fuoripista.",
       "pc.pros.3": "Itinerari sci colorati per difficoltà CAS, sentieri per categoria.",
       "pc.pros.4": "Funziona offline una volta copiati i file sull'orologio.",
       "pc.pros.5": "Scegli una regione tramite GPX o nome, oppure disegna la tua zona.",
       "pc.cons_title": "Cosa sapere prima",
-      "pc.cons.1": "L'orologio mostra un solo pacchetto regionale alla volta, più la panoramica nazionale. Se la prossima uscita è in una regione diversa, lo cambi prima di partire.",
+      "pc.cons.1": "L'orologio mostra un solo pacchetto regionale alla volta. Se la prossima uscita è in una regione diversa, lo cambi prima di partire.",
       "pc.cons.2": "Il cambio avviene collegando l'orologio al computer via USB. Non c'è un interruttore nel menu dell'orologio per i singoli pacchetti.",
       "pc.cons.3": "Sono mappe raster. Sono molto belle ma non permettono il ricalcolo curva-per-curva come la TopoActive di Garmin.",
       "pc.cons.4": "L'ombreggiatura delle pendenze è solo indicativa. Non sostituisce il bollettino valanghe SLF giornaliero né il tuo giudizio sul posto.",
       "pc.cons.5": "L'installazione è una copia manuale di file. La guida è passo passo, calcola 15 minuti la prima volta.",
       "disclaimer.title": "Sicurezza:",
       "disclaimer.body": "Considera queste mappe sull'orologio come un complemento, non come strumento di navigazione principale. Porta sempre una mappa di riserva, bussola e un GPS dedicato come backup. L'ombreggiatura delle pendenze è derivata dal modello altimetrico 10 m ed è solo indicativa: non sostituisce il bollettino valanghe SLF, la pianificazione del giro o il giudizio sul posto. Autori e collaboratori declinano ogni responsabilità per le conseguenze dell'uso di queste mappe. Le uscite in fuoripista comportano gravi rischi intrinseci.",
+      "watches.heading": "Su quali dispositivi Garmin funziona?",
+      "watches.lead": "La funzione Custom Maps di Garmin ha un limite di tile fissato nel firmware, per dispositivo. I pacchetti regionali pubblicati sono dimensionati per la classe 500 tile. Se il tuo dispositivo ha un tetto più basso, disegna una zona più ristretta col selettore.",
+      "watches.standard_title": "I pacchetti regionali standard funzionano",
+      "watches.standard_desc": "Limite ≈ 500 tile. Scegli una regione dal selettore GPX e copia i file .kmz.",
+      "watches.custom_title": "Serve un'area su misura (limite basso)",
+      "watches.custom_desc": "Limite 100–250 tile. Una regione intera non entra. Disegna una piccola zona attorno ai tuoi giri e ti inviamo un pacchetto su misura.",
+      "watches.unsupported_title": "Non supportato",
+      "watches.unsupported_desc": "Il firmware non legge i file KMZ. Non c'è soluzione.",
+      "watches.note": "Epix 2 / Fenix 7 Pro / Fenix 8 sono nella classe 500 in base al build empirico del manutentore (≈489 tile renderizzate su Epix 2). La documentazione ufficiale resta a 100. Se il tuo orologio si comporta come 100, usa il selettore di zona.",
       "zones.dlg_winter": "Pacchetto inverno",
       "zones.dlg_summer": "Pacchetto estate",
       "zones.dlg_zip_winter": "Scarica .zip inverno",
@@ -939,19 +1081,19 @@
          <span class="zp-size">${f.size_mb} MB</span>
          <span class="zp-arrow">↓</span>
        </a>`;
-    const overview = (HOME_MANIFEST.overview && HOME_MANIFEST.overview.winter_files) || [];
     const sections = [];
 
     // For each season: if a zip exists -> show single-click .zip link.
     // Otherwise show a SINGLE "Download N files (XX MB)" batch button that
-    // fires the overview + that season's KMZ parts via hidden iframes (the
-    // same Chrome-Allow-multi-downloads pattern the GPX picker uses).
-    function buildSeason(label, zipObj, fileList) {
+    // fires the zone's detail parts + its overview KMZ (per-zone zoom-out
+    // 200 m -> ~12 km) via hidden iframes (same Chrome-Allow-multi-downloads
+    // pattern the GPX picker uses).
+    function buildSeason(label, zipObj, fileList, overviewObj) {
       if (zipObj) {
         return link(zipObj, T("zones.dlg_zip_" + label));
       }
       if (!fileList || !fileList.length) return "";
-      const all = [...overview, ...fileList];
+      const all = overviewObj ? [overviewObj, ...fileList] : [...fileList];
       const sizeMb = all.reduce((a, f) => a + (f.size_mb || 0), 0).toFixed(0);
       const id = "zp-batch-" + label + "-" + n;
       // Stash on a global so the click handler can find the file list.
@@ -964,8 +1106,8 @@
       </button>
       <div class="zp-tip">${T("zones.dlg_batch_tip")}</div>`;
     }
-    const winterHtml = buildSeason("winter", zone.winter_zip, zone.winter_files);
-    const summerHtml = buildSeason("summer", zone.summer_zip, zone.summer_files);
+    const winterHtml = buildSeason("winter", zone.winter_zip, zone.winter_files, zone.winter_overview);
+    const summerHtml = buildSeason("summer", zone.summer_zip, zone.summer_files, zone.summer_overview);
     if (winterHtml) sections.push(["winter", winterHtml]);
     if (summerHtml) sections.push(["summer", summerHtml]);
 
