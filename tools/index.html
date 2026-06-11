@@ -400,7 +400,7 @@
   }
   .watches-note {
     margin-top: 1rem; font-size: 0.82rem; color: var(--muted);
-    max-width: 72ch; line-height: 1.5;
+    line-height: 1.5;
   }
 
   footer {
@@ -411,7 +411,7 @@
   footer a { color: var(--muted); }
   .legal {
     margin-top: 0.6rem; font-size: 0.78rem; color: #888;
-    max-width: 75ch; line-height: 1.5;
+    line-height: 1.5;
   }
 </style>
 </head>
@@ -582,9 +582,9 @@
         <ul>
           <li>Epix 2 (Gen 2), Epix Pro 42 / 47 / 51 mm</li>
           <li>Fenix 8 (43 / 47 / 51 mm AMOLED, Solar MIP)</li>
-          <li>Fenix 7 Pro / 7S Pro / 7X Pro</li>
-          <li>Fenix 5X (original)</li>
-          <li>Tactix 7 Pro AMOLED, MARQ Gen 2, Quatix 8</li>
+          <li>Fenix 7 / 7S / 7X (incl. Pro variants)</li>
+          <li>Fenix 5X (original, 2017)</li>
+          <li>Tactix 7 / 7 Pro, MARQ Gen 2, Quatix 8</li>
           <li>Forerunner 965</li>
           <li>GPSMAP 64 / 65 / 66 / 67 family</li>
           <li>Montana 600 / 650 / 680 / 700 / 700i / 750i</li>
@@ -596,18 +596,16 @@
         <summary>⚠ <span data-i18n="watches.custom_title">Custom area required (small tile cap)</span></summary>
         <p class="w-sub" data-i18n="watches.custom_desc">Tile cap 100–250. A full region won't fit. Paint a small area around your tours and we email a tile-trimmed pack.</p>
         <ul>
-          <li>Fenix 7 / 7S / 7X (non-Pro)</li>
-          <li>Fenix 6 / 6S / 6X (incl. Pro and Solar)</li>
-          <li>Fenix 5 Plus / 5S Plus / 5X Plus</li>
-          <li>Forerunner 945 / 955</li>
-          <li>Enduro 1 / 2 / 3</li>
-          <li>Tactix Delta, Tactix 7 (MIP), Quatix 7</li>
-          <li>MARQ (Gen 1)</li>
-          <li>Edge 1050 / 1040 / 1030 Plus (≈250 tiles, 4 files)</li>
-          <li>Edge 1030 (orig.), 840, 830, 540, 530, 810, 800</li>
-          <li>GPSMAP 62 family, 79 / 86 / 276Cx</li>
-          <li>Oregon 700 / 750, eTrex 20x / 22x / 32x / Touch</li>
-          <li>zumo XT / XT2 / 590 / 595</li>
+          <li>Fenix 6 / 6S / 6X (incl. Pro and Solar) — ≈100 tiles</li>
+          <li>Fenix 5 Plus / 5S Plus / 5X Plus — ≈100 tiles</li>
+          <li>Forerunner 945 / 955 — ≈100 tiles</li>
+          <li>Enduro 1 / 2 / 3 — ≈100 tiles</li>
+          <li>Tactix Delta, Quatix 7, MARQ (Gen 1) — ≈100 tiles</li>
+          <li>Edge 1050 / 1040 / 1030 Plus — ≈250 tiles (4 files max)</li>
+          <li>Edge 1030 (orig.), 840, 830, 540, 530, 810, 800 — ≈100 tiles</li>
+          <li>GPSMAP 62 family, 79 / 86 / 276Cx — ≈100 tiles</li>
+          <li>Oregon 700 / 750, eTrex 20x / 22x / 32x / Touch — ≈100 tiles</li>
+          <li>zumo XT / XT2 / 590 / 595 — ≈100 tiles</li>
         </ul>
       </details>
 
@@ -624,7 +622,7 @@
         </ul>
       </details>
     </div>
-    <p class="watches-note" data-i18n="watches.note">The Epix 2 / Fenix 7 Pro / Fenix 8 family is grouped with the 500-tile tier based on the maintainer's empirical build (~489 tiles rendered fine on Epix 2). Public docs still quote 100. If your watch behaves as 100, switch to the custom-area picker.</p>
+    <p class="watches-note" data-i18n="watches.note">Heads-up: the only device the maintainer has personally tested is the Epix 2. Everything else is grouped from Garmin support docs, community forum threads, and the firmware-family relationships between models. Treat the bucketing as a best-effort guess for your specific watch, not a guarantee. Two known quirks behind the grouping: (1) The Fenix 7 / Epix 2 / Fenix 8 generation is shown here as 500-tile based on the maintainer's empirical build (~489 tiles render fine on an Epix 2); Garmin docs and most community sources still quote 100. Pro and non-Pro share the same firmware family — both sit in the same bucket. If your watch turns out to behave as 100, switch to the custom-area picker. (2) The original Fenix 5X (2017) inherited the 500-tile cap from Garmin's handheld firmware family. Starting with the Fenix 5 Plus (2018) and through the Fenix 6 generation, the cap was reduced to 100 with no published explanation from Garmin.</p>
   </section>
 
 </main>
@@ -698,7 +696,7 @@
       "watches.custom_desc": "Tile cap 100–250. A full region won't fit. Paint a small area around your tours and we email a tile-trimmed pack.",
       "watches.unsupported_title": "Not supported",
       "watches.unsupported_desc": "Firmware doesn't read KMZ at all. There's no workaround.",
-      "watches.note": "The Epix 2 / Fenix 7 Pro / Fenix 8 family is grouped with the 500-tile tier based on the maintainer's empirical build (≈489 tiles rendered fine on Epix 2). Public docs still quote 100. If your watch behaves as 100, switch to the custom-area picker.",
+      "watches.note": "Heads-up: the only device the maintainer has personally tested is the Epix 2. Everything else is grouped from Garmin support docs, community forum threads, and the firmware-family relationships between models. Treat the bucketing as a best-effort guess for your specific watch, not a guarantee. Two known quirks behind the grouping: (1) The Fenix 7 / Epix 2 / Fenix 8 generation is shown here as 500-tile based on the maintainer's empirical build (≈489 tiles render fine on an Epix 2); Garmin docs and most community sources still quote 100. Pro and non-Pro share the same firmware family — both sit in the same bucket. If your watch turns out to behave as 100, switch to the custom-area picker. (2) The original Fenix 5X (2017) inherited the 500-tile cap from Garmin's handheld firmware family. Starting with the Fenix 5 Plus (2018) and through the Fenix 6 generation, the cap was reduced to 100 with no published explanation from Garmin.",
       "zones.dlg_winter": "Winter pack",
       "zones.dlg_summer": "Summer pack",
       "zones.dlg_zip_winter": "Download winter .zip",
@@ -761,7 +759,7 @@
       "watches.custom_desc": "Kachel-Limit 100–250. Eine ganze Region passt nicht. Zeichne ein kleines Gebiet um deine Touren, wir mailen dir ein passendes Paket.",
       "watches.unsupported_title": "Nicht unterstützt",
       "watches.unsupported_desc": "Die Firmware liest KMZ nicht. Es gibt keinen Workaround.",
-      "watches.note": "Epix 2 / Fenix 7 Pro / Fenix 8 sind hier in der 500-Klasse, basierend auf dem empirischen Build des Maintainers (≈489 Kacheln laufen auf der Epix 2). Offizielle Doku spricht weiter von 100. Verhält sich deine Uhr wie 100, nimm den Picker für ein eigenes Gebiet.",
+      "watches.note": "Hinweis: Selbst getestet hat der Maintainer nur die Epix 2. Alles andere ist aus Garmin-Supportdoku, Community-Forenbeiträgen und den Firmware-Familien-Beziehungen zusammengestellt. Sieh die Einteilung als bestmögliche Einschätzung für deine konkrete Uhr, nicht als Garantie. Zwei bekannte Eigenheiten hinter der Gruppierung: (1) Die Generation Fenix 7 / Epix 2 / Fenix 8 ist hier in der 500-Klasse, basierend auf dem empirischen Build des Maintainers (≈489 Kacheln laufen auf einer Epix 2). Garmin-Doku und die meisten Community-Quellen sprechen weiter von 100. Pro und Non-Pro teilen dieselbe Firmware-Familie und stehen im selben Korb. Verhält sich deine Uhr wie 100, nimm den Picker für ein eigenes Gebiet. (2) Die ursprüngliche Fenix 5X (2017) hat die 500-Kachel-Grenze aus Garmins Handheld-Firmware-Familie geerbt. Ab Fenix 5 Plus (2018) und durch die Fenix-6-Generation wurde die Grenze ohne offizielle Erklärung von Garmin auf 100 reduziert.",
       "zones.dlg_winter": "Winter-Paket",
       "zones.dlg_summer": "Sommer-Paket",
       "zones.dlg_zip_winter": "Winter-.zip herunterladen",
@@ -824,7 +822,7 @@
       "watches.custom_desc": "Plafond 100–250 tuiles. Une région complète ne tient pas. Dessine une petite zone autour de tes sorties et on t'envoie un pack ajusté.",
       "watches.unsupported_title": "Non supporté",
       "watches.unsupported_desc": "Le firmware ne lit pas les KMZ. Pas de contournement.",
-      "watches.note": "Epix 2 / Fenix 7 Pro / Fenix 8 sont placés en classe 500 sur la base du build empirique du mainteneur (≈489 tuiles affichées sur Epix 2). La doc officielle reste à 100. Si ta montre se comporte comme 100, passe au sélecteur de zone.",
+      "watches.note": "À noter : le seul appareil que le mainteneur a personnellement testé est l'Epix 2. Tout le reste est compilé à partir de la doc support Garmin, des fils de discussion communautaires et des liens de famille firmware entre modèles. Considère le classement comme une estimation au mieux pour ta montre, pas une garantie. Deux curiosités connues derrière le classement : (1) La génération Fenix 7 / Epix 2 / Fenix 8 est placée ici en classe 500 sur la base du build empirique du mainteneur (≈489 tuiles affichées sur une Epix 2). La doc Garmin et la plupart des sources communautaires restent à 100. Pro et non-Pro partagent la même famille firmware — même classement. Si ta montre se comporte comme 100, passe au sélecteur de zone. (2) La Fenix 5X d'origine (2017) a hérité du plafond 500 tuiles de la famille firmware des appareils portatifs Garmin. À partir de la Fenix 5 Plus (2018) et sur la génération Fenix 6, le plafond a été ramené à 100 sans explication publiée par Garmin.",
       "zones.dlg_winter": "Pack hiver",
       "zones.dlg_summer": "Pack été",
       "zones.dlg_zip_winter": "Télécharger le .zip hiver",
@@ -883,7 +881,7 @@
       "watches.custom_desc": "Limite 100–250 tile. Una regione intera non entra. Disegna una piccola zona attorno ai tuoi giri e ti inviamo un pacchetto su misura.",
       "watches.unsupported_title": "Non supportato",
       "watches.unsupported_desc": "Il firmware non legge i file KMZ. Non c'è soluzione.",
-      "watches.note": "Epix 2 / Fenix 7 Pro / Fenix 8 sono nella classe 500 in base al build empirico del manutentore (≈489 tile renderizzate su Epix 2). La documentazione ufficiale resta a 100. Se il tuo orologio si comporta come 100, usa il selettore di zona.",
+      "watches.note": "Nota: l'unico dispositivo che il manutentore ha testato di persona è l'Epix 2. Tutto il resto è messo insieme dalla documentazione di supporto Garmin, dai thread dei forum della community e dalle parentele tra famiglie firmware. Considera la suddivisione come una stima al meglio per il tuo orologio, non una garanzia. Due stranezze note dietro la suddivisione: (1) La generazione Fenix 7 / Epix 2 / Fenix 8 è inserita qui nella classe 500 in base al build empirico del manutentore (≈489 tile renderizzate su un Epix 2). La documentazione Garmin e gran parte delle fonti della community restano a 100. Pro e non-Pro condividono la stessa famiglia firmware — stesso bucket. Se il tuo orologio si comporta come 100, usa il selettore di zona. (2) Il Fenix 5X originale (2017) ha ereditato il limite di 500 tile dalla famiglia firmware dei dispositivi portatili Garmin. Dal Fenix 5 Plus (2018) e per tutta la generazione Fenix 6 il limite è stato ridotto a 100 senza alcuna spiegazione pubblica da Garmin.",
       "zones.dlg_winter": "Pacchetto inverno",
       "zones.dlg_summer": "Pacchetto estate",
       "zones.dlg_zip_winter": "Scarica .zip inverno",
