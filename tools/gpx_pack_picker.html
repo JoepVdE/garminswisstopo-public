@@ -713,11 +713,33 @@
   const wmtsOvly = (layer, opacity = 0.55, ext = 'png') => _wmts(layer, { ext, opacity });
 
   const map = L.map('map').setView([46.8, 8.2], 8);
+
+  // SAC ski-tour routes coloured by difficulty (blue L/WS/WS+, red ZS/ZS+,
+  // black S/S+). Source: tools/ski_routes_graded.geojson, generated from
+  // ski_routes_2056 by tools/build_routes_geojson.py. Same colour scheme as
+  // the burned KMZ output, so what you see here matches the watch render.
+  const SKI_TIER_STYLE = {
+    0: { color: '#1E5AA0', weight: 2.4, opacity: 0.9 },
+    1: { color: '#C80000', weight: 2.6, opacity: 0.9 },
+    2: { color: '#202020', weight: 2.8, opacity: 0.9 },
+  };
+  const skiRoutesLayer = L.geoJSON([], {
+    style: (f) => SKI_TIER_STYLE[f.properties.t] || SKI_TIER_STYLE[0],
+    onEachFeature: (f, layer) => {
+      const n = f.properties && f.properties.n;
+      if (n) layer.bindTooltip(n, { sticky: true });
+    },
+  });
+  fetch('ski_routes_graded.geojson')
+    .then(r => r.ok ? r.json() : null)
+    .then(d => { if (d) skiRoutesLayer.addData(d); })
+    .catch(err => console.warn('ski routes load failed:', err));
+
   const layers = {
     winter: {
       base:   wmtsBase('ch.swisstopo.pixelkarte-farbe-winter'),
       slope:  wmtsOvly('ch.swisstopo.hangneigung-ueber_30', 0.55),
-      routes: wmtsOvly('ch.swisstopo-karto.skitouren', 0.9),
+      routes: skiRoutesLayer,
     },
     summer: {
       base:   wmtsBase('ch.swisstopo.pixelkarte-farbe'),

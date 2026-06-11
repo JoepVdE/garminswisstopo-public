@@ -358,27 +358,28 @@
       </div>
     </div>
     <figure class="hero-figure">
-      <svg viewBox="-5 -16 1100 733" xmlns="http://www.w3.org/2000/svg"
+      <svg viewBox="0 0 791 801" xmlns="http://www.w3.org/2000/svg"
            role="img" aria-labelledby="watchTitle">
         <title id="watchTitle">Interactive Garmin watch mockup showing live swisstopo LK25 + slope shading + ski-tour routes, centred on the Clariden</title>
         <defs>
-          <!-- Screen is a slightly wide ellipse matching the watch_frame.png
-               bezel, centred at (549, 350) with rx=199 ry=191. -->
+          <!-- Screen oval matches the inner bezel ring detected at
+               (424, 397) r=199 in the tighter-cropped watch_frame.png.
+               Map clip sits a few px inside that ring. -->
           <clipPath id="screenClip">
-            <ellipse cx="549" cy="350" rx="199" ry="191"/>
+            <circle cx="424" cy="397" r="187"/>
           </clipPath>
         </defs>
 
         <!-- Watch frame UNDERNEATH the interactive map. -->
         <image href="watch_frame.png"
-               x="0" y="0" width="1100" height="733"/>
+               x="0" y="0" width="791" height="801"/>
 
         <!-- Live swisstopo Leaflet map INSIDE the screen.
              CSS clip-path on the inner div (NOT SVG clipPath on the
              foreignObject) so Leaflet's drag / pinch-zoom events keep
              working — Chrome and Firefox drop pointer events through SVG
              clipPath on foreignObject. -->
-        <foreignObject x="350" y="159" width="398" height="382">
+        <foreignObject x="237" y="210" width="374" height="374">
           <div xmlns="http://www.w3.org/1999/xhtml"
                id="watchMap"
                style="width:100%; height:100%; background:#e8eef5;
@@ -391,16 +392,16 @@
              - End caps go UP only; label centred ABOVE the bar with thin black
                outline for legibility over the map. -->
         <g clip-path="url(#screenClip)" style="pointer-events:none">
-          <line x1="525" y1="537" x2="573" y2="537"
-                stroke="#fff" stroke-width="2.2" stroke-linecap="butt" />
-          <line x1="525" y1="537" x2="525" y2="530"
-                stroke="#fff" stroke-width="2.2" stroke-linecap="butt" />
-          <line x1="573" y1="537" x2="573" y2="530"
-                stroke="#fff" stroke-width="2.2" stroke-linecap="butt" />
-          <text x="549" y="526" text-anchor="middle"
+          <line x1="400" y1="580" x2="448" y2="580"
+                stroke="#fff" stroke-width="2.4" stroke-linecap="butt" />
+          <line x1="400" y1="580" x2="400" y2="572"
+                stroke="#fff" stroke-width="2.4" stroke-linecap="butt" />
+          <line x1="448" y1="580" x2="448" y2="572"
+                stroke="#fff" stroke-width="2.4" stroke-linecap="butt" />
+          <text x="424" y="567" text-anchor="middle"
                 font-family="-apple-system,Segoe UI,sans-serif"
-                font-size="11" font-weight="700"
-                fill="#fff" stroke="#000" stroke-width="0.5"
+                font-size="12" font-weight="700"
+                fill="#fff" stroke="#000" stroke-width="0.6"
                 paint-order="stroke fill">300 m</text>
         </g>
       </svg>
@@ -557,7 +558,7 @@
       "pc.cons.4": "Slope shading is advisory only. It does not replace the daily SLF avalanche bulletin or your own judgement on the day.",
       "pc.cons.5": "Setup is a manual file copy. The guide is step-by-step, but plan 15 minutes the first time.",
       "disclaimer.title": "Safety:",
-      "disclaimer.body": "slope shading is derived from the 10 m elevation model and is for awareness only. It does not replace the daily SLF avalanche bulletin, route planning, or on-site judgement. Relying on these maps alone for alpine-terrain decisions is not safe practice; the authors and contributors accept no liability for any consequences of using them. Backcountry travel has inherent risks including death.",
+      "disclaimer.body": "Treat these watch maps as a supplement, not a primary navigation tool. Always carry a paper map, compass, and a dedicated GPS device as a backup. Slope shading is derived from the 10 m elevation model and is for awareness only — it does not replace the daily SLF avalanche bulletin, proper route planning, or on-site judgement. The authors and contributors accept no liability for any consequences of using these maps. Backcountry travel has inherent risks including death.",
       "zones.dlg_winter": "Winter pack",
       "zones.dlg_summer": "Summer pack",
       "zones.dlg_zip_winter": "Download winter .zip",
@@ -611,7 +612,7 @@
       "pc.cons.4": "Die Hangneigung ist nur ein Hinweis. Sie ersetzt nicht das tägliche SLF-Lawinenbulletin oder dein Urteil vor Ort.",
       "pc.cons.5": "Die Einrichtung ist manuelles Datei-Kopieren. Die Anleitung führt dich Schritt für Schritt durch, plane das erste Mal 15 Minuten ein.",
       "disclaimer.title": "Sicherheit:",
-      "disclaimer.body": "Die Hangneigung basiert auf dem 10-m-Höhenmodell und dient nur der Awareness. Sie ersetzt nicht das tägliche SLF-Lawinenbulletin, die Tourenplanung oder deine Beurteilung vor Ort. Sich im alpinen Gelände allein auf diese Karten zu verlassen, ist keine sichere Praxis; die Autoren und Mitwirkenden übernehmen keinerlei Haftung für Folgen aus der Nutzung. Touren im Gelände sind mit inhärenten Risiken verbunden, einschliesslich Tod.",
+      "disclaimer.body": "Betrachte diese Uhrenkarten als Ergänzung, nicht als primäres Navigationsmittel. Nimm immer Papierkarte, Kompass und ein dediziertes GPS-Gerät als Backup mit. Die Hangneigung basiert auf dem 10-m-Höhenmodell und dient nur der Awareness, sie ersetzt nicht das tägliche SLF-Lawinenbulletin, die Tourenplanung oder deine Beurteilung vor Ort. Die Autoren und Mitwirkenden übernehmen keinerlei Haftung für Folgen aus der Nutzung. Touren im Gelände sind mit inhärenten Risiken verbunden, einschliesslich Tod.",
       "zones.dlg_winter": "Winter-Paket",
       "zones.dlg_summer": "Sommer-Paket",
       "zones.dlg_zip_winter": "Winter-.zip herunterladen",
@@ -665,7 +666,7 @@
       "pc.cons.4": "L'ombrage des pentes est indicatif. Il ne remplace pas le bulletin d'avalanches SLF du jour ni ton jugement sur le terrain.",
       "pc.cons.5": "L'installation est une copie manuelle de fichiers. Le guide est détaillé pas à pas, prévois 15 minutes la première fois.",
       "disclaimer.title": "Sécurité :",
-      "disclaimer.body": "l'ombrage des pentes est dérivé du modèle altimétrique 10 m et n'est qu'une indication. Il ne remplace ni le bulletin SLF du jour, ni la planification d'itinéraire, ni ton jugement sur place. Se fier uniquement à ces cartes pour décider en terrain alpin n'est pas une pratique sûre ; les auteurs et contributeurs déclinent toute responsabilité pour les conséquences de leur utilisation. Les sorties hors-piste comportent des risques inhérents, y compris la mort.",
+      "disclaimer.body": "Considère ces cartes sur la montre comme un complément, pas comme un outil de navigation principal. Emporte toujours une carte papier, une boussole et un GPS dédié en backup. L'ombrage des pentes est dérivé du modèle altimétrique 10 m et n'est qu'une indication : il ne remplace ni le bulletin SLF du jour, ni la planification d'itinéraire, ni ton jugement sur place. Les auteurs et contributeurs déclinent toute responsabilité pour les conséquences de l'utilisation de ces cartes. Les sorties hors-piste comportent des risques inhérents, y compris la mort.",
       "zones.dlg_winter": "Pack hiver",
       "zones.dlg_summer": "Pack été",
       "zones.dlg_zip_winter": "Télécharger le .zip hiver",
@@ -715,7 +716,7 @@
       "pc.cons.4": "L'ombreggiatura delle pendenze è solo indicativa. Non sostituisce il bollettino valanghe SLF giornaliero né il tuo giudizio sul posto.",
       "pc.cons.5": "L'installazione è una copia manuale di file. La guida è passo passo, calcola 15 minuti la prima volta.",
       "disclaimer.title": "Sicurezza:",
-      "disclaimer.body": "l'ombreggiatura delle pendenze è derivata dal modello altimetrico 10 m ed è solo indicativa. Non sostituisce il bollettino valanghe SLF, la pianificazione del giro o il giudizio sul posto. Affidarsi solo a queste mappe per decisioni in terreno alpino non è una pratica sicura; autori e collaboratori declinano ogni responsabilità per le conseguenze dell'uso. Le uscite in fuoripista comportano rischi intrinseci, inclusa la morte.",
+      "disclaimer.body": "Considera queste mappe sull'orologio come un complemento, non come strumento di navigazione principale. Porta sempre carta cartacea, bussola e un GPS dedicato come backup. L'ombreggiatura delle pendenze è derivata dal modello altimetrico 10 m ed è solo indicativa: non sostituisce il bollettino valanghe SLF, la pianificazione del giro o il giudizio sul posto. Autori e collaboratori declinano ogni responsabilità per le conseguenze dell'uso di queste mappe. Le uscite in fuoripista comportano rischi intrinseci, inclusa la morte.",
       "zones.dlg_winter": "Pacchetto inverno",
       "zones.dlg_summer": "Pacchetto estate",
       "zones.dlg_zip_winter": "Scarica .zip inverno",
@@ -1072,7 +1073,22 @@
     );
     wmts("ch.swisstopo.pixelkarte-farbe-winter", "jpeg").addTo(map);
     wmts("ch.swisstopo.hangneigung-ueber_30",    "png", 0.55).addTo(map);
-    wmts("ch.swisstopo-karto.skitouren",         "png", 0.9).addTo(map);
+
+    // SAC ski-tour routes coloured the same way the KMZ pipeline burns them:
+    // blue L/WS/WS+, red ZS/ZS+, black S/S+. Replaces the swisstopo-karto
+    // raster overlay so the hero matches the on-watch render.
+    const STYLES = {
+      0: { color: "#1E5AA0", weight: 2.2, opacity: 0.9 },
+      1: { color: "#C80000", weight: 2.4, opacity: 0.9 },
+      2: { color: "#202020", weight: 2.6, opacity: 0.9 },
+    };
+    const skiLayer = L.geoJSON([], {
+      style: (f) => STYLES[f.properties.t] || STYLES[0],
+    }).addTo(map);
+    fetch("ski_routes_graded.geojson")
+      .then(r => r.ok ? r.json() : null)
+      .then(d => { if (d) skiLayer.addData(d); })
+      .catch(() => {});
   }
 
   function loadLeafletThen(cb) {
