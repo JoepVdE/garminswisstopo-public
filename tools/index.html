@@ -124,30 +124,39 @@
   .watch-stack {
     position: relative;
     width: 100%;
-    max-width: 560px;
+    max-width: 730px;          /* 30% bigger than the prior 560px */
     aspect-ratio: 1100 / 733;
     display: block;
   }
-  .watch-stack .watch-map {
-    position: absolute;
-    /* Match the ellipse in viewBox 0 0 1100 733: cx=549 cy=350 rx=199 ry=191 */
-    left:   31.7273%;   /* (549-199)/1100 */
-    top:    21.6917%;   /* (350-191)/733  */
-    width:  36.1818%;   /* 398/1100 */
-    height: 52.1146%;   /* 382/733 */
-    background: #e8eef5;
-    clip-path: ellipse(50% 50% at 50% 50%);
-    -webkit-clip-path: ellipse(50% 50% at 50% 50%);
-    z-index: 1;
-  }
+  /* Watch-frame PNG underneath: provides the bezel + opaque centre that the
+     map ellipse sits on top of. */
   .watch-stack .watch-overlay {
     position: absolute; inset: 0;
     width: 100%; height: 100%;
-    pointer-events: none;   /* clicks fall through to the map below */
+    pointer-events: none;
+    z-index: 1;
+  }
+  /* Live map ON TOP of the frame, clipped to the screen ellipse so only the
+     screen window shows it. Coords match viewBox 0 0 1100 733: ellipse
+     cx=549 cy=350 rx=199 ry=191. */
+  .watch-stack .watch-map {
+    position: absolute;
+    left:   31.7273%;
+    top:    21.6917%;
+    width:  36.1818%;
+    height: 52.1146%;
+    background: #e8eef5;
+    clip-path: ellipse(50% 50% at 50% 50%);
+    -webkit-clip-path: ellipse(50% 50% at 50% 50%);
     z-index: 2;
   }
-  /* Re-enable pointer events on the zoom buttons specifically */
-  .watch-stack .leaflet-control-container { pointer-events: auto; }
+  /* The scale-bar text in a second overlay SVG that sits above the map. */
+  .watch-stack .watch-scale {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+    z-index: 3;
+  }
   .hero-figure figcaption {
     color: var(--muted); font-size: 0.85rem;
     text-align: center; max-width: 32ch;
@@ -385,27 +394,29 @@
     </div>
     <figure class="hero-figure">
       <div class="watch-stack" role="img" aria-label="Interactive Garmin watch mockup showing live swisstopo LK25 + slope shading + ski-tour routes, centred on the Clariden">
-        <!-- Live swisstopo Leaflet map; plain HTML div, clipped to the watch
-             screen ellipse via CSS. Sits underneath the watch-frame PNG. -->
-        <div id="watchMap" class="watch-map"></div>
-
-        <!-- Watch frame + scale bar on top. pointer-events:none so the user
-             can still drag / pinch / zoom the map underneath. -->
+        <!-- Watch frame PNG underneath. pointer-events:none lets clicks pass
+             through to the map sitting on top. -->
         <svg class="watch-overlay" viewBox="0 0 1100 733" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
           <image href="watch_frame.png" x="0" y="0" width="1100" height="733"/>
-          <g>
-            <line x1="525" y1="537" x2="573" y2="537"
-                  stroke="#fff" stroke-width="2.2" stroke-linecap="butt" />
-            <line x1="525" y1="537" x2="525" y2="530"
-                  stroke="#fff" stroke-width="2.2" stroke-linecap="butt" />
-            <line x1="573" y1="537" x2="573" y2="530"
-                  stroke="#fff" stroke-width="2.2" stroke-linecap="butt" />
-            <text x="549" y="526" text-anchor="middle"
-                  font-family="-apple-system,Segoe UI,sans-serif"
-                  font-size="11" font-weight="700"
-                  fill="#fff" stroke="#000" stroke-width="0.5"
-                  paint-order="stroke fill">300 m</text>
-          </g>
+        </svg>
+
+        <!-- Live swisstopo Leaflet map ON TOP, ellipse-clipped to the screen.
+             Plain HTML div (NOT a foreignObject) so vector overlays render. -->
+        <div id="watchMap" class="watch-map"></div>
+
+        <!-- Scale bar floats above the map so it stays readable. -->
+        <svg class="watch-scale" viewBox="0 0 1100 733" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <line x1="525" y1="537" x2="573" y2="537"
+                stroke="#fff" stroke-width="2.2" stroke-linecap="butt" />
+          <line x1="525" y1="537" x2="525" y2="530"
+                stroke="#fff" stroke-width="2.2" stroke-linecap="butt" />
+          <line x1="573" y1="537" x2="573" y2="530"
+                stroke="#fff" stroke-width="2.2" stroke-linecap="butt" />
+          <text x="549" y="526" text-anchor="middle"
+                font-family="-apple-system,Segoe UI,sans-serif"
+                font-size="11" font-weight="700"
+                fill="#fff" stroke="#000" stroke-width="0.5"
+                paint-order="stroke fill">300 m</text>
         </svg>
       </div>
       <figcaption data-i18n="hero.caption">Swiss topo, on your Garmin.</figcaption>
@@ -1046,9 +1057,7 @@
     const map = L.map(el, {
       center: [46.84055, 8.87883],   // Clariden 3267 m
       zoom: 14,
-      // Compact +/- zoom buttons inside the screen so users see how to
-      // zoom out without having to discover scroll-wheel.
-      zoomControl: true,
+      zoomControl: false,
       attributionControl: false,
       // Scroll-wheel zoom is enabled but only AFTER the user clicks/taps
       // the map (Leaflet's "click to wake" pattern). Stops the hero from
@@ -1067,7 +1076,6 @@
     el.addEventListener("click", wakeWheel);
     el.addEventListener("touchstart", wakeWheel, { passive: true });
 
-    map.zoomControl.setPosition("topright");
     const wmts = (layer, ext, opacity) => L.tileLayer(
       `https://wmts{s}.geo.admin.ch/1.0.0/${layer}/default/current/3857/{z}/{x}/{y}.${ext}`,
       { subdomains: ["10","11","12","13","14"], maxZoom: 18, minZoom: 8,
