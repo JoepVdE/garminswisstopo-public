@@ -117,7 +117,7 @@
     gap: 0.6rem;
   }
   .hero-figure svg {
-    width: 100%; max-width: 460px; height: auto; display: block;
+    width: 100%; max-width: 500px; height: auto; display: block;
   }
   .hero-figure figcaption {
     color: var(--muted); font-size: 0.85rem;
@@ -1075,7 +1075,15 @@
       1: { color: "#C80000", weight: 3.4, opacity: 0.95 },
       2: { color: "#202020", weight: 3.6, opacity: 0.95 },
     };
+    // Canvas renderer (not SVG): Leaflet's default SVG renderer creates an
+    // <svg> element inside an HTML container, which then sits inside our
+    // outer <foreignObject>. Chrome / Firefox sometimes size that inner SVG
+    // overlay to 0 px when the foreignObject is clip-pathed, so the polyline
+    // paths never get a viewport even though base tiles render fine. Canvas
+    // draws into a plain <canvas> element that respects the clipped div's
+    // box, so the strokes appear.
     const skiLayer = L.geoJSON([], {
+      renderer: L.canvas({ padding: 0.5 }),
       style: (f) => STYLES[(f.properties || {}).t] || STYLES[0],
     }).addTo(map);
     fetch("ski_routes_graded.geojson")
