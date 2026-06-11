@@ -130,13 +130,13 @@
     max-width: 760px;
     /* SVG viewBox crops the watch_frame.png both ways: horizontally to
        the middle 70 % (PNG x ∈ [165, 935]) and vertically to y ∈
-       [92, 632] so the empty space above the upper lug and below the
-       lower lug doesn't waste hero real estate. y_start=92 keeps the
-       oval (PNG cy=350) at (350-92)/540 ≈ 47.8 % of stack height,
-       matching the original 350/733 ≈ 47.7 %, so the oval stays in
-       the same spot relative to the stack. Applied to both desktop
-       and mobile so the watch shape is consistent across viewports. */
-    aspect-ratio: 770 / 540;
+       [86, 635] so the empty space above the upper lug and below the
+       lower lug doesn't waste hero real estate. y_start=86 keeps the
+       oval (PNG cy=350) at (350-86)/549 ≈ 48.1 % of stack height,
+       close to the original 350/733 ≈ 47.7 %, so the oval stays in
+       roughly the same spot relative to the stack. Applied to both
+       desktop and mobile for a consistent watch shape. */
+    aspect-ratio: 770 / 549;
     display: block;
   }
   /* Mobile: let the stack overflow .wrap's 1.1rem side padding so it
@@ -161,17 +161,17 @@
   }
   /* Live map ON TOP of the frame, clipped to the screen ellipse so only
      the screen window shows it. Ellipse in the source PNG is cx=549,
-     cy=350, rx=199, ry=191. With the viewBox crop "165 92 770 540":
+     cy=350, rx=199, ry=191. With the viewBox crop "165 86 770 549":
        left   = (549-199-165) / 770 = 24.026 %
-       top    = (350-191-92)  / 540 = 12.407 %
+       top    = (350-191-86)  / 549 = 13.297 %
        width  =  398          / 770 = 51.688 %
-       height =  382          / 540 = 70.741 %  */
+       height =  382          / 549 = 69.581 %  */
   .watch-stack .watch-map {
     position: absolute;
     left:   24.0260%;
-    top:    12.4074%;
+    top:    13.2969%;
     width:  51.6883%;
-    height: 70.7407%;
+    height: 69.5810%;
     background: #e8eef5;
     clip-path: ellipse(50% 50% at 50% 50%);
     -webkit-clip-path: ellipse(50% 50% at 50% 50%);
@@ -476,7 +476,7 @@
       <div class="watch-stack" role="img" aria-label="Interactive Garmin watch mockup showing live swisstopo LK25 + slope shading + ski-tour routes, centred on the Clariden">
         <!-- Watch frame PNG underneath. pointer-events:none lets clicks pass
              through to the map sitting on top. -->
-        <svg class="watch-overlay" viewBox="165 92 770 540" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <svg class="watch-overlay" viewBox="165 86 770 549" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
           <image href="watch_frame.png" x="0" y="0" width="1100" height="733"/>
         </svg>
 
@@ -487,7 +487,7 @@
         <!-- Scale bar floats above the map. Bar width + label are updated by
              JS on every map zoom/move so the indicated distance is honest.
              Black on the light LK25 base reads better than white-with-stroke. -->
-        <svg class="watch-scale" viewBox="165 92 770 540" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <svg class="watch-scale" viewBox="165 86 770 549" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
           <g id="scaleBarGroup">
             <line id="scaleBar-bar" x1="525" y1="537" x2="573" y2="537"
                   stroke="#000" stroke-width="2.2" stroke-linecap="butt" />
@@ -1219,8 +1219,8 @@
   drawZones();
   applyLang(detectLang());
 
-  // Watch SVGs share one viewBox "165 92 770 540" across desktop and
-  // mobile: PNG x=[165, 935] horizontally, y=[92, 632] vertically. The
+  // Watch SVGs share one viewBox "165 86 770 549" across desktop and
+  // mobile: PNG x=[165, 935] horizontally, y=[86, 635] vertically. The
   // scale bar (drawn at viewBox y=537) is inside this crop. Width 770
   // is the unit the scale-bar code below uses for vbPerCss.
   const WATCH_VB_W = 770;
