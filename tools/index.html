@@ -6,6 +6,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="description" content="Swisstopo LK25 maps with slope shading and ski/hiking route overlay for Garmin Epix and Fenix watches.">
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+      crossorigin="">
 <style>
   :root {
     --bg: #faf8f3;
@@ -311,48 +314,48 @@
     <figure class="hero-figure">
       <svg viewBox="-5 -16 1100 733" xmlns="http://www.w3.org/2000/svg"
            role="img" aria-labelledby="watchTitle">
-        <title id="watchTitle">Garmin watch showing LK25 with slope shading and SAC ski-tour routes near the Clariden summit</title>
+        <title id="watchTitle">Interactive Garmin watch mockup showing live swisstopo LK25 + slope shading + ski-tour routes, centred on the Clariden</title>
         <defs>
+          <!-- Screen is a slightly wide ellipse matching the watch_frame.png
+               bezel, centred at (549, 350) with rx=199 ry=191. -->
           <clipPath id="screenClip">
-            <!-- Map clip extends halfway to ring C (r≈192). The map sits
-                 ON TOP of the watch frame inside this circle, so the inner
-                 ring strokes hide under the map. -->
-            <circle cx="545" cy="351" r="192"/>
+            <ellipse cx="549" cy="350" rx="199" ry="191"/>
           </clipPath>
         </defs>
 
-        <!-- Watch frame UNDERNEATH. Only the strokes OUTSIDE the screen clip
-             will remain visible (case rim, outer bezel ring, buttons, lugs);
-             inner ring + tick strokes get hidden under the map above. -->
+        <!-- Watch frame UNDERNEATH the interactive map. -->
         <image href="watch_frame.png"
                x="0" y="0" width="1100" height="733"/>
 
-        <!-- Map ON TOP, clipped to the screen circle. -->
-        <image href="preview_map.jpg"
-               x="353" y="159" width="384" height="384"
-               clip-path="url(#screenClip)"
-               preserveAspectRatio="xMidYMid slice"/>
+        <!-- Live swisstopo Leaflet map INSIDE the screen. The map div lives in
+             a foreignObject so the SVG can clip it cleanly to the bezel oval.
+             JS init below picks Clariden as the default centre. -->
+        <foreignObject x="350" y="159" width="398" height="382"
+                       clip-path="url(#screenClip)">
+          <div xmlns="http://www.w3.org/1999/xhtml"
+               id="watchMap"
+               style="width:100%; height:100%; background:#e8eef5"></div>
+        </foreignObject>
 
-        <!-- Scale bar at the very bottom of the screen.
-             - No background fill (transparent).
-             - End caps go UP only (bracket opens downward: ⌐⌐).
-             - "300 m" label centred ABOVE the bar.
-             - Label has a thin black stroke for readability over the map. -->
-        <g clip-path="url(#screenClip)">
-          <line x1="521" y1="538" x2="569" y2="538"
+        <!-- Scale bar at the bottom of the screen oval.
+             - Centre at x=549, 48 SVG px wide.
+             - End caps go UP only; label centred ABOVE the bar with thin black
+               outline for legibility over the map. -->
+        <g clip-path="url(#screenClip)" style="pointer-events:none">
+          <line x1="525" y1="537" x2="573" y2="537"
                 stroke="#fff" stroke-width="2.2" stroke-linecap="butt" />
-          <line x1="521" y1="538" x2="521" y2="531"
+          <line x1="525" y1="537" x2="525" y2="530"
                 stroke="#fff" stroke-width="2.2" stroke-linecap="butt" />
-          <line x1="569" y1="538" x2="569" y2="531"
+          <line x1="573" y1="537" x2="573" y2="530"
                 stroke="#fff" stroke-width="2.2" stroke-linecap="butt" />
-          <text x="545" y="527" text-anchor="middle"
+          <text x="549" y="526" text-anchor="middle"
                 font-family="-apple-system,Segoe UI,sans-serif"
                 font-size="11" font-weight="700"
                 fill="#fff" stroke="#000" stroke-width="0.5"
                 paint-order="stroke fill">300 m</text>
         </g>
       </svg>
-      <figcaption data-i18n="hero.caption">LK25 with slope shading and SAC ski tours, on a Garmin Epix Pro. Clariden summit, zone 09.</figcaption>
+      <figcaption data-i18n="hero.caption">Swiss topo, on your Garmin.</figcaption>
     </figure>
   </section>
 
@@ -465,7 +468,7 @@
       "hero.lead": "Pre-built map packs of Switzerland for Garmin watches. LK25 raster cartography with a slope-shading and ski/hiking route overlay, sized to fit your watch's tile limit.",
       "hero.cta_install": "How to install",
       "hero.cta_picker": "Find maps for my tour",
-      "hero.caption": "LK25 with slope shading and SAC ski tours, on a Garmin Epix Pro. Clariden summit, zone 09.",
+      "hero.caption": "Swiss topo, on your Garmin.",
       "what.heading": "What is this?",
       "what.lead": "A way to put Swiss topographic maps on your Garmin watch. Same LK25 cartography you'd see on a paper Swisstopo map or in SchweizMobil, with a slope-angle and route overlay on top. Not an app. Just files you copy to the watch over USB.",
       "what.winter_title": "Winter",
@@ -509,7 +512,7 @@
       "hero.lead": "Fertige Kartenpakete der Schweiz für Garmin-Uhren. LK25-Rasterkartografie mit einem Hangneigungs- und Routen-Overlay (Ski / Wandern), passend für die Kachelgrenze deiner Uhr.",
       "hero.cta_install": "Anleitung",
       "hero.cta_picker": "Karten finden",
-      "hero.caption": "LK25 mit Hangneigung und SAC-Skitouren, auf einer Garmin Epix Pro. Clariden, Region 09.",
+      "hero.caption": "Schweizer Topo, auf deiner Garmin.",
       "what.heading": "Was ist das?",
       "what.lead": "Ein Weg, Schweizer Landeskarten auf eine Garmin-Uhr zu bringen. Gleiche LK25-Kartografie wie auf der Papier-Swisstopo oder in SchweizMobil, darauf ein Hangneigungs- und Routen-Overlay. Keine App. Nur Dateien, die du per USB auf die Uhr kopierst.",
       "what.winter_title": "Winter",
@@ -553,7 +556,7 @@
       "hero.lead": "Packs cartographiques de la Suisse, prêts à l'emploi, pour montres Garmin. Cartographie raster LK25 avec un overlay d'ombrage des pentes et d'itinéraires ski / rando, dimensionnés pour la limite de tuiles de ta montre.",
       "hero.cta_install": "Comment installer",
       "hero.cta_picker": "Trouver les cartes de ma sortie",
-      "hero.caption": "LK25 avec ombrage des pentes et itinéraires ski CAS, sur une Garmin Epix Pro. Sommet du Clariden, zone 09.",
+      "hero.caption": "Topo suisse, sur ta Garmin.",
       "what.heading": "C'est quoi ?",
       "what.lead": "Une façon de mettre des cartes topographiques suisses sur une montre Garmin. Même cartographie LK25 que sur la carte papier Swisstopo ou dans SuisseMobile, avec un overlay d'inclinaison de pente et d'itinéraires par-dessus. Pas une appli. Juste des fichiers à copier sur la montre via USB.",
       "what.winter_title": "Hiver",
@@ -597,7 +600,7 @@
       "hero.lead": "Pacchetti cartografici della Svizzera già pronti per orologi Garmin. Cartografia raster LK25 con un overlay di ombreggiatura delle pendenze e di itinerari sci / escursionismo, dimensionati per il limite di tile dell'orologio.",
       "hero.cta_install": "Come installare",
       "hero.cta_picker": "Trova le mappe per il mio giro",
-      "hero.caption": "LK25 con ombreggiatura pendenze e itinerari sci CAS, su un Garmin Epix Pro. Cima del Clariden, zona 09.",
+      "hero.caption": "Topo svizzera, sul tuo Garmin.",
       "what.heading": "Che cos'è?",
       "what.lead": "Un modo per portare carte topografiche svizzere sul tuo orologio Garmin. Stessa cartografia LK25 della carta cartacea Swisstopo o di SvizzeraMobile, con un overlay di pendenza e itinerari sopra. Non è un'app. Solo file che copi sull'orologio tramite USB.",
       "what.winter_title": "Inverno",
@@ -819,6 +822,49 @@
   loadZoneGrid();
   drawZones();
   applyLang(detectLang());
+
+  // ───────────── Interactive Clariden map inside the watch screen ─────────────
+  // Loads Leaflet lazily after the rest of the page; binds a swisstopo
+  // WMTS LK25 base + slope overlay + ski-tour overlay; default view sits on
+  // the Clariden summit but is fully pannable + pinch-zoomable.
+  function initWatchMap() {
+    const el = document.getElementById("watchMap");
+    if (!el || typeof L === "undefined") return;
+    const map = L.map(el, {
+      center: [46.84055, 8.87883],   // Clariden 3267 m
+      zoom: 14,
+      zoomControl: false,
+      attributionControl: false,
+      scrollWheelZoom: false,        // don't hijack page scroll
+      dragging: true,
+      tap: true,
+    });
+    const wmts = (layer, ext, opacity) => L.tileLayer(
+      `https://wmts{s}.geo.admin.ch/1.0.0/${layer}/default/current/3857/{z}/{x}/{y}.${ext}`,
+      { subdomains: ["10","11","12","13","14"], maxZoom: 18, minZoom: 8,
+        opacity: opacity ?? 1.0,
+        attribution: '© <a href="https://www.swisstopo.admin.ch">swisstopo</a>' }
+    );
+    wmts("ch.swisstopo.pixelkarte-farbe-winter", "jpeg").addTo(map);
+    wmts("ch.swisstopo.hangneigung-ueber_30",    "png", 0.55).addTo(map);
+    wmts("ch.swisstopo-karto.skitouren",         "png", 0.9).addTo(map);
+  }
+
+  function loadLeafletThen(cb) {
+    if (typeof L !== "undefined") { cb(); return; }
+    const s = document.createElement("script");
+    s.src = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.js";
+    s.integrity = "sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=";
+    s.crossOrigin = "";
+    s.onload = cb;
+    document.body.appendChild(s);
+  }
+  // Defer so the hero paint isn't blocked by the Leaflet script.
+  if (document.readyState === "complete") {
+    loadLeafletThen(initWatchMap);
+  } else {
+    window.addEventListener("load", () => loadLeafletThen(initWatchMap));
+  }
 })();
 </script>
 
