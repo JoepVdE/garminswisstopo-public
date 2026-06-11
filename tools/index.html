@@ -414,21 +414,19 @@
 
         <!-- Scale bar floats above the map. Bar width + label are updated by
              JS on every map zoom/move so the indicated distance is honest.
-             Same font and white-with-black-outline styling the static PNG
-             scale used. -->
+             Black on the light LK25 base reads better than white-with-stroke. -->
         <svg class="watch-scale" viewBox="165 0 770 733" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
           <g id="scaleBarGroup">
             <line id="scaleBar-bar" x1="525" y1="537" x2="573" y2="537"
-                  stroke="#fff" stroke-width="2.2" stroke-linecap="butt" />
+                  stroke="#000" stroke-width="2.2" stroke-linecap="butt" />
             <line id="scaleBar-tickL" x1="525" y1="537" x2="525" y2="530"
-                  stroke="#fff" stroke-width="2.2" stroke-linecap="butt" />
+                  stroke="#000" stroke-width="2.2" stroke-linecap="butt" />
             <line id="scaleBar-tickR" x1="573" y1="537" x2="573" y2="530"
-                  stroke="#fff" stroke-width="2.2" stroke-linecap="butt" />
+                  stroke="#000" stroke-width="2.2" stroke-linecap="butt" />
             <text id="scaleBar-label" x="549" y="526" text-anchor="middle"
                   font-family="-apple-system,Segoe UI,sans-serif"
                   font-size="11" font-weight="700"
-                  fill="#fff" stroke="#000" stroke-width="0.5"
-                  paint-order="stroke fill">300 m</text>
+                  fill="#000">300 m</text>
           </g>
         </svg>
       </div>
