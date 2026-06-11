@@ -9,28 +9,26 @@ Single source of truth for the static-site tools. Schema:
   "release_tag": "...",
   "asset_url_template": "https://github.com/<repo>/releases/download/<tag>/{name}",
   "tile_cap": 500,
-  "overview_tiles_est": 89,
-  "overview": {
-    "name": "overview_ch",
-    "files":         [{name, size_mb}],     # winter overview (backwards-compat)
-    "winter_files":  [{name, size_mb}],
-    "summer_files":  [{name, size_mb}],     # may be []
-    "total_size_mb": ...                    # winter total
-  },
   "zones": [
     { "n": 1, "name": "...", "bbox_lv95": [...], "desc": "...",
-      "files":          [{name, size_mb}],   # winter (backwards-compat)
-      "winter_files":   [{name, size_mb}],
-      "summer_files":   [{name, size_mb}],   # may be []
-      "total_size_mb":  ...,                 # winter
-      "winter_size_mb": ...,
-      "summer_size_mb": ...,
-      "total_tiles_est":...,
-      "seasons": ["winter"] | ["winter","summer"]  # what's actually shipped
+      "files":            [{name, size_mb}],  # winter detail (backwards-compat)
+      "winter_files":     [{name, size_mb}],  # winter detail T1 parts
+      "winter_overview":  {name, size_mb} | null,  # NN_<zone>_overview.kmz
+      "summer_files":     [{name, size_mb}],  # summer detail T1 parts
+      "summer_overview":  {name, size_mb} | null,  # NN_<zone>_summer_overview.kmz
+      "total_size_mb":    ...,                # winter (backwards-compat)
+      "winter_size_mb":   ...,                # winter detail + overview combined
+      "summer_size_mb":   ...,                # summer detail + overview combined
+      "total_tiles_est":  ...,
+      "seasons": ["winter"] | ["winter","summer"] | ...
     },
     ...
   ]
 }
+
+Note: the all-CH `00_overview_ch.kmz` was retired 2026-06-11 in favour of
+per-zone multi-tier overview KMZs (T2/T3/T4 bundled). Each zone now ships its
+own zoom-pyramid in `<zone>_overview.kmz`.
 """
 from __future__ import annotations
 
@@ -83,24 +81,50 @@ def merge_zones(winter: list[dict], summer: list[dict]) -> list[dict]:
     return sorted(by_n.values(), key=lambda z: z["n"])
 
 
-def kmz_files_for(prefix: str, suffix: str = "") -> list[dict]:
-    """Match `<prefix><anything><suffix>.kmz`. Empty suffix matches winter
-    naming (NN_<name>.kmz or NN_<name>_part_NNN.kmz). suffix=_summer matches
-    NN_<name>_summer.kmz / NN_<name>_summer_part_NNN.kmz.
+def _file_record(f: Path) -> dict:
+    return {"name": f.name, "size_mb": round(f.stat().st_size / 1_048_576, 1)}
+
+
+def detail_files(prefix: str, season: str = "winter") -> list[dict]:
+    """Detail-tier KMZ parts for a zone (T1 only — overview tiers excluded).
+
+    season='winter': matches NN_<name>.kmz or NN_<name>_part_NNN.kmz.
+    season='summer': matches NN_<name>_summer.kmz or NN_<name>_summer_part_NNN.kmz.
+    Excludes _overview.kmz files (those are the new T2/T3/T4 bundle).
     """
     files = []
     for f in sorted(PACKS.glob(f"{prefix}*.kmz")):
-        # Filter on the _summer suffix being present (or absent) before .kmz
-        # or before _part_NNN.kmz.
         stem = f.stem
-        m = re.match(r".+?(_part_\d+)?$", stem)
-        bare = stem[:-len(m.group(1))] if m and m.group(1) else stem
-        if suffix and not bare.endswith(suffix):
+        # Drop trailing _part_NNN to get the "bare" stem for season matching.
+        m = re.match(r"(.+?)(_part_\d+)?$", stem)
+        bare = m.group(1) if m else stem
+        if bare.endswith("_overview"):
             continue
-        if not suffix and bare.endswith("_summer"):
-            continue
-        files.append({"name": f.name, "size_mb": round(f.stat().st_size / 1_048_576, 1)})
+        if season == "winter":
+            if bare.endswith("_summer"):
+                continue
+            files.append(_file_record(f))
+        elif season == "summer":
+            if not bare.endswith("_summer"):
+                continue
+            files.append(_file_record(f))
     return files
+
+
+def overview_file(prefix: str, season: str = "winter") -> dict | None:
+    """Return the single overview KMZ for a zone, or None.
+
+    winter: NN_<name>_overview.kmz
+    summer: NN_<name>_summer_overview.kmz
+    """
+    suffix = "_summer_overview.kmz" if season == "summer" else "_overview.kmz"
+    candidates = list(PACKS.glob(f"{prefix}*{suffix}"))
+    if not candidates:
+        return None
+    if len(candidates) > 1:
+        # Shouldn't happen — overview KMZ is always single-file.
+        candidates.sort()
+    return _file_record(candidates[0])
 
 
 def estimate_tiles(zone: dict) -> int:
@@ -144,45 +168,40 @@ def main() -> None:
     zones_out = []
     for z in merged:
         prefix = f"{z['n']:02d}_{z['name']}"
-        winter_files = kmz_files_for(prefix)
-        summer_files = kmz_files_for(prefix, suffix="_summer")
+        winter_files = detail_files(prefix, "winter")
+        summer_files = detail_files(prefix, "summer")
+        winter_ov    = overview_file(prefix, "winter")
+        summer_ov    = overview_file(prefix, "summer")
         if z["n"] in PRIVATE_WINTER_ZONES:
-            winter_files = []   # keep summer, drop the winter publish
+            winter_files = []
+            winter_ov    = None
         winter_zip = zip_for(f"{z['n']:02d}_{z['name']}.zip") if winter_files else None
         summer_zip = zip_for(f"{z['n']:02d}_{z['name']}_summer.zip") if summer_files else None
         seasons = []
         if winter_files: seasons.append("winter")
         if summer_files: seasons.append("summer")
+        winter_total = sum_mb(winter_files) + (winter_ov["size_mb"] if winter_ov else 0)
+        summer_total = sum_mb(summer_files) + (summer_ov["size_mb"] if summer_ov else 0)
         zones_out.append({
             **z,
-            "files":          winter_files,                  # backwards-compat
-            "winter_files":   winter_files,
-            "summer_files":   summer_files,
-            "winter_zip":     winter_zip,
-            "summer_zip":     summer_zip,
-            "total_size_mb":  sum_mb(winter_files),          # backwards-compat
-            "winter_size_mb": sum_mb(winter_files),
-            "summer_size_mb": sum_mb(summer_files),
-            "total_tiles_est": estimate_tiles(z),
+            "files":            winter_files,                # backwards-compat
+            "winter_files":     winter_files,
+            "winter_overview":  winter_ov,
+            "summer_files":     summer_files,
+            "summer_overview":  summer_ov,
+            "winter_zip":       winter_zip,
+            "summer_zip":       summer_zip,
+            "total_size_mb":    round(winter_total, 1),      # backwards-compat
+            "winter_size_mb":   round(winter_total, 1),
+            "summer_size_mb":   round(summer_total, 1),
+            "total_tiles_est":  estimate_tiles(z),
             "seasons": seasons,
         })
-
-    overview_winter = kmz_files_for("00_overview_ch")
-    overview_summer = kmz_files_for("00_overview_ch", suffix="_summer")
 
     manifest = {
         "release_tag": args.release_tag,
         "asset_url_template": url_tmpl,
         "tile_cap": 500,
-        "overview_tiles_est": 89,
-        "overview": {
-            "name": "overview_ch",
-            "desc": "All of Switzerland @ 25 m/px. Always-on background.",
-            "files":         overview_winter,
-            "winter_files":  overview_winter,
-            "summer_files":  overview_summer,
-            "total_size_mb": sum_mb(overview_winter),
-        },
         "zones": zones_out,
     }
 
@@ -192,13 +211,16 @@ def main() -> None:
 
     winter_n = sum(1 for z in zones_out if "winter" in z["seasons"])
     summer_n = sum(1 for z in zones_out if "summer" in z["seasons"])
-    total_files = (sum(len(z["winter_files"]) + len(z["summer_files"]) for z in zones_out)
-                   + len(overview_winter) + len(overview_summer))
+    winter_ov_n = sum(1 for z in zones_out if z["winter_overview"])
+    summer_ov_n = sum(1 for z in zones_out if z["summer_overview"])
+    detail_parts = (sum(len(z["winter_files"]) for z in zones_out)
+                  + sum(len(z["summer_files"]) for z in zones_out))
+    total_files = detail_parts + winter_ov_n + summer_ov_n
     print(f"wrote {out}")
     print(f"  zones: {len(zones_out)} total / winter={winter_n} / summer={summer_n}")
-    print(f"  files: {total_files} ({sum(len(z['winter_files']) for z in zones_out)} winter zone parts, "
-          f"{sum(len(z['summer_files']) for z in zones_out)} summer zone parts, "
-          f"{len(overview_winter)} winter overview, {len(overview_summer)} summer overview)")
+    print(f"  files: {total_files} ({sum(len(z['winter_files']) for z in zones_out)} winter detail parts, "
+          f"{sum(len(z['summer_files']) for z in zones_out)} summer detail parts, "
+          f"{winter_ov_n} winter overview, {summer_ov_n} summer overview)")
 
 
 if __name__ == "__main__":

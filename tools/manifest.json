@@ -2,25 +2,6 @@
   "release_tag": "v1",
   "asset_url_template": "https://github.com/JoepVdE/garminswisstopo-public/releases/download/v1/{name}",
   "tile_cap": 500,
-  "overview_tiles_est": 89,
-  "overview": {
-    "name": "overview_ch",
-    "desc": "All of Switzerland @ 25 m/px. Always-on background.",
-    "files": [
-      {
-        "name": "00_overview_ch.kmz",
-        "size_mb": 26.3
-      }
-    ],
-    "winter_files": [
-      {
-        "name": "00_overview_ch.kmz",
-        "size_mb": 26.3
-      }
-    ],
-    "summer_files": [],
-    "total_size_mb": 26.3
-  },
   "zones": [
     {
       "n": 1,
@@ -68,6 +49,10 @@
           "size_mb": 24.9
         }
       ],
+      "winter_overview": {
+        "name": "01_waadtlaender_alpen_overview.kmz",
+        "size_mb": 14.2
+      },
       "summer_files": [
         {
           "name": "01_waadtlaender_alpen_summer_part_001.kmz",
@@ -86,6 +71,10 @@
           "size_mb": 21.3
         }
       ],
+      "summer_overview": {
+        "name": "01_waadtlaender_alpen_summer_overview.kmz",
+        "size_mb": 14.4
+      },
       "winter_zip": {
         "name": "01_waadtlaender_alpen.zip",
         "size_mb": 165.9
@@ -94,9 +83,9 @@
         "name": "01_waadtlaender_alpen_summer.zip",
         "size_mb": 172.9
       },
-      "total_size_mb": 139.6,
-      "winter_size_mb": 139.6,
-      "summer_size_mb": 146.8,
+      "total_size_mb": 153.8,
+      "winter_size_mb": 153.8,
+      "summer_size_mb": 161.2,
       "total_tiles_est": 250,
       "seasons": [
         "winter",
@@ -149,6 +138,10 @@
           "size_mb": 22.2
         }
       ],
+      "winter_overview": {
+        "name": "02_wallis_west_overview.kmz",
+        "size_mb": 15.9
+      },
       "summer_files": [
         {
           "name": "02_wallis_west_summer_part_001.kmz",
@@ -167,6 +160,10 @@
           "size_mb": 23.6
         }
       ],
+      "summer_overview": {
+        "name": "02_wallis_west_summer_overview.kmz",
+        "size_mb": 16.0
+      },
       "winter_zip": {
         "name": "02_wallis_west.zip",
         "size_mb": 194.2
@@ -175,9 +172,9 @@
         "name": "02_wallis_west_summer.zip",
         "size_mb": 207.1
       },
-      "total_size_mb": 168.1,
-      "winter_size_mb": 168.1,
-      "summer_size_mb": 180.9,
+      "total_size_mb": 184.0,
+      "winter_size_mb": 184.0,
+      "summer_size_mb": 196.9,
       "total_tiles_est": 250,
       "seasons": [
         "winter",
@@ -230,6 +227,10 @@
           "size_mb": 1.7
         }
       ],
+      "winter_overview": {
+        "name": "03_wallis_zentral_overview.kmz",
+        "size_mb": 13.0
+      },
       "summer_files": [
         {
           "name": "03_wallis_zentral_summer_part_001.kmz",
@@ -248,6 +249,10 @@
           "size_mb": 1.8
         }
       ],
+      "summer_overview": {
+        "name": "03_wallis_zentral_summer_overview.kmz",
+        "size_mb": 13.1
+      },
       "winter_zip": {
         "name": "03_wallis_zentral.zip",
         "size_mb": 171.5
@@ -256,9 +261,9 @@
         "name": "03_wallis_zentral_summer.zip",
         "size_mb": 184.7
       },
-      "total_size_mb": 145.2,
-      "winter_size_mb": 145.2,
-      "summer_size_mb": 158.4,
+      "total_size_mb": 158.2,
+      "winter_size_mb": 158.2,
+      "summer_size_mb": 171.5,
       "total_tiles_est": 202,
       "seasons": [
         "winter",
@@ -303,6 +308,10 @@
           "size_mb": 6.3
         }
       ],
+      "winter_overview": {
+        "name": "04_mattertal_saastal_overview.kmz",
+        "size_mb": 10.4
+      },
       "summer_files": [
         {
           "name": "04_mattertal_saastal_summer_part_001.kmz",
@@ -317,6 +326,10 @@
           "size_mb": 5.7
         }
       ],
+      "summer_overview": {
+        "name": "04_mattertal_saastal_summer_overview.kmz",
+        "size_mb": 10.3
+      },
       "winter_zip": {
         "name": "04_mattertal_saastal.zip",
         "size_mb": 127.5
@@ -325,9 +338,9 @@
         "name": "04_mattertal_saastal_summer.zip",
         "size_mb": 136.2
       },
-      "total_size_mb": 101.2,
-      "winter_size_mb": 101.2,
-      "summer_size_mb": 110.0,
+      "total_size_mb": 111.6,
+      "winter_size_mb": 111.6,
+      "summer_size_mb": 120.3,
       "total_tiles_est": 160,
       "seasons": [
         "winter",
@@ -372,6 +385,10 @@
           "size_mb": 29.6
         }
       ],
+      "winter_overview": {
+        "name": "05_goms_aletsch_overview.kmz",
+        "size_mb": 11.3
+      },
       "summer_files": [
         {
           "name": "05_goms_aletsch_summer_part_001.kmz",
@@ -386,6 +403,10 @@
           "size_mb": 31.8
         }
       ],
+      "summer_overview": {
+        "name": "05_goms_aletsch_summer_overview.kmz",
+        "size_mb": 11.3
+      },
       "winter_zip": {
         "name": "05_goms_aletsch.zip",
         "size_mb": 153.0
@@ -394,9 +415,9 @@
         "name": "05_goms_aletsch_summer.zip",
         "size_mb": 162.8
       },
-      "total_size_mb": 126.7,
-      "winter_size_mb": 126.7,
-      "summer_size_mb": 136.6,
+      "total_size_mb": 138.0,
+      "winter_size_mb": 138.0,
+      "summer_size_mb": 147.9,
       "total_tiles_est": 180,
       "seasons": [
         "winter",
@@ -441,6 +462,10 @@
           "size_mb": 26.5
         }
       ],
+      "winter_overview": {
+        "name": "06_berner_oberland_west_overview.kmz",
+        "size_mb": 10.3
+      },
       "summer_files": [
         {
           "name": "06_berner_oberland_west_summer_part_001.kmz",
@@ -455,6 +480,10 @@
           "size_mb": 28.5
         }
       ],
+      "summer_overview": {
+        "name": "06_berner_oberland_west_summer_overview.kmz",
+        "size_mb": 10.5
+      },
       "winter_zip": {
         "name": "06_berner_oberland_west.zip",
         "size_mb": 137.5
@@ -463,9 +492,9 @@
         "name": "06_berner_oberland_west_summer.zip",
         "size_mb": 144.3
       },
-      "total_size_mb": 111.2,
-      "winter_size_mb": 111.2,
-      "summer_size_mb": 118.0,
+      "total_size_mb": 121.5,
+      "winter_size_mb": 121.5,
+      "summer_size_mb": 128.5,
       "total_tiles_est": 180,
       "seasons": [
         "winter",
@@ -510,6 +539,10 @@
           "size_mb": 6.0
         }
       ],
+      "winter_overview": {
+        "name": "07_jungfrau_region_overview.kmz",
+        "size_mb": 9.1
+      },
       "summer_files": [
         {
           "name": "07_jungfrau_region_summer_part_001.kmz",
@@ -524,6 +557,10 @@
           "size_mb": 6.3
         }
       ],
+      "summer_overview": {
+        "name": "07_jungfrau_region_summer_overview.kmz",
+        "size_mb": 9.2
+      },
       "winter_zip": {
         "name": "07_jungfrau_region.zip",
         "size_mb": 126.9
@@ -532,9 +569,9 @@
         "name": "07_jungfrau_region_summer.zip",
         "size_mb": 134.5
       },
-      "total_size_mb": 100.6,
-      "winter_size_mb": 100.6,
-      "summer_size_mb": 108.1,
+      "total_size_mb": 109.7,
+      "winter_size_mb": 109.7,
+      "summer_size_mb": 117.3,
       "total_tiles_est": 158,
       "seasons": [
         "winter",
@@ -579,6 +616,10 @@
           "size_mb": 30.9
         }
       ],
+      "winter_overview": {
+        "name": "08_zentralschweiz_overview.kmz",
+        "size_mb": 10.7
+      },
       "summer_files": [
         {
           "name": "08_zentralschweiz_summer_part_001.kmz",
@@ -593,6 +634,10 @@
           "size_mb": 33.8
         }
       ],
+      "summer_overview": {
+        "name": "08_zentralschweiz_summer_overview.kmz",
+        "size_mb": 10.9
+      },
       "winter_zip": {
         "name": "08_zentralschweiz.zip",
         "size_mb": 144.1
@@ -601,9 +646,9 @@
         "name": "08_zentralschweiz_summer.zip",
         "size_mb": 153.1
       },
-      "total_size_mb": 117.7,
-      "winter_size_mb": 117.7,
-      "summer_size_mb": 126.7,
+      "total_size_mb": 128.4,
+      "winter_size_mb": 128.4,
+      "summer_size_mb": 137.6,
       "total_tiles_est": 180,
       "seasons": [
         "winter",
@@ -648,6 +693,10 @@
           "size_mb": 27.3
         }
       ],
+      "winter_overview": {
+        "name": "09_glarus_surselva_overview.kmz",
+        "size_mb": 10.9
+      },
       "summer_files": [
         {
           "name": "09_glarus_surselva_summer_part_001.kmz",
@@ -662,6 +711,10 @@
           "size_mb": 29.1
         }
       ],
+      "summer_overview": {
+        "name": "09_glarus_surselva_summer_overview.kmz",
+        "size_mb": 11.1
+      },
       "winter_zip": {
         "name": "09_glarus_surselva.zip",
         "size_mb": 147.4
@@ -670,9 +723,9 @@
         "name": "09_glarus_surselva_summer.zip",
         "size_mb": 157.3
       },
-      "total_size_mb": 121.1,
-      "winter_size_mb": 121.1,
-      "summer_size_mb": 131.1,
+      "total_size_mb": 132.0,
+      "winter_size_mb": 132.0,
+      "summer_size_mb": 142.2,
       "total_tiles_est": 180,
       "seasons": [
         "winter",
@@ -717,6 +770,10 @@
           "size_mb": 0.5
         }
       ],
+      "winter_overview": {
+        "name": "10_davos_klosters_overview.kmz",
+        "size_mb": 8.4
+      },
       "summer_files": [
         {
           "name": "10_davos_klosters_summer_part_001.kmz",
@@ -731,6 +788,10 @@
           "size_mb": 0.5
         }
       ],
+      "summer_overview": {
+        "name": "10_davos_klosters_summer_overview.kmz",
+        "size_mb": 8.5
+      },
       "winter_zip": {
         "name": "10_davos_klosters.zip",
         "size_mb": 110.1
@@ -739,9 +800,9 @@
         "name": "10_davos_klosters_summer.zip",
         "size_mb": 115.8
       },
-      "total_size_mb": 83.8,
-      "winter_size_mb": 83.8,
-      "summer_size_mb": 89.6,
+      "total_size_mb": 92.2,
+      "winter_size_mb": 92.2,
+      "summer_size_mb": 98.1,
       "total_tiles_est": 140,
       "seasons": [
         "winter",
@@ -786,6 +847,10 @@
           "size_mb": 19.1
         }
       ],
+      "winter_overview": {
+        "name": "11_engadin_overview.kmz",
+        "size_mb": 10.2
+      },
       "summer_files": [
         {
           "name": "11_engadin_summer_part_001.kmz",
@@ -800,6 +865,10 @@
           "size_mb": 19.9
         }
       ],
+      "summer_overview": {
+        "name": "11_engadin_summer_overview.kmz",
+        "size_mb": 10.3
+      },
       "winter_zip": {
         "name": "11_engadin.zip",
         "size_mb": 131.7
@@ -808,9 +877,9 @@
         "name": "11_engadin_summer.zip",
         "size_mb": 140.5
       },
-      "total_size_mb": 105.5,
-      "winter_size_mb": 105.5,
-      "summer_size_mb": 114.1,
+      "total_size_mb": 115.7,
+      "winter_size_mb": 115.7,
+      "summer_size_mb": 124.4,
       "total_tiles_est": 160,
       "seasons": [
         "winter",
@@ -863,6 +932,10 @@
           "size_mb": 25.2
         }
       ],
+      "winter_overview": {
+        "name": "12_tessin_gotthard_overview.kmz",
+        "size_mb": 15.7
+      },
       "summer_files": [
         {
           "name": "12_tessin_gotthard_summer_part_001.kmz",
@@ -881,6 +954,10 @@
           "size_mb": 26.9
         }
       ],
+      "summer_overview": {
+        "name": "12_tessin_gotthard_summer_overview.kmz",
+        "size_mb": 16.1
+      },
       "winter_zip": {
         "name": "12_tessin_gotthard.zip",
         "size_mb": 185.3
@@ -889,9 +966,9 @@
         "name": "12_tessin_gotthard_summer.zip",
         "size_mb": 199.8
       },
-      "total_size_mb": 159.1,
-      "winter_size_mb": 159.1,
-      "summer_size_mb": 173.6,
+      "total_size_mb": 174.8,
+      "winter_size_mb": 174.8,
+      "summer_size_mb": 189.7,
       "total_tiles_est": 250,
       "seasons": [
         "winter",
@@ -936,6 +1013,10 @@
           "size_mb": 15.3
         }
       ],
+      "winter_overview": {
+        "name": "13_alpstein_toggenburg_overview.kmz",
+        "size_mb": 9.3
+      },
       "summer_files": [
         {
           "name": "13_alpstein_toggenburg_summer_part_001.kmz",
@@ -950,6 +1031,10 @@
           "size_mb": 16.2
         }
       ],
+      "summer_overview": {
+        "name": "13_alpstein_toggenburg_summer_overview.kmz",
+        "size_mb": 9.7
+      },
       "winter_zip": {
         "name": "13_alpstein_toggenburg.zip",
         "size_mb": 126.8
@@ -958,9 +1043,9 @@
         "name": "13_alpstein_toggenburg_summer.zip",
         "size_mb": 131.8
       },
-      "total_size_mb": 100.5,
-      "winter_size_mb": 100.5,
-      "summer_size_mb": 105.5,
+      "total_size_mb": 109.8,
+      "winter_size_mb": 109.8,
+      "summer_size_mb": 115.2,
       "total_tiles_est": 175,
       "seasons": [
         "winter",
@@ -1005,6 +1090,10 @@
           "size_mb": 4.6
         }
       ],
+      "winter_overview": {
+        "name": "14_berner_voralpen_overview.kmz",
+        "size_mb": 8.3
+      },
       "summer_files": [
         {
           "name": "14_berner_voralpen_summer_part_001.kmz",
@@ -1019,6 +1108,10 @@
           "size_mb": 4.9
         }
       ],
+      "summer_overview": {
+        "name": "14_berner_voralpen_summer_overview.kmz",
+        "size_mb": 8.5
+      },
       "winter_zip": {
         "name": "14_berner_voralpen.zip",
         "size_mb": 117.4
@@ -1027,9 +1120,9 @@
         "name": "14_berner_voralpen_summer.zip",
         "size_mb": 121.4
       },
-      "total_size_mb": 91.1,
-      "winter_size_mb": 91.1,
-      "summer_size_mb": 95.2,
+      "total_size_mb": 99.4,
+      "winter_size_mb": 99.4,
+      "summer_size_mb": 103.7,
       "total_tiles_est": 158,
       "seasons": [
         "winter",
@@ -1066,6 +1159,10 @@
           "size_mb": 8.2
         }
       ],
+      "winter_overview": {
+        "name": "15_fribourger_voralpen_overview.kmz",
+        "size_mb": 4.3
+      },
       "summer_files": [
         {
           "name": "15_fribourger_voralpen_summer_part_001.kmz",
@@ -1076,6 +1173,10 @@
           "size_mb": 8.8
         }
       ],
+      "summer_overview": {
+        "name": "15_fribourger_voralpen_summer_overview.kmz",
+        "size_mb": 4.4
+      },
       "winter_zip": {
         "name": "15_fribourger_voralpen.zip",
         "size_mb": 73.2
@@ -1084,9 +1185,9 @@
         "name": "15_fribourger_voralpen_summer.zip",
         "size_mb": 75.2
       },
-      "total_size_mb": 46.9,
-      "winter_size_mb": 46.9,
-      "summer_size_mb": 48.9,
+      "total_size_mb": 51.2,
+      "winter_size_mb": 51.2,
+      "summer_size_mb": 53.3,
       "total_tiles_est": 88,
       "seasons": [
         "winter",
@@ -1123,6 +1224,10 @@
           "size_mb": 30.1
         }
       ],
+      "winter_overview": {
+        "name": "16_glarner_voralpen_overview.kmz",
+        "size_mb": 6.7
+      },
       "summer_files": [
         {
           "name": "16_glarner_voralpen_summer_part_001.kmz",
@@ -1133,6 +1238,10 @@
           "size_mb": 32.0
         }
       ],
+      "summer_overview": {
+        "name": "16_glarner_voralpen_summer_overview.kmz",
+        "size_mb": 6.9
+      },
       "winter_zip": {
         "name": "16_glarner_voralpen.zip",
         "size_mb": 100.0
@@ -1141,9 +1250,9 @@
         "name": "16_glarner_voralpen_summer.zip",
         "size_mb": 103.9
       },
-      "total_size_mb": 73.7,
-      "winter_size_mb": 73.7,
-      "summer_size_mb": 77.6,
+      "total_size_mb": 80.4,
+      "winter_size_mb": 80.4,
+      "summer_size_mb": 84.5,
       "total_tiles_est": 120,
       "seasons": [
         "winter",
@@ -1188,6 +1297,10 @@
           "size_mb": 0.6
         }
       ],
+      "winter_overview": {
+        "name": "17_spluegen_hinterrhein_overview.kmz",
+        "size_mb": 7.6
+      },
       "summer_files": [
         {
           "name": "17_spluegen_hinterrhein_summer_part_001.kmz",
@@ -1202,6 +1315,10 @@
           "size_mb": 0.6
         }
       ],
+      "summer_overview": {
+        "name": "17_spluegen_hinterrhein_summer_overview.kmz",
+        "size_mb": 7.7
+      },
       "winter_zip": {
         "name": "17_spluegen_hinterrhein.zip",
         "size_mb": 109.6
@@ -1210,9 +1327,9 @@
         "name": "17_spluegen_hinterrhein_summer.zip",
         "size_mb": 116.3
       },
-      "total_size_mb": 83.4,
-      "winter_size_mb": 83.4,
-      "summer_size_mb": 90.1,
+      "total_size_mb": 91.0,
+      "winter_size_mb": 91.0,
+      "summer_size_mb": 97.8,
       "total_tiles_est": 122,
       "seasons": [
         "winter",
@@ -1249,6 +1366,10 @@
           "size_mb": 19.8
         }
       ],
+      "winter_overview": {
+        "name": "18_muenstertal_ofenpass_overview.kmz",
+        "size_mb": 5.7
+      },
       "summer_files": [
         {
           "name": "18_muenstertal_ofenpass_summer_part_001.kmz",
@@ -1259,6 +1380,10 @@
           "size_mb": 21.3
         }
       ],
+      "summer_overview": {
+        "name": "18_muenstertal_ofenpass_summer_overview.kmz",
+        "size_mb": 5.8
+      },
       "winter_zip": {
         "name": "18_muenstertal_ofenpass.zip",
         "size_mb": 89.7
@@ -1267,9 +1392,9 @@
         "name": "18_muenstertal_ofenpass_summer.zip",
         "size_mb": 95.0
       },
-      "total_size_mb": 63.5,
-      "winter_size_mb": 63.5,
-      "summer_size_mb": 68.7,
+      "total_size_mb": 69.2,
+      "winter_size_mb": 69.2,
+      "summer_size_mb": 74.5,
       "total_tiles_est": 90,
       "seasons": [
         "winter",
@@ -1322,6 +1447,10 @@
           "size_mb": 4.3
         }
       ],
+      "winter_overview": {
+        "name": "19_jura_west_overview.kmz",
+        "size_mb": 10.9
+      },
       "summer_files": [
         {
           "name": "19_jura_west_summer_part_001.kmz",
@@ -1340,6 +1469,10 @@
           "size_mb": 4.4
         }
       ],
+      "summer_overview": {
+        "name": "19_jura_west_summer_overview.kmz",
+        "size_mb": 11.2
+      },
       "winter_zip": {
         "name": "19_jura_west.zip",
         "size_mb": 130.6
@@ -1348,9 +1481,9 @@
         "name": "19_jura_west_summer.zip",
         "size_mb": 131.2
       },
-      "total_size_mb": 104.3,
-      "winter_size_mb": 104.3,
-      "summer_size_mb": 104.9,
+      "total_size_mb": 115.2,
+      "winter_size_mb": 115.2,
+      "summer_size_mb": 116.1,
       "total_tiles_est": 270,
       "seasons": [
         "winter",
@@ -1387,6 +1520,10 @@
           "size_mb": 23.0
         }
       ],
+      "winter_overview": {
+        "name": "20_jura_ost_overview.kmz",
+        "size_mb": 5.9
+      },
       "summer_files": [
         {
           "name": "20_jura_ost_summer_part_001.kmz",
@@ -1397,6 +1534,10 @@
           "size_mb": 24.0
         }
       ],
+      "summer_overview": {
+        "name": "20_jura_ost_summer_overview.kmz",
+        "size_mb": 6.0
+      },
       "winter_zip": {
         "name": "20_jura_ost.zip",
         "size_mb": 90.2
@@ -1405,9 +1546,9 @@
         "name": "20_jura_ost_summer.zip",
         "size_mb": 93.9
       },
-      "total_size_mb": 63.9,
-      "winter_size_mb": 63.9,
-      "summer_size_mb": 67.6,
+      "total_size_mb": 69.8,
+      "winter_size_mb": 69.8,
+      "summer_size_mb": 73.6,
       "total_tiles_est": 120,
       "seasons": [
         "winter",
@@ -1426,6 +1567,7 @@
       "desc": "Zuerich, ETH/Uni, Uetliberg, Sihlwald + Tuerlersee + full Albis ridge, Pfannenstiel, Greifensee, Limmattal (Baden, Wettingen, Brugg), Aaretal (Aarau), Villigen/PSI, Buelach, Doettingen",
       "files": [],
       "winter_files": [],
+      "winter_overview": null,
       "summer_files": [
         {
           "name": "21_zuerich_villigen_summer_part_001.kmz",
@@ -1448,6 +1590,10 @@
           "size_mb": 16.1
         }
       ],
+      "summer_overview": {
+        "name": "21_zuerich_villigen_summer_overview.kmz",
+        "size_mb": 17.1
+      },
       "winter_zip": null,
       "summer_zip": {
         "name": "21_zuerich_villigen_summer.zip",
@@ -1455,7 +1601,7 @@
       },
       "total_size_mb": 0,
       "winter_size_mb": 0,
-      "summer_size_mb": 188.0,
+      "summer_size_mb": 205.1,
       "total_tiles_est": 336,
       "seasons": [
         "summer"
@@ -1473,6 +1619,10 @@
       "desc": "Geneva, Lausanne, Vevey, Yverdon, La Cote, Lavaux",
       "files": [],
       "winter_files": [],
+      "winter_overview": {
+        "name": "22_lac_leman_summer_overview.kmz",
+        "size_mb": 13.0
+      },
       "summer_files": [
         {
           "name": "22_lac_leman_summer_part_001.kmz",
@@ -1491,14 +1641,18 @@
           "size_mb": 15.4
         }
       ],
+      "summer_overview": {
+        "name": "22_lac_leman_summer_overview.kmz",
+        "size_mb": 13.0
+      },
       "winter_zip": null,
       "summer_zip": {
         "name": "22_lac_leman_summer.zip",
         "size_mb": 132.2
       },
-      "total_size_mb": 0,
-      "winter_size_mb": 0,
-      "summer_size_mb": 105.9,
+      "total_size_mb": 13.0,
+      "winter_size_mb": 13.0,
+      "summer_size_mb": 118.9,
       "total_tiles_est": 300,
       "seasons": [
         "summer"
@@ -1516,6 +1670,10 @@
       "desc": "Bern, Burgdorf, Solothurn, Emmental West",
       "files": [],
       "winter_files": [],
+      "winter_overview": {
+        "name": "23_mittelland_west_summer_overview.kmz",
+        "size_mb": 7.9
+      },
       "summer_files": [
         {
           "name": "23_mittelland_west_summer_part_001.kmz",
@@ -1530,14 +1688,18 @@
           "size_mb": 3.5
         }
       ],
+      "summer_overview": {
+        "name": "23_mittelland_west_summer_overview.kmz",
+        "size_mb": 7.9
+      },
       "winter_zip": null,
       "summer_zip": {
         "name": "23_mittelland_west_summer.zip",
         "size_mb": 110.0
       },
-      "total_size_mb": 0,
-      "winter_size_mb": 0,
-      "summer_size_mb": 83.7,
+      "total_size_mb": 7.9,
+      "winter_size_mb": 7.9,
+      "summer_size_mb": 91.6,
       "total_tiles_est": 158,
       "seasons": [
         "summer"
@@ -1555,6 +1717,10 @@
       "desc": "Luzern, Zug, Aargau Sud, Rigi, Pilatus foreland",
       "files": [],
       "winter_files": [],
+      "winter_overview": {
+        "name": "24_mittelland_zentral_summer_overview.kmz",
+        "size_mb": 9.6
+      },
       "summer_files": [
         {
           "name": "24_mittelland_zentral_summer_part_001.kmz",
@@ -1569,14 +1735,18 @@
           "size_mb": 25.4
         }
       ],
+      "summer_overview": {
+        "name": "24_mittelland_zentral_summer_overview.kmz",
+        "size_mb": 9.6
+      },
       "winter_zip": null,
       "summer_zip": {
         "name": "24_mittelland_zentral_summer.zip",
         "size_mb": 128.8
       },
-      "total_size_mb": 0,
-      "winter_size_mb": 0,
-      "summer_size_mb": 102.5,
+      "total_size_mb": 9.6,
+      "winter_size_mb": 9.6,
+      "summer_size_mb": 112.1,
       "total_tiles_est": 180,
       "seasons": [
         "summer"
@@ -1594,6 +1764,10 @@
       "desc": "Bodensee, Thurgau, St Gallen lowland, Appenzeller Vorland",
       "files": [],
       "winter_files": [],
+      "winter_overview": {
+        "name": "25_ostschweiz_thurgau_summer_overview.kmz",
+        "size_mb": 7.2
+      },
       "summer_files": [
         {
           "name": "25_ostschweiz_thurgau_summer_part_001.kmz",
@@ -1608,14 +1782,18 @@
           "size_mb": 11.6
         }
       ],
+      "summer_overview": {
+        "name": "25_ostschweiz_thurgau_summer_overview.kmz",
+        "size_mb": 7.2
+      },
       "winter_zip": null,
       "summer_zip": {
         "name": "25_ostschweiz_thurgau_summer.zip",
         "size_mb": 102.1
       },
-      "total_size_mb": 0,
-      "winter_size_mb": 0,
-      "summer_size_mb": 75.8,
+      "total_size_mb": 7.2,
+      "winter_size_mb": 7.2,
+      "summer_size_mb": 83.0,
       "total_tiles_est": 175,
       "seasons": [
         "summer"
@@ -1633,6 +1811,10 @@
       "desc": "Lugano, Mendrisio, Monte Bre, Monte San Salvatore",
       "files": [],
       "winter_files": [],
+      "winter_overview": {
+        "name": "26_sottoceneri_summer_overview.kmz",
+        "size_mb": 11.1
+      },
       "summer_files": [
         {
           "name": "26_sottoceneri_summer_part_001.kmz",
@@ -1647,14 +1829,18 @@
           "size_mb": 3.6
         }
       ],
+      "summer_overview": {
+        "name": "26_sottoceneri_summer_overview.kmz",
+        "size_mb": 11.1
+      },
       "winter_zip": null,
       "summer_zip": {
         "name": "26_sottoceneri_summer.zip",
         "size_mb": 112.1
       },
-      "total_size_mb": 0,
-      "winter_size_mb": 0,
-      "summer_size_mb": 85.7,
+      "total_size_mb": 11.1,
+      "winter_size_mb": 11.1,
+      "summer_size_mb": 96.8,
       "total_tiles_est": 200,
       "seasons": [
         "summer"
