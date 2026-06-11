@@ -39,7 +39,7 @@
     -webkit-font-smoothing: antialiased;
   }
   a { color: var(--accent-dark); }
-  .wrap { max-width: 1080px; margin: 0 auto; padding: 0 1.1rem; }
+  .wrap { max-width: 1140px; margin: 0 auto; padding: 0 1.1rem; }
 
   .topbar {
     border-bottom: 1px solid var(--line);
@@ -80,7 +80,7 @@
     align-items: center;
   }
   @media (min-width: 820px) {
-    .hero { grid-template-columns: 1fr 1.25fr; gap: 2.6rem; padding-top: 3.2rem; }
+    .hero { grid-template-columns: 1fr 1.4fr; gap: 2.6rem; padding-top: 3.2rem; }
   }
   .hero h1 {
     font-size: clamp(1.95rem, 4vw, 2.7rem);
@@ -124,7 +124,7 @@
   .watch-stack {
     position: relative;
     width: 100%;
-    max-width: 730px;          /* 30% bigger than the prior 560px */
+    max-width: 760px;
     aspect-ratio: 1100 / 733;
     display: block;
   }
@@ -1056,6 +1056,10 @@
     if (!el || typeof L === "undefined") return;
     const map = L.map(el, {
       center: [46.84055, 8.87883],   // Clariden 3267 m
+      // mapZoom=13 = wide-area view. The base tile layer below pins
+      // minNativeZoom=14 so swisstopo always serves LK25 (1:25 000)
+      // cartography and Leaflet auto-downscales it. Without this, z=13
+      // would render the LK50/LK100 generalisation.
       zoom: 13,
       zoomControl: false,
       attributionControl: false,
@@ -1076,14 +1080,19 @@
     el.addEventListener("click", wakeWheel);
     el.addEventListener("touchstart", wakeWheel, { passive: true });
 
-    const wmts = (layer, ext, opacity) => L.tileLayer(
+    // minNativeZoom=14 forces swisstopo to always serve the LK25 tile set
+    // (which kicks in at WebMercator z=14). At map zoom 13 Leaflet
+    // auto-downscales the LK25 tiles to fit the wider view — same LK25
+    // cartography as the KMZ output, just on a larger area.
+    const wmts = (layer, ext, opacity, minNativeZoom) => L.tileLayer(
       `https://wmts{s}.geo.admin.ch/1.0.0/${layer}/default/current/3857/{z}/{x}/{y}.${ext}`,
       { subdomains: ["10","11","12","13","14"], maxZoom: 18, minZoom: 8,
+        minNativeZoom: minNativeZoom,
         opacity: opacity ?? 1.0,
         attribution: '© <a href="https://www.swisstopo.admin.ch">swisstopo</a>' }
     );
-    wmts("ch.swisstopo.pixelkarte-farbe-winter", "jpeg").addTo(map);
-    wmts("ch.swisstopo.hangneigung-ueber_30",    "png", 0.55).addTo(map);
+    wmts("ch.swisstopo.pixelkarte-farbe-winter", "jpeg", 1.0,  14).addTo(map);
+    wmts("ch.swisstopo.hangneigung-ueber_30",    "png",  0.55, 14).addTo(map);
 
     // SAC ski-tour routes coloured the same way the KMZ pipeline burns them:
     // blue L/WS/WS+, red ZS/ZS+, black S/S+. Replaces the swisstopo-karto
