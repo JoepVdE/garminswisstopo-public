@@ -1071,17 +1071,24 @@
     // blue L/WS/WS+, red ZS/ZS+, black S/S+. Replaces the swisstopo-karto
     // raster overlay so the hero matches the on-watch render.
     const STYLES = {
-      0: { color: "#1E5AA0", weight: 2.2, opacity: 0.9 },
-      1: { color: "#C80000", weight: 2.4, opacity: 0.9 },
-      2: { color: "#202020", weight: 2.6, opacity: 0.9 },
+      0: { color: "#1E5AA0", weight: 3.2, opacity: 0.95 },
+      1: { color: "#C80000", weight: 3.4, opacity: 0.95 },
+      2: { color: "#202020", weight: 3.6, opacity: 0.95 },
     };
     const skiLayer = L.geoJSON([], {
-      style: (f) => STYLES[f.properties.t] || STYLES[0],
+      style: (f) => STYLES[(f.properties || {}).t] || STYLES[0],
     }).addTo(map);
     fetch("ski_routes_graded.geojson")
-      .then(r => r.ok ? r.json() : null)
-      .then(d => { if (d) skiLayer.addData(d); })
-      .catch(() => {});
+      .then(r => {
+        if (!r.ok) { console.warn("[watch-hero] ski routes fetch failed:", r.status); return null; }
+        return r.json();
+      })
+      .then(d => {
+        if (!d) return;
+        skiLayer.addData(d);
+        console.log("[watch-hero] ski routes loaded:", (d.features || []).length);
+      })
+      .catch(err => console.warn("[watch-hero] ski routes load error:", err));
   }
 
   function loadLeafletThen(cb) {
