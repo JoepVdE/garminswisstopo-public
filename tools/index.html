@@ -80,7 +80,7 @@
     align-items: center;
   }
   @media (min-width: 820px) {
-    .hero { grid-template-columns: 1fr 1.4fr; gap: 2.6rem; padding-top: 3.2rem; }
+    .hero { grid-template-columns: 1fr 1.55fr; gap: 2.6rem; padding-top: 3.2rem; }
   }
   .hero h1 {
     font-size: clamp(1.95rem, 4vw, 2.7rem);
@@ -125,7 +125,10 @@
     position: relative;
     width: 100%;
     max-width: 760px;
-    aspect-ratio: 1100 / 733;
+    /* SVG viewBox crops the watch_frame.png horizontally: keep only the
+       middle 70 % (165–935 of the 1100-wide source) so the wide black
+       margins on the sides go away and the watch fills the column. */
+    aspect-ratio: 770 / 733;
     display: block;
   }
   /* Watch-frame PNG underneath: provides the bezel + opaque centre that the
@@ -137,13 +140,18 @@
     z-index: 1;
   }
   /* Live map ON TOP of the frame, clipped to the screen ellipse so only the
-     screen window shows it. Coords match viewBox 0 0 1100 733: ellipse
-     cx=549 cy=350 rx=199 ry=191. */
+     screen window shows it. Ellipse in the source PNG is cx=549 cy=350
+     rx=199 ry=191; with the 15 % side crop the new visible box is
+     x ∈ [165, 935] (width 770) × y ∈ [0, 733], so:
+       left   = (549-199-165) / 770 = 24.026 %
+       top    = (350-191)     / 733 = 21.692 %
+       width  =  398          / 770 = 51.688 %
+       height =  382          / 733 = 52.115 %  */
   .watch-stack .watch-map {
     position: absolute;
-    left:   31.7273%;
+    left:   24.0260%;
     top:    21.6917%;
-    width:  36.1818%;
+    width:  51.6883%;
     height: 52.1146%;
     background: #e8eef5;
     clip-path: ellipse(50% 50% at 50% 50%);
@@ -396,7 +404,7 @@
       <div class="watch-stack" role="img" aria-label="Interactive Garmin watch mockup showing live swisstopo LK25 + slope shading + ski-tour routes, centred on the Clariden">
         <!-- Watch frame PNG underneath. pointer-events:none lets clicks pass
              through to the map sitting on top. -->
-        <svg class="watch-overlay" viewBox="0 0 1100 733" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <svg class="watch-overlay" viewBox="165 0 770 733" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
           <image href="watch_frame.png" x="0" y="0" width="1100" height="733"/>
         </svg>
 
@@ -404,19 +412,24 @@
              Plain HTML div (NOT a foreignObject) so vector overlays render. -->
         <div id="watchMap" class="watch-map"></div>
 
-        <!-- Scale bar floats above the map so it stays readable. -->
-        <svg class="watch-scale" viewBox="0 0 1100 733" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-          <line x1="525" y1="537" x2="573" y2="537"
-                stroke="#fff" stroke-width="2.2" stroke-linecap="butt" />
-          <line x1="525" y1="537" x2="525" y2="530"
-                stroke="#fff" stroke-width="2.2" stroke-linecap="butt" />
-          <line x1="573" y1="537" x2="573" y2="530"
-                stroke="#fff" stroke-width="2.2" stroke-linecap="butt" />
-          <text x="549" y="526" text-anchor="middle"
-                font-family="-apple-system,Segoe UI,sans-serif"
-                font-size="11" font-weight="700"
-                fill="#fff" stroke="#000" stroke-width="0.5"
-                paint-order="stroke fill">300 m</text>
+        <!-- Scale bar floats above the map. Bar width + label are updated by
+             JS on every map zoom/move so the indicated distance is honest.
+             Same font and white-with-black-outline styling the static PNG
+             scale used. -->
+        <svg class="watch-scale" viewBox="165 0 770 733" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <g id="scaleBarGroup">
+            <line id="scaleBar-bar" x1="525" y1="537" x2="573" y2="537"
+                  stroke="#fff" stroke-width="2.2" stroke-linecap="butt" />
+            <line id="scaleBar-tickL" x1="525" y1="537" x2="525" y2="530"
+                  stroke="#fff" stroke-width="2.2" stroke-linecap="butt" />
+            <line id="scaleBar-tickR" x1="573" y1="537" x2="573" y2="530"
+                  stroke="#fff" stroke-width="2.2" stroke-linecap="butt" />
+            <text id="scaleBar-label" x="549" y="526" text-anchor="middle"
+                  font-family="-apple-system,Segoe UI,sans-serif"
+                  font-size="11" font-weight="700"
+                  fill="#fff" stroke="#000" stroke-width="0.5"
+                  paint-order="stroke fill">300 m</text>
+          </g>
         </svg>
       </div>
       <figcaption data-i18n="hero.caption">Swiss topo, on your Garmin.</figcaption>
@@ -1104,11 +1117,15 @@
     };
     // Foot-only / Gehweg segments (properties.d == 1 in the GeoJSON) are the
     // dashed ridge sections of an SAC ski tour, matching what the KMZ
-    // pipeline burns in via 11_base_raster/draw_routes.py.
+    // pipeline burns in via 11_base_raster/draw_routes.py. Use butt caps so
+    // the rounded line-ends (default in Leaflet Canvas) don't bleed into the
+    // gaps and make the line look solid.
     const styleFor = (f) => {
       const p = f.properties || {};
       const base = STYLES[p.t] || STYLES[0];
-      return p.d ? { ...base, dashArray: "4,7" } : base;
+      return p.d
+        ? { ...base, dashArray: "3,9", lineCap: "butt" }
+        : base;
     };
     // Canvas renderer (not SVG): Leaflet's default SVG renderer creates an
     // <svg> element inside an HTML container, which then sits inside our
@@ -1132,6 +1149,51 @@
         console.log("[watch-hero] ski routes loaded:", (d.features || []).length);
       })
       .catch(err => console.warn("[watch-hero] ski routes load error:", err));
+
+    // ─── Dynamic scale bar ──────────────────────────────────────────────
+    // SVG viewBox is "165 0 770 733" → 770 viewBox-units span the rendered
+    // stack width in CSS pixels. We pick a "nice" round meter value such
+    // that the resulting bar is ~70 screen-pixels wide, then convert that
+    // back to viewBox-units and centre the bar at the screen ellipse
+    // centre (viewBox x = 549). Updates on every map move / zoom / resize.
+    const stack = document.querySelector(".watch-stack");
+    const lineEl  = document.getElementById("scaleBar-bar");
+    const tickL   = document.getElementById("scaleBar-tickL");
+    const tickR   = document.getElementById("scaleBar-tickR");
+    const labelEl = document.getElementById("scaleBar-label");
+    function niceMeters(target) {
+      const pow = Math.pow(10, Math.floor(Math.log10(target)));
+      const f = target / pow;
+      const nf = f < 1.5 ? 1 : f < 3.5 ? 2 : f < 7.5 ? 5 : 10;
+      return nf * pow;
+    }
+    function fmtDistance(m) {
+      return m >= 1000 ? (m / 1000) + " km" : Math.round(m) + " m";
+    }
+    function updateScale() {
+      if (!stack || !lineEl) return;
+      const cssW = stack.clientWidth;
+      if (!cssW) return;
+      const vbPerCss = 770 / cssW;       // viewBox units per CSS pixel
+      // metres per CSS pixel at the map's current view
+      const c   = map.getCenter();
+      const pC  = map.latLngToContainerPoint(c);
+      const pR  = L.point(pC.x + 100, pC.y);
+      const llR = map.containerPointToLatLng(pR);
+      const mPerPx = map.distance(c, llR) / 100;
+      const meters = niceMeters(70 * mPerPx);
+      const widthPx = meters / mPerPx;
+      const widthVb = widthPx * vbPerCss;
+      const cx = 549, by = 537, tickTop = 530;
+      const x1 = cx - widthVb / 2, x2 = cx + widthVb / 2;
+      lineEl.setAttribute("x1", x1); lineEl.setAttribute("x2", x2);
+      tickL.setAttribute("x1", x1);  tickL.setAttribute("x2", x1);
+      tickR.setAttribute("x1", x2);  tickR.setAttribute("x2", x2);
+      labelEl.textContent = fmtDistance(meters);
+    }
+    map.on("zoomend moveend", updateScale);
+    window.addEventListener("resize", updateScale);
+    updateScale();
   }
 
   function loadLeafletThen(cb) {
