@@ -1102,6 +1102,14 @@
       1: { color: "#C80000", weight: 3.4, opacity: 0.95 },
       2: { color: "#202020", weight: 3.6, opacity: 0.95 },
     };
+    // Foot-only / Gehweg segments (properties.d == 1 in the GeoJSON) are the
+    // dashed ridge sections of an SAC ski tour, matching what the KMZ
+    // pipeline burns in via 11_base_raster/draw_routes.py.
+    const styleFor = (f) => {
+      const p = f.properties || {};
+      const base = STYLES[p.t] || STYLES[0];
+      return p.d ? { ...base, dashArray: "4,7" } : base;
+    };
     // Canvas renderer (not SVG): Leaflet's default SVG renderer creates an
     // <svg> element inside an HTML container, which then sits inside our
     // outer <foreignObject>. Chrome / Firefox sometimes size that inner SVG
@@ -1111,7 +1119,7 @@
     // box, so the strokes appear.
     const skiLayer = L.geoJSON([], {
       renderer: L.canvas({ padding: 0.5 }),
-      style: (f) => STYLES[(f.properties || {}).t] || STYLES[0],
+      style: styleFor,
     }).addTo(map);
     fetch("ski_routes_graded.geojson")
       .then(r => {
