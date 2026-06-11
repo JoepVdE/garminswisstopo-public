@@ -130,12 +130,12 @@
     max-width: 760px;
     /* SVG viewBox crops the watch_frame.png both ways: horizontally to
        the middle 70 % (PNG x ∈ [165, 935]) and vertically to y ∈
-       [70, 650]. Top + bottom margins tuned by visual feedback to
+       [60, 650]. Top + bottom margins tuned by visual feedback to
        leave breathing room around the lugs. Oval (PNG cy=350) lands
-       at (350-70)/580 ≈ 48.3 % of stack height, close to the
+       at (350-60)/590 ≈ 49.2 % of stack height, close to the
        original 47.7 %. Applied to both desktop and mobile for a
        consistent watch shape. */
-    aspect-ratio: 770 / 580;
+    aspect-ratio: 770 / 590;
     display: block;
   }
   /* Mobile: let the stack overflow .wrap's 1.1rem side padding so it
@@ -160,17 +160,17 @@
   }
   /* Live map ON TOP of the frame, clipped to the screen ellipse so only
      the screen window shows it. Ellipse in the source PNG is cx=549,
-     cy=350, rx=199, ry=191. With the viewBox crop "165 70 770 580":
+     cy=350, rx=199, ry=191. With the viewBox crop "165 60 770 590":
        left   = (549-199-165) / 770 = 24.026 %
-       top    = (350-191-70)  / 580 = 15.345 %
+       top    = (350-191-60)  / 590 = 16.780 %
        width  =  398          / 770 = 51.688 %
-       height =  382          / 580 = 65.862 %  */
+       height =  382          / 590 = 64.746 %  */
   .watch-stack .watch-map {
     position: absolute;
     left:   24.0260%;
-    top:    15.3448%;
+    top:    16.7797%;
     width:  51.6883%;
-    height: 65.8621%;
+    height: 64.7458%;
     background: #e8eef5;
     clip-path: ellipse(50% 50% at 50% 50%);
     -webkit-clip-path: ellipse(50% 50% at 50% 50%);
@@ -475,7 +475,7 @@
       <div class="watch-stack" role="img" aria-label="Interactive Garmin watch mockup showing live swisstopo LK25 + slope shading + ski-tour routes, centred on the Clariden">
         <!-- Watch frame PNG underneath. pointer-events:none lets clicks pass
              through to the map sitting on top. -->
-        <svg class="watch-overlay" viewBox="165 70 770 580" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <svg class="watch-overlay" viewBox="165 60 770 590" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
           <image href="watch_frame.png" x="0" y="0" width="1100" height="733"/>
         </svg>
 
@@ -486,7 +486,7 @@
         <!-- Scale bar floats above the map. Bar width + label are updated by
              JS on every map zoom/move so the indicated distance is honest.
              Black on the light LK25 base reads better than white-with-stroke. -->
-        <svg class="watch-scale" viewBox="165 70 770 580" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <svg class="watch-scale" viewBox="165 60 770 590" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
           <g id="scaleBarGroup">
             <line id="scaleBar-bar" x1="525" y1="537" x2="573" y2="537"
                   stroke="#000" stroke-width="2.2" stroke-linecap="butt" />
@@ -1218,8 +1218,8 @@
   drawZones();
   applyLang(detectLang());
 
-  // Watch SVGs share one viewBox "165 70 770 580" across desktop and
-  // mobile: PNG x=[165, 935] horizontally, y=[70, 650] vertically. The
+  // Watch SVGs share one viewBox "165 60 770 590" across desktop and
+  // mobile: PNG x=[165, 935] horizontally, y=[60, 650] vertically. The
   // scale bar (drawn at viewBox y=537) is inside this crop. Width 770
   // is the unit the scale-bar code below uses for vbPerCss.
   const WATCH_VB_W = 770;
