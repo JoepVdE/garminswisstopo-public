@@ -117,12 +117,45 @@
     gap: 0.6rem;
   }
   .hero-figure svg {
-    width: 100%; max-width: 460px; height: auto; display: block;
+    width: 100%; max-width: 690px; height: auto; display: block;
   }
   .hero-figure figcaption {
     color: var(--muted); font-size: 0.85rem;
     text-align: center; max-width: 32ch;
   }
+
+  /* Zone-download modal (opened from the 26-region map) */
+  dialog#zonePrompt {
+    border: 1px solid var(--line); border-radius: 12px;
+    padding: 1.2rem 1.4rem; max-width: 460px; width: 92%;
+    background: var(--surface); color: var(--ink);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.2);
+  }
+  dialog#zonePrompt::backdrop { background: rgba(20,30,55,0.4); backdrop-filter: blur(2px); }
+  dialog#zonePrompt h3.zp-name { margin: 0 0 0.2rem; font-size: 1.1rem; }
+  dialog#zonePrompt .zp-desc { color: var(--muted); font-size: 0.88rem; margin: 0 0 0.85rem; }
+  dialog#zonePrompt .zp-section { margin: 0.7rem 0; }
+  dialog#zonePrompt .zp-section-title {
+    font-size: 0.72rem; font-weight: 700; color: var(--muted);
+    text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.3rem;
+  }
+  dialog#zonePrompt .zp-btn {
+    display: flex; align-items: center; gap: 0.6rem;
+    padding: 0.55rem 0.75rem; border: 1px solid var(--line);
+    border-radius: 8px; background: var(--bg); color: var(--ink);
+    text-decoration: none; margin: 0.3rem 0;
+    transition: border-color 0.15s, background 0.15s;
+  }
+  dialog#zonePrompt .zp-btn:hover { border-color: var(--good); background: var(--good-bg); }
+  dialog#zonePrompt .zp-btn > :first-child { flex: 1; font-weight: 600; }
+  dialog#zonePrompt .zp-btn .zp-size { color: var(--muted); font-size: 0.82rem; }
+  dialog#zonePrompt .zp-btn .zp-arrow { color: var(--good); font-weight: 700; }
+  dialog#zonePrompt .zp-close {
+    appearance: none; border: none; background: transparent;
+    color: var(--muted); font-size: 0.88rem; cursor: pointer;
+    margin-top: 0.6rem; padding: 0.3rem 0.5rem;
+  }
+  dialog#zonePrompt .zp-close:hover { color: var(--ink); }
 
   section { padding: 2.4rem 0; }
   section + section { border-top: 1px solid var(--line); }
@@ -327,14 +360,17 @@
         <image href="watch_frame.png"
                x="0" y="0" width="1100" height="733"/>
 
-        <!-- Live swisstopo Leaflet map INSIDE the screen. The map div lives in
-             a foreignObject so the SVG can clip it cleanly to the bezel oval.
-             JS init below picks Clariden as the default centre. -->
-        <foreignObject x="350" y="159" width="398" height="382"
-                       clip-path="url(#screenClip)">
+        <!-- Live swisstopo Leaflet map INSIDE the screen.
+             CSS clip-path on the inner div (NOT SVG clipPath on the
+             foreignObject) so Leaflet's drag / pinch-zoom events keep
+             working — Chrome and Firefox drop pointer events through SVG
+             clipPath on foreignObject. -->
+        <foreignObject x="350" y="159" width="398" height="382">
           <div xmlns="http://www.w3.org/1999/xhtml"
                id="watchMap"
-               style="width:100%; height:100%; background:#e8eef5"></div>
+               style="width:100%; height:100%; background:#e8eef5;
+                      clip-path: ellipse(50% 50% at 50% 50%);
+                      -webkit-clip-path: ellipse(50% 50% at 50% 50%);"></div>
         </foreignObject>
 
         <!-- Scale bar at the bottom of the screen oval.
@@ -457,6 +493,13 @@
   </div>
 </footer>
 
+<dialog id="zonePrompt">
+  <h3 class="zp-name">—</h3>
+  <p class="zp-desc"></p>
+  <div class="zp-body"></div>
+  <button class="zp-close" type="button" data-i18n="zones.dlg_close">Close</button>
+</dialog>
+
 <script>
 (function () {
   // ───────────── i18n dictionary (EN / DE / FR / IT) ─────────────
@@ -501,7 +544,13 @@
       "pc.cons.4": "Slope shading is advisory only. It does not replace the daily SLF avalanche bulletin or your own judgement on the day.",
       "pc.cons.5": "Setup is a manual file copy. The guide is step-by-step, but plan 15 minutes the first time.",
       "disclaimer.title": "Safety:",
-      "disclaimer.body": "slope shading is derived from the 10 m elevation model and is for awareness only. It does not replace the daily SLF avalanche bulletin, route planning, or on-site judgement. Backcountry travel has inherent risks.",
+      "disclaimer.body": "slope shading is derived from the 10 m elevation model and is for awareness only. It does not replace the daily SLF avalanche bulletin, route planning, or on-site judgement. Relying on these maps alone for alpine-terrain decisions is not safe practice; the authors and contributors accept no liability for any consequences of using them. Backcountry travel has inherent risks including death.",
+      "zones.dlg_winter": "Winter pack",
+      "zones.dlg_summer": "Summer pack",
+      "zones.dlg_zip_winter": "Download winter .zip",
+      "zones.dlg_zip_summer": "Download summer .zip",
+      "zones.dlg_none": "No published download for this zone yet.",
+      "zones.dlg_close": "Close",
       "footer.data": "Map data © swisstopo.",
       "footer.legal": "An independent community project. Not affiliated with, endorsed by, or sponsored by Garmin Ltd. or swisstopo. \"Garmin\", \"Epix\" and \"Fenix\" are trademarks of Garmin Ltd. \"Swisstopo\" is a trademark of the Swiss Federal Office of Topography. All trademarks belong to their respective owners."
     },
@@ -545,7 +594,13 @@
       "pc.cons.4": "Die Hangneigung ist nur ein Hinweis. Sie ersetzt nicht das tägliche SLF-Lawinenbulletin oder dein Urteil vor Ort.",
       "pc.cons.5": "Die Einrichtung ist manuelles Datei-Kopieren. Die Anleitung führt dich Schritt für Schritt durch, plane das erste Mal 15 Minuten ein.",
       "disclaimer.title": "Sicherheit:",
-      "disclaimer.body": "Die Hangneigung basiert auf dem 10-m-Höhenmodell und dient nur der Awareness. Sie ersetzt nicht das tägliche SLF-Lawinenbulletin, die Tourenplanung oder deine Beurteilung vor Ort. Touren im Gelände sind mit inhärenten Risiken verbunden.",
+      "disclaimer.body": "Die Hangneigung basiert auf dem 10-m-Höhenmodell und dient nur der Awareness. Sie ersetzt nicht das tägliche SLF-Lawinenbulletin, die Tourenplanung oder deine Beurteilung vor Ort. Sich im alpinen Gelände allein auf diese Karten zu verlassen, ist keine sichere Praxis; die Autoren und Mitwirkenden übernehmen keinerlei Haftung für Folgen aus der Nutzung. Touren im Gelände sind mit inhärenten Risiken verbunden, einschliesslich Tod.",
+      "zones.dlg_winter": "Winter-Paket",
+      "zones.dlg_summer": "Sommer-Paket",
+      "zones.dlg_zip_winter": "Winter-.zip herunterladen",
+      "zones.dlg_zip_summer": "Sommer-.zip herunterladen",
+      "zones.dlg_none": "Für diese Region ist noch kein Download veröffentlicht.",
+      "zones.dlg_close": "Schliessen",
       "footer.data": "Kartendaten © swisstopo.",
       "footer.legal": "Ein unabhängiges Community-Projekt. Nicht von Garmin Ltd. oder swisstopo betrieben, autorisiert oder gesponsert. „Garmin\", „Epix\" und „Fenix\" sind Marken von Garmin Ltd. „Swisstopo\" ist eine Marke des Bundesamts für Landestopografie. Alle Marken gehören den jeweiligen Inhabern."
     },
@@ -589,7 +644,13 @@
       "pc.cons.4": "L'ombrage des pentes est indicatif. Il ne remplace pas le bulletin d'avalanches SLF du jour ni ton jugement sur le terrain.",
       "pc.cons.5": "L'installation est une copie manuelle de fichiers. Le guide est détaillé pas à pas, prévois 15 minutes la première fois.",
       "disclaimer.title": "Sécurité :",
-      "disclaimer.body": "l'ombrage des pentes est dérivé du modèle altimétrique 10 m et n'est qu'une indication. Il ne remplace ni le bulletin SLF du jour, ni la planification d'itinéraire, ni ton jugement sur place. Les sorties hors-piste comportent des risques.",
+      "disclaimer.body": "l'ombrage des pentes est dérivé du modèle altimétrique 10 m et n'est qu'une indication. Il ne remplace ni le bulletin SLF du jour, ni la planification d'itinéraire, ni ton jugement sur place. Se fier uniquement à ces cartes pour décider en terrain alpin n'est pas une pratique sûre ; les auteurs et contributeurs déclinent toute responsabilité pour les conséquences de leur utilisation. Les sorties hors-piste comportent des risques inhérents, y compris la mort.",
+      "zones.dlg_winter": "Pack hiver",
+      "zones.dlg_summer": "Pack été",
+      "zones.dlg_zip_winter": "Télécharger le .zip hiver",
+      "zones.dlg_zip_summer": "Télécharger le .zip été",
+      "zones.dlg_none": "Pas encore de téléchargement publié pour cette région.",
+      "zones.dlg_close": "Fermer",
       "footer.data": "Données cartographiques © swisstopo.",
       "footer.legal": "Projet indépendant de la communauté. Non affilié à, soutenu par ou sponsorisé par Garmin Ltd. ou swisstopo. « Garmin », « Epix » et « Fenix » sont des marques de Garmin Ltd. « Swisstopo » est une marque de l'Office fédéral de topographie. Toutes les marques appartiennent à leurs propriétaires respectifs."
     },
@@ -633,7 +694,13 @@
       "pc.cons.4": "L'ombreggiatura delle pendenze è solo indicativa. Non sostituisce il bollettino valanghe SLF giornaliero né il tuo giudizio sul posto.",
       "pc.cons.5": "L'installazione è una copia manuale di file. La guida è passo passo, calcola 15 minuti la prima volta.",
       "disclaimer.title": "Sicurezza:",
-      "disclaimer.body": "l'ombreggiatura delle pendenze è derivata dal modello altimetrico 10 m ed è solo indicativa. Non sostituisce il bollettino valanghe SLF, la pianificazione del giro o il giudizio sul posto. Le uscite in fuoripista comportano rischi.",
+      "disclaimer.body": "l'ombreggiatura delle pendenze è derivata dal modello altimetrico 10 m ed è solo indicativa. Non sostituisce il bollettino valanghe SLF, la pianificazione del giro o il giudizio sul posto. Affidarsi solo a queste mappe per decisioni in terreno alpino non è una pratica sicura; autori e collaboratori declinano ogni responsabilità per le conseguenze dell'uso. Le uscite in fuoripista comportano rischi intrinseci, inclusa la morte.",
+      "zones.dlg_winter": "Pacchetto inverno",
+      "zones.dlg_summer": "Pacchetto estate",
+      "zones.dlg_zip_winter": "Scarica .zip inverno",
+      "zones.dlg_zip_summer": "Scarica .zip estate",
+      "zones.dlg_none": "Per questa regione non c'è ancora un download pubblicato.",
+      "zones.dlg_close": "Chiudi",
       "footer.data": "Dati cartografici © swisstopo.",
       "footer.legal": "Progetto indipendente della community. Non affiliato a, sostenuto o sponsorizzato da Garmin Ltd. o swisstopo. «Garmin», «Epix» e «Fenix» sono marchi di Garmin Ltd. «Swisstopo» è un marchio dell'Ufficio federale di topografia. Tutti i marchi appartengono ai rispettivi proprietari."
     }
@@ -786,6 +853,79 @@
     }
     wrap.addEventListener("mousemove", onMove);
     wrap.addEventListener("mouseleave", () => tooltip && tooltip.classList.remove("visible"));
+
+    // Click on a zone → open the download prompt with that zone's KMZ links.
+    function hitTestZone(e) {
+      if (!ZONE_GRID) return 0;
+      const r = svg.getBoundingClientRect();
+      const fx = (e.clientX - r.left) / r.width;
+      const fy = (e.clientY - r.top) / r.height;
+      if (fx < 0 || fx > 1 || fy < 0 || fy > 1) return 0;
+      const gx = Math.min(ZONE_GRID.w - 1, Math.max(0, Math.floor(fx * ZONE_GRID.w)));
+      const gy = Math.min(ZONE_GRID.h - 1, Math.max(0, Math.floor(fy * ZONE_GRID.h)));
+      return ZONE_GRID.data[gy * ZONE_GRID.w + gx];
+    }
+    wrap.style.cursor = "pointer";
+    wrap.addEventListener("click", (e) => {
+      const n = hitTestZone(e);
+      if (n) openZonePrompt(n);
+    });
+  }
+
+  // ───────────── Zone download prompt ─────────────
+  let HOME_MANIFEST = null;
+  fetch("manifest.json")
+    .then(r => r.ok ? r.json() : null)
+    .then(m => { HOME_MANIFEST = m; })
+    .catch(() => {});
+
+  function openZonePrompt(n) {
+    const dlg = document.getElementById("zonePrompt");
+    if (!dlg || !HOME_MANIFEST) return;
+    const zone = HOME_MANIFEST.zones.find(z => z.n === n);
+    if (!zone) return;
+    const urlFor = (name) =>
+      HOME_MANIFEST.asset_url_template.replace("{name}", encodeURIComponent(name));
+    const link = (f, label) =>
+      `<a class="zp-btn" href="${urlFor(f.name)}" download>
+         <span>${label}</span>
+         <span class="zp-size">${f.size_mb} MB</span>
+         <span class="zp-arrow">↓</span>
+       </a>`;
+    const seasons = [];
+    if (zone.winter_zip)  seasons.push(["winter", link(zone.winter_zip, T("zones.dlg_zip_winter"))]);
+    if (zone.summer_zip)  seasons.push(["summer", link(zone.summer_zip, T("zones.dlg_zip_summer"))]);
+    // Fall back to individual KMZ files if no zip is published yet.
+    if (!seasons.length) {
+      const wp = (zone.winter_files || []);
+      const sp = (zone.summer_files || []);
+      if (wp.length) seasons.push(["winter", wp.map(f => link(f, f.name)).join("")]);
+      if (sp.length) seasons.push(["summer", sp.map(f => link(f, f.name)).join("")]);
+    }
+    const body = seasons.map(([s, html]) =>
+      `<div class="zp-section"><div class="zp-section-title">${T("zones.dlg_" + s)}</div>${html}</div>`
+    ).join("") || `<p>${T("zones.dlg_none")}</p>`;
+    dlg.querySelector(".zp-name").textContent =
+      `#${String(n).padStart(2, "0")} ${zone.name}`;
+    dlg.querySelector(".zp-desc").textContent = zone.desc || "";
+    dlg.querySelector(".zp-body").innerHTML = body;
+    if (typeof dlg.showModal === "function") dlg.showModal();
+    else dlg.setAttribute("open", "");
+  }
+
+  // Helper for i18n in this scope (uses the same dict).
+  function T(key) {
+    const dict = I18N[document.documentElement.lang] || I18N.en;
+    return dict[key] != null ? dict[key] : (I18N.en[key] || key);
+  }
+  // Close handlers.
+  const dlg = document.getElementById("zonePrompt");
+  if (dlg) {
+    dlg.addEventListener("click", (e) => {
+      if (e.target === dlg) dlg.close();   // click on backdrop
+    });
+    const closeBtn = dlg.querySelector(".zp-close");
+    if (closeBtn) closeBtn.addEventListener("click", () => dlg.close());
   }
 
   // ───────────── language switching ─────────────
