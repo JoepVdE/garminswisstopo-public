@@ -647,7 +647,15 @@
     2: { color: '#202020', weight: 2.8, opacity: 0.9 },
   };
   const skiRoutesLayer = L.geoJSON([], {
-    style: (f) => SKI_TIER_STYLE[f.properties.t] || SKI_TIER_STYLE[0],
+    // properties.d == 1 → foot-only Gehweg segment (dashed in the KMZ).
+    // Use butt caps so the round line-ends don't fill the gaps.
+    style: (f) => {
+      const p = f.properties || {};
+      const base = SKI_TIER_STYLE[p.t] || SKI_TIER_STYLE[0];
+      return p.d
+        ? Object.assign({}, base, { dashArray: '3,7', lineCap: 'butt' })
+        : base;
+    },
     onEachFeature: (f, layer) => {
       const n = f.properties && f.properties.n;
       if (n) layer.bindTooltip(n, { sticky: true });
