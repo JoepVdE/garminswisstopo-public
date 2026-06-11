@@ -222,7 +222,7 @@
         <rect x="8" y="13" width="8" height="2.5" fill="#fff" rx="0.4"/>
         <rect x="10.75" y="10.25" width="2.5" height="8" fill="#fff" rx="0.4"/>
       </svg>
-      <span data-i18n="brand">Swisstopo for Garmin</span>
+      <span data-i18n="brand">swisstopo for Garmin</span>
     </a>
     <nav class="langs" aria-label="Language">
       <button type="button" data-lang="en" aria-pressed="false">EN</button>
@@ -533,7 +533,7 @@
       const opts = g.devices.map(d => {
         const tag = d.tile_cap === 0 ? "no Custom Maps"
                                      : `${d.tile_cap} tiles${d.disputed ? " ⚠" : ""}`;
-        return `<option value="${d.key}">${d.name} — ${tag}</option>`;
+        return `<option value="${d.key}">${d.name}, ${tag}</option>`;
       }).join("");
       return `<optgroup label="${g.label}">${opts}</optgroup>`;
     }).join("");
@@ -1251,7 +1251,7 @@
 
     const email = document.getElementById('buildEmail').value.trim();
     if (!email) {
-      if (!confirm("No email entered — you'll have to find your build manually on the GitHub Actions page. Continue?")) {
+      if (!confirm("No email entered; you'll have to find your build manually on the GitHub Actions page. Continue?")) {
         progEl.style.display = 'none'; return;
       }
     }
@@ -1367,7 +1367,7 @@
               ${TILE_BUDGET_REGIONAL}-tile alongside-overview budget. You'll need
               to deploy this pack with <code>-NoOverview</code>.</div>`;
     } else {
-      warn = `<div class="stat-box ok">✓ Estimated ${est} tiles — fits 500-cap with
+      warn = `<div class="stat-box ok">✓ Estimated ${est} tiles, fits 500-cap with
               ${TILE_BUDGET_REGIONAL - est} tiles to spare alongside the all-CH overview.</div>`;
     }
 
@@ -1405,7 +1405,7 @@
   // ───────────── i18n (EN / DE / FR / IT) ─────────────
   const I18N = {
     en: {
-      "brand": "Swisstopo for Garmin",
+      "brand": "swisstopo for Garmin",
       "page.title": "Custom KMZ pack builder",
       "page.subtitle": "Paint an area, drop a GPX, or pick a town. We build a pack and email it to you.",
       "ctrl.heading": "Controls",
@@ -1458,7 +1458,7 @@
       "footer.legal": "An independent community project. Not affiliated with Garmin Ltd. or swisstopo. \"Garmin\", \"Epix\" and \"Fenix\" are trademarks of Garmin Ltd."
     },
     de: {
-      "brand": "Swisstopo für Garmin",
+      "brand": "swisstopo für Garmin",
       "page.title": "Eigenes KMZ-Paket bauen",
       "page.subtitle": "Gebiet einzeichnen, GPX hochladen oder Ort auswählen. Wir bauen ein Paket und mailen es dir.",
       "ctrl.heading": "Steuerung",
@@ -1511,7 +1511,7 @@
       "footer.legal": "Ein unabhängiges Community-Projekt. Nicht von Garmin Ltd. oder swisstopo betrieben. „Garmin\", „Epix\" und „Fenix\" sind Marken von Garmin Ltd."
     },
     fr: {
-      "brand": "Swisstopo pour Garmin",
+      "brand": "swisstopo pour Garmin",
       "page.title": "Construire un pack KMZ sur mesure",
       "page.subtitle": "Dessine une zone, dépose un GPX, ou choisis une localité. On construit un pack et on te l'envoie par mail.",
       "ctrl.heading": "Contrôles",
@@ -1564,7 +1564,7 @@
       "footer.legal": "Projet indépendant de la communauté. Non affilié à Garmin Ltd. ou swisstopo. « Garmin », « Epix » et « Fenix » sont des marques de Garmin Ltd."
     },
     it: {
-      "brand": "Swisstopo per Garmin",
+      "brand": "swisstopo per Garmin",
       "page.title": "Costruisci un pacchetto KMZ personalizzato",
       "page.subtitle": "Disegna un'area, carica un GPX o scegli una località. Costruiamo un pacchetto e te lo inviamo via mail.",
       "ctrl.heading": "Controlli",
