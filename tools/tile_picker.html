@@ -527,6 +527,12 @@
   // max_kmz_mb, disputed?, note? }] }] }
   let WATCH_INDEX = new Map();   // key -> device object
   let deviceProfile = { key: "epix2", tileCap: 500, maxFiles: 100, maxKmzMB: 3 };
+  // True while a /build POST is in flight. Guards the click handler against
+  // accidental double-presses (the Worker also dedupes server-side, but this
+  // keeps the UI honest) and feeds the buildBtn disabled state so
+  // updateStatus() can't re-enable the button mid-request. Declared up here
+  // because readDeviceProfile() reads it before the build section loads.
+  let buildInFlight = false;
 
   function populateWatches(json) {
     const sel = document.getElementById('deviceSel');
@@ -575,7 +581,7 @@
     }
     document.getElementById('deviceNote').innerHTML = note;
     document.getElementById('buildBtn').disabled =
-      selectedCells().length === 0 || d.tile_cap === 0;
+      buildInFlight || selectedCells().length === 0 || d.tile_cap === 0;
     updateStatus();
   }
 
@@ -1219,7 +1225,7 @@
     }
 
     document.getElementById('exportBtn').disabled = sel.length === 0;
-    document.getElementById('buildBtn').disabled  = sel.length === 0;
+    document.getElementById('buildBtn').disabled  = buildInFlight || sel.length === 0;
     return { unionBbox, est, estOv, count: sel.length };
   }
 
@@ -1343,9 +1349,12 @@
     const job = await resp.json();
     const left = typeof job.remaining === 'number'
       ? `<small>(${job.remaining} of ${job.limit} build${job.limit === 1 ? "" : "s"} remaining this month)</small>` : "";
+    const headline = job.duplicate
+      ? "✓ Already queued — an identical build was started moments ago; not starting a second one."
+      : "✓ Build queued.";
     progEl.innerHTML = `
       <div class="stat-box ok">
-        ✓ Build queued. Job <code>${job.job_id}</code>. ${left}
+        ${headline} Job <code>${job.job_id}</code>. ${left}
         <p style="margin-top:0.5rem">${job.message || ""}</p>
         ${job.release_url ? `<p style="font-size:0.85rem;margin-top:0.4rem">
           The KMZ ZIP will appear at
@@ -1358,7 +1367,8 @@
       </div>`;
   }
 
-  document.getElementById('buildBtn').addEventListener('click', () => {
+  document.getElementById('buildBtn').addEventListener('click', async () => {
+    if (buildInFlight) return;
     const { est, estOv, count } = updateStatus();
     const sel = selectedCells();
     if (!sel.length) return;
@@ -1366,7 +1376,14 @@
     if (total > TILE_CAP) {
       if (!confirm(`Selection is ~${est} detail + ~${estOv} overview = ~${total} tiles, over the ${TILE_CAP}-cap. Build anyway?`)) return;
     }
-    buildHosted(sel.map(c => c.lv95));
+    buildInFlight = true;
+    document.getElementById('buildBtn').disabled = true;
+    try {
+      await buildHosted(sel.map(c => c.lv95));
+    } finally {
+      buildInFlight = false;
+      updateStatus();
+    }
   });
 
   document.getElementById('exportBtn').addEventListener('click', () => {
