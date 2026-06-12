@@ -531,8 +531,8 @@
         <div id="zoneTooltip" class="zone-tooltip" role="tooltip"></div>
       </div>
       <div class="legend">
-        <span class="legend-item"><span class="legend-swatch winter"></span> <span data-i18n="zones.legend_winter">Winter and summer regions (1 to 21)</span></span>
-        <span class="legend-item"><span class="legend-swatch summer"></span> <span data-i18n="zones.legend_summer">Summer-only regions (22 to 26)</span></span>
+        <span class="legend-item"><span class="legend-swatch winter"></span> <span data-i18n="zones.legend_winter">Winter and summer regions (1 to 20)</span></span>
+        <span class="legend-item"><span class="legend-swatch summer"></span> <span data-i18n="zones.legend_summer">Summer-only regions (21 to 26)</span></span>
       </div>
     </div>
   </section>
@@ -747,8 +747,8 @@
       "zones.heading": "Die Schweiz ist in 26 Regionen aufgeteilt",
       "zones.lead": "Eine Garmin-Uhr kann ein Regionalpaket aufs Mal aufnehmen. Wähl die Region, die deine Touren abdeckt, kopier sie rüber und nutz sie, solange deine Touren in dieser Region liegen. Wechseln musst du nur, wenn du in eine andere Region gehst.",
       "zones.svg_title": "Karte der Schweiz, aufgeteilt in 26 Regionalpakete",
-      "zones.legend_winter": "Winter- und Sommerregionen (1 bis 21)",
-      "zones.legend_summer": "Reine Sommerregionen (22 bis 26)",
+      "zones.legend_winter": "Winter- und Sommerregionen (1 bis 20)",
+      "zones.legend_summer": "Reine Sommerregionen (21 bis 26)",
       "pick.heading": "Zwei Wege, das passende Paket zu finden",
       "pick.lead": "Du weisst nicht, welche der 26 Regionen dein Ziel abdeckt? Wähl den Weg, der zu dir passt.",
       "pick.gpx_title": "GPX hochladen (oder Karte durchstöbern)",
@@ -810,8 +810,8 @@
       "zones.heading": "La Suisse est divisée en 26 régions",
       "zones.lead": "Une montre Garmin peut contenir un seul pack régional à la fois. Choisis la région qui couvre tes sorties, copie-la une fois, et utilise-la tant que tes sorties restent dans cette région. Tu ne changes que si tu passes dans une région différente.",
       "zones.svg_title": "Carte de la Suisse divisée en 26 packs régionaux",
-      "zones.legend_winter": "Régions hiver et été (1 à 21)",
-      "zones.legend_summer": "Régions uniquement été (22 à 26)",
+      "zones.legend_winter": "Régions hiver et été (1 à 20)",
+      "zones.legend_summer": "Régions uniquement été (21 à 26)",
       "pick.heading": "Deux façons de trouver le bon pack",
       "pick.lead": "Tu ne sais pas laquelle des 26 régions couvre ta destination ? Choisis la méthode qui te convient.",
       "pick.gpx_title": "Déposer ton GPX (ou parcourir la carte)",
@@ -869,8 +869,8 @@
       "zones.heading": "La Svizzera è divisa in 26 regioni",
       "zones.lead": "Un orologio Garmin può contenere un solo pacchetto regionale alla volta. Scegli la regione che copre i tuoi giri, copiala una volta e usala finché i tuoi giri restano in quella regione. Cambi solo quando ti sposti in una regione diversa.",
       "zones.svg_title": "Mappa della Svizzera divisa in 26 pacchetti regionali",
-      "zones.legend_winter": "Regioni inverno ed estate (1 a 21)",
-      "zones.legend_summer": "Regioni solo estate (22 a 26)",
+      "zones.legend_winter": "Regioni inverno ed estate (1 a 20)",
+      "zones.legend_summer": "Regioni solo estate (21 a 26)",
       "pick.heading": "Due modi per trovare il pacchetto giusto",
       "pick.lead": "Non sai quale delle 26 regioni copre la tua destinazione? Scegli il metodo che preferisci.",
       "pick.gpx_title": "Carica il tuo GPX (o sfoglia la mappa)",
@@ -1288,7 +1288,7 @@
       const p = f.properties || {};
       const base = STYLES[p.t] || STYLES[0];
       return p.d
-        ? { ...base, dashArray: "3,9", lineCap: "butt" }
+        ? { ...base, dashArray: "4,10", lineCap: "butt" }
         : base;
     };
     // Canvas renderer (not SVG): Leaflet's default SVG renderer creates an

@@ -101,7 +101,9 @@ def detail_files(prefix: str, season: str = "winter") -> list[dict]:
         if bare.endswith("_overview"):
             continue
         if season == "winter":
-            if bare.endswith("_summer"):
+            # _summer is the summer tier; _fenix6 is the 100-tile-cap tier —
+            # neither belongs in the standard winter file list.
+            if bare.endswith("_summer") or bare.endswith("_fenix6"):
                 continue
             files.append(_file_record(f))
         elif season == "summer":
@@ -116,15 +118,14 @@ def overview_file(prefix: str, season: str = "winter") -> dict | None:
 
     winter: NN_<name>_overview.kmz
     summer: NN_<name>_summer_overview.kmz
+
+    Exact-name match: a winter glob like ``{prefix}*_overview.kmz`` would also
+    catch ``_summer_overview.kmz`` (and ``_fenix6_overview.kmz``), which is how
+    summer-only zones used to wrongly report a winter overview.
     """
     suffix = "_summer_overview.kmz" if season == "summer" else "_overview.kmz"
-    candidates = list(PACKS.glob(f"{prefix}*{suffix}"))
-    if not candidates:
-        return None
-    if len(candidates) > 1:
-        # Shouldn't happen — overview KMZ is always single-file.
-        candidates.sort()
-    return _file_record(candidates[0])
+    p = PACKS / f"{prefix}{suffix}"
+    return _file_record(p) if p.exists() else None
 
 
 def estimate_tiles(zone: dict) -> int:

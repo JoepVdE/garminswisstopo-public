@@ -677,7 +677,7 @@
       const p = f.properties || {};
       const base = SKI_TIER_STYLE[p.t] || SKI_TIER_STYLE[0];
       return p.d
-        ? Object.assign({}, base, { dashArray: '3,7', lineCap: 'butt' })
+        ? Object.assign({}, base, { dashArray: '4,10', lineCap: 'butt' })
         : base;
     },
     onEachFeature: (f, layer) => {
