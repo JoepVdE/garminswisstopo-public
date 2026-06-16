@@ -923,9 +923,13 @@
   // Sized to match build/fetch_ch_overview.py's WGS84 bbox + output size.
   // Linear lat/lon interpolation introduces a sub-pixel mercator error at
   // this scale; not visible to the eye.
+  // Backdrop dimensions come from ch_zones_overlay.json (written by
+  // build/render_zones_overlay.py at the same resolution as ch_backdrop.jpg).
+  // Fallback values match the legacy zoom-8 backdrop in case the side-car
+  // hasn't been deployed yet.
   const BACKDROP = {
     src: "ch_backdrop.jpg",
-    w: 865, h: 558,
+    w: 3459, h: 2234,
     lon_min: 5.85, lon_max: 10.60,
     lat_min: 45.75, lat_max: 47.85,
   };
@@ -997,8 +1001,9 @@
   // build/render_zones_overlay.py.
   let ZONE_GRID = null;
 
+  const _deployDay = new Date().toISOString().slice(0, 10);
   function loadZoneGrid() {
-    return fetch("ch_zones_grid.json").then(r => r.json()).then(j => {
+    return fetch(`ch_zones_grid.json?v=${_deployDay}`).then(r => r.json()).then(j => {
       const bin = atob(j.data);
       const u = new Uint8Array(bin.length);
       for (let i = 0; i < bin.length; i++) u[i] = bin.charCodeAt(i);
@@ -1024,14 +1029,28 @@
     img.setAttribute("height", String(H));
     svg.appendChild(img);
 
-    // Voronoi region overlay (CH-clipped, no gaps).
-    const ov = document.createElementNS(ns, "image");
-    ov.setAttribute("href", "ch_zones_overlay.png");
-    ov.setAttribute("x", "0");
-    ov.setAttribute("y", "0");
-    ov.setAttribute("width", String(W));
-    ov.setAttribute("height", String(H));
-    svg.appendChild(ov);
+    // Vector overlay: fetch ch_zones_overlay.svg and inline its <path>s into
+    // our SVG so they scale crisply at any zoom. Fallback to the raster PNG
+    // if the SVG fetch fails (older deploy, network hiccup).
+    const ovGroup = document.createElementNS(ns, "g");
+    ovGroup.setAttribute("class", "zones-overlay");
+    svg.appendChild(ovGroup);
+    fetch(`ch_zones_overlay.svg?v=${_deployDay}`)
+      .then(r => r.ok ? r.text() : Promise.reject(r.status))
+      .then(svgText => {
+        const doc = new DOMParser().parseFromString(svgText, "image/svg+xml");
+        const root = doc.documentElement;
+        // Move every child <path> (and friends) into our existing SVG.
+        while (root.firstChild) ovGroup.appendChild(root.firstChild);
+      })
+      .catch(() => {
+        const fallback = document.createElementNS(ns, "image");
+        fallback.setAttribute("href", "ch_zones_overlay.png");
+        fallback.setAttribute("x", "0"); fallback.setAttribute("y", "0");
+        fallback.setAttribute("width", String(W));
+        fallback.setAttribute("height", String(H));
+        ovGroup.appendChild(fallback);
+      });
 
     // Zone-number labels at each bbox centre, projected the same way.
     function toSvg(e, n) {
@@ -1097,8 +1116,14 @@
   }
 
   // ───────────── Zone download prompt ─────────────
+  // Cache-buster: every mirror commit normalises author/committer dates to
+  // 12:00 UTC, so toISOString().slice(0,10) is a stable cache key for the
+  // day's manifest. Without this, GitHub Pages' CDN can serve a stale
+  // manifest.json for tens of minutes after a deploy and brand-new zones
+  // (e.g. n:31 geneva_sud added 2026-06-17) appear in the SVG but click
+  // handlers silently no-op because zone N isn't in the cached manifest.
   let HOME_MANIFEST = null;
-  fetch("manifest.json")
+  fetch(`manifest.json?v=${_deployDay}`)
     .then(r => r.ok ? r.json() : null)
     .then(m => { HOME_MANIFEST = m; })
     .catch(() => {});
