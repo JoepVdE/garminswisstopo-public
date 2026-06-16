@@ -396,8 +396,11 @@
     </script>
     <div id="deviceCaps" style="font-size:0.78rem; color:var(--muted); margin-top:0.3rem">
       <span data-i18n="device.cap">Tile cap:</span> <strong id="capLbl">?</strong> ·
-      <span data-i18n="device.files">Max files:</span> <strong id="filesLbl">?</strong> ·
-      <span data-i18n="device.kmz">Max KMZ:</span> <strong id="sizeLbl">?</strong> MB
+      <span data-i18n="device.files">Files (advisory):</span> <strong id="filesLbl">?</strong> ·
+      <span data-i18n="device.kmz">KMZ size (advisory):</span> <strong id="sizeLbl">?</strong> MB
+    </div>
+    <div style="font-size:0.72rem; color:var(--muted); margin-top:0.15rem; font-style:italic">
+      <span data-i18n="device.caps_note">Only the tile cap is firmware-enforced. The file count and per-KMZ size are device-recommended targets — exceeding them may work but is untested.</span>
     </div>
     <div id="deviceNote" style="font-size:0.78rem; color:var(--muted); margin-top:0.3rem; padding:0.3rem 0.4rem; background:var(--surface); border:1px solid var(--line); border-radius:5px"></div>
 
@@ -428,8 +431,12 @@
 
     <div id="status" class="stat-box neutral">
       <div class="stat-line"><strong>0 <span data-i18n="status.cells">cells</span></strong> <span data-i18n="status.selected">selected</span></div>
-      <div class="stat-line">~<strong id="tileEst">0</strong> + ~<strong id="tileEstOv">0</strong> <span data-i18n="status.tiles_of">tiles /</span> <strong id="tileCapLbl">500</strong> <span data-i18n="status.cap">cap</span></div>
-      <div class="stat-line" style="font-size:0.78em; color:var(--muted, #777); margin-top:2px"><span data-i18n="status.tier_breakdown">detail + overview (T2/T3/T4)</span></div>
+      <div class="stat-line">~<strong id="tileEst">0</strong> <span data-i18n="status.tiles_of">tiles /</span> <strong id="tileCapLbl">500</strong> <span data-i18n="status.cap">cap</span></div>
+      <div class="stat-line" style="font-size:0.78em; color:var(--muted, #777); margin-top:2px">
+        <span data-i18n="status.tier_breakdown">peak of detail / overview — watch loads one layer at a time</span>
+        · <span data-i18n="status.detail_short">detail</span> ~<span id="tileEstDetail">0</span>
+        · <span data-i18n="status.overview_short">overview</span> ~<span id="tileEstOv">0</span>
+      </div>
     </div>
 
     <h3 style="margin-top:0.6rem" data-i18n="gpx.heading">Auto-select from GPX</h3>
@@ -1208,17 +1215,22 @@
 
     const statusEl = document.getElementById('status');
     statusEl.querySelector('.stat-line strong').textContent = sel.length;
-    document.getElementById('tileEst').textContent = est;
+    // Garmin's tile cap is a *render-cache* limit, not a storage limit. At any
+    // given zoom level the watch only loads tiles from one tier (T1 detail OR
+    // T2/T3/T4 overview), so the load against the cap is the MAX of the two
+    // tier costs, not the sum. Show the peak in the headline number; surface
+    // the breakdown in the sub-label so power users still see both.
+    const peak = Math.max(est, estOv);
+    document.getElementById('tileEst').textContent = peak;
     document.getElementById('tileEstOv').textContent = estOv;
+    const detailLbl = document.getElementById('tileEstDetail');
+    if (detailLbl) detailLbl.textContent = est;
 
-    // Live cap is whatever the user picked in the device dropdown. Use the
-    // ACTUAL estimated overview count (vs the static OVERVIEW_RESERVE) for the
-    // warn threshold so small selections aren't artificially gated.
+    // Live cap is whatever the user picked in the device dropdown.
     const cap = deviceProfile.tileCap;
-    const total = est + estOv;
     if (est === 0) {
       statusEl.className = 'stat-box neutral';
-    } else if (total > cap) {
+    } else if (peak > cap) {
       statusEl.className = 'stat-box warn';
     } else {
       statusEl.className = 'stat-box ok';
@@ -1464,8 +1476,9 @@
       "device.heading": "Your watch",
       "device.loading": "Loading device list…",
       "device.cap": "Tile cap:",
-      "device.files": "Max files:",
-      "device.kmz": "Max KMZ:",
+      "device.files": "Files (advisory):",
+      "device.kmz": "KMZ size (advisory):",
+      "device.caps_note": "Only the tile cap is firmware-enforced. The file count and per-KMZ size are device-recommended targets — exceeding them may work but is untested.",
       "layers.heading": "Map layers",
       "layers.base": "Base map:",
       "layers.base_winter": "winter LK25 (snow-shaded)",
@@ -1477,7 +1490,9 @@
       "layers.note": "Base map and routes toggle independently. Mix any combination. Both seasons ship 26 prebuilt zones; custom shapes go through the build queue at the bottom of the panel.",
       "slope.tip": "⚠ Slope classes are indicative only. Derived from the swissALTI3D 10 m elevation model. They do not replace the SLF avalanche bulletin or sound on-site tour planning. Use at your own risk. Full disclaimer in the install guide.",
       "status.cells": "cells",
-      "status.tier_breakdown": "detail + overview (T2/T3/T4)",
+      "status.tier_breakdown": "peak load shown — watch loads one layer at a time",
+      "status.detail_short": "detail",
+      "status.overview_short": "overview",
       "status.selected": "selected",
       "status.tiles_of": "tiles /",
       "status.cap": "cap",
@@ -1518,8 +1533,9 @@
       "device.heading": "Deine Uhr",
       "device.loading": "Geräteliste wird geladen…",
       "device.cap": "Kachelgrenze:",
-      "device.files": "Max. Dateien:",
-      "device.kmz": "Max. KMZ:",
+      "device.files": "Dateien (Richtwert):",
+      "device.kmz": "KMZ-Größe (Richtwert):",
+      "device.caps_note": "Nur die Kachelgrenze ist durch die Firmware erzwungen. Datei-Anzahl und KMZ-Größe sind nur Richtwerte – Überschreiten kann funktionieren, ist aber ungetestet.",
       "layers.heading": "Karten-Ebenen",
       "layers.base": "Grundkarte:",
       "layers.base_winter": "LK25 Winter (Schneedeckung)",
@@ -1531,7 +1547,9 @@
       "layers.note": "Grundkarte und Routen lassen sich unabhängig umschalten. Beide Saisons liefern 26 vorgebaute Regionen; eigene Formen laufen über die Build-Queue unten im Panel.",
       "slope.tip": "⚠ Hangneigungsklassen sind nur indikativ. Aus dem swissALTI3D-Höhenmodell (10 m) abgeleitet. Sie ersetzen weder das SLF-Lawinenbulletin noch eine seriöse Tourenplanung vor Ort. Nutzung auf eigene Verantwortung. Vollständiger Haftungsausschluss in der Installationsanleitung.",
       "status.cells": "Zellen",
-      "status.tier_breakdown": "Detail + Übersicht (T2/T3/T4)",
+      "status.tier_breakdown": "Spitzenlast angezeigt — die Uhr lädt nur eine Ebene gleichzeitig",
+      "status.detail_short": "Detail",
+      "status.overview_short": "Übersicht",
       "status.selected": "ausgewählt",
       "status.tiles_of": "Kacheln /",
       "status.cap": "Limit",
@@ -1572,8 +1590,9 @@
       "device.heading": "Ta montre",
       "device.loading": "Chargement de la liste…",
       "device.cap": "Limite de tuiles :",
-      "device.files": "Max fichiers :",
-      "device.kmz": "Max KMZ :",
+      "device.files": "Fichiers (indicatif) :",
+      "device.kmz": "Taille KMZ (indicatif) :",
+      "device.caps_note": "Seule la limite de tuiles est imposée par le firmware. Le nombre de fichiers et la taille KMZ sont des cibles recommandées par appareil — les dépasser peut fonctionner mais n'est pas testé.",
       "layers.heading": "Couches de la carte",
       "layers.base": "Carte de base :",
       "layers.base_winter": "LK25 hiver (manteau neigeux)",
@@ -1585,7 +1604,9 @@
       "layers.note": "Carte de base et itinéraires se basculent indépendamment. Les deux saisons proposent 26 régions prêtes ; les formes sur mesure passent par la file d'attente en bas du panneau.",
       "slope.tip": "⚠ Les classes de pente sont indicatives. Dérivées du modèle altimétrique swissALTI3D 10 m. Elles ne remplacent ni le bulletin d'avalanches SLF, ni une planification sérieuse sur le terrain. À tes risques et périls. Avertissement complet dans le guide d'installation.",
       "status.cells": "cellules",
-      "status.tier_breakdown": "détail + aperçu (T2/T3/T4)",
+      "status.tier_breakdown": "charge max affichée — la montre charge une seule couche à la fois",
+      "status.detail_short": "détail",
+      "status.overview_short": "aperçu",
       "status.selected": "sélectionnées",
       "status.tiles_of": "tuiles /",
       "status.cap": "limite",
@@ -1626,8 +1647,9 @@
       "device.heading": "Il tuo orologio",
       "device.loading": "Caricamento elenco dispositivi…",
       "device.cap": "Limite tile:",
-      "device.files": "Max file:",
-      "device.kmz": "Max KMZ:",
+      "device.files": "File (indicativo):",
+      "device.kmz": "Dim. KMZ (indicativo):",
+      "device.caps_note": "Solo il limite di tile è imposto dal firmware. Numero di file e dimensione KMZ sono valori consigliati per il dispositivo — superarli può funzionare ma non è testato.",
       "layers.heading": "Livelli della mappa",
       "layers.base": "Mappa di base:",
       "layers.base_winter": "LK25 inverno (con neve)",
@@ -1639,7 +1661,9 @@
       "layers.note": "Mappa di base e itinerari si attivano in modo indipendente. Entrambe le stagioni offrono 26 regioni precostruite; le forme personalizzate passano dalla coda di build in fondo al pannello.",
       "slope.tip": "⚠ Le classi di pendenza sono solo indicative. Derivate dal modello altimetrico swissALTI3D 10 m. Non sostituiscono il bollettino valanghe SLF né una pianificazione seria sul posto. Uso a proprio rischio. Avvertenza completa nella guida all'installazione.",
       "status.cells": "celle",
-      "status.tier_breakdown": "dettaglio + panoramica (T2/T3/T4)",
+      "status.tier_breakdown": "carico massimo mostrato — l'orologio carica un livello alla volta",
+      "status.detail_short": "dettaglio",
+      "status.overview_short": "panoramica",
       "status.selected": "selezionate",
       "status.tiles_of": "tile /",
       "status.cap": "limite",
