@@ -148,9 +148,9 @@ def main() -> None:
     ap.add_argument("--out", default=str(REPO / "tools" / "manifest.json"))
     args = ap.parse_args()
 
-    # Zones we still build locally for personal use but don't publish as winter.
-    # Their winter KMZs land in out/packs/ but the public manifest only exposes
-    # them as summer. See conversation 2026-06-10.
+    # Zone 21 (zuerich_villigen) was retired 2026-06-16. The set stays so that
+    # any leftover 21_* winter KMZ from the prior build doesn't leak into the
+    # public manifest; it's empty for zones we ship in full.
     PRIVATE_WINTER_ZONES = {21}
 
     url_tmpl = f"https://github.com/{args.repo_slug}/releases/download/{args.release_tag}/{{name}}"

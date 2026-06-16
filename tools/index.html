@@ -297,6 +297,7 @@
   }
   .legend-swatch.winter { background: var(--winter); }
   .legend-swatch.summer { background: var(--summer); }
+  .legend-swatch.gap    { background: #aaaaaa; }
 
   .pick-grid {
     display: grid; gap: 0.85rem;
@@ -521,31 +522,32 @@
   </section>
 
   <section>
-    <h2 data-i18n="zones.heading">Switzerland is split into 26 regions</h2>
+    <h2 data-i18n="zones.heading">Switzerland is split into 31 regions</h2>
     <p class="section-lead" data-i18n="zones.lead">A Garmin watch can hold one regional pack at a time. Pick the region that covers your trips, copy it across, and use it as long as your trips fall inside it. Swap only when you move to a different region.</p>
     <div class="zone-card">
       <div class="zone-svg-wrap" id="zoneMapWrap">
         <svg id="zonesSvg" class="zone-svg" viewBox="0 0 800 500" preserveAspectRatio="xMidYMid meet" role="img" aria-labelledby="zonesTitle">
-          <title id="zonesTitle" data-i18n="zones.svg_title">Map of Switzerland divided into 26 regional packs</title>
+          <title id="zonesTitle" data-i18n="zones.svg_title">Map of Switzerland divided into 31 regional packs</title>
         </svg>
         <div id="zoneTooltip" class="zone-tooltip" role="tooltip"></div>
       </div>
       <div class="legend">
         <span class="legend-item"><span class="legend-swatch winter"></span> <span data-i18n="zones.legend_winter">Winter and summer regions (1 to 20)</span></span>
-        <span class="legend-item"><span class="legend-swatch summer"></span> <span data-i18n="zones.legend_summer">Summer-only regions (21 to 26)</span></span>
+        <span class="legend-item"><span class="legend-swatch summer"></span> <span data-i18n="zones.legend_summer">Summer-only regions (21 to 31)</span></span>
+        <span class="legend-item"><span class="legend-swatch gap"></span> <span data-i18n="zones.legend_gap">No pre-built pack — use the custom-area picker</span></span>
       </div>
     </div>
   </section>
 
   <section>
     <h2 data-i18n="pick.heading">Two ways to find the right pack</h2>
-    <p class="section-lead" data-i18n="pick.lead">Not sure which of the 26 regions covers your destination? Pick the workflow that fits.</p>
+    <p class="section-lead" data-i18n="pick.lead">Not sure which of the 31 regions covers your destination? Pick the workflow that fits.</p>
     <div class="pick-grid" style="grid-template-columns: 1fr;">
       <a class="pick" href="gpx_pack_picker.html" style="display:grid; grid-template-columns: auto 1fr; gap: 1rem; align-items: start;">
         <div class="pick-icon" style="margin: 0;">📍</div>
         <div>
           <h3 data-i18n="pick.gpx_title">Drop your GPX (or browse the map)</h3>
-          <p data-i18n="pick.gpx_desc">Drop a tour file (from SchweizMobil, Komoot, Strava, etc.) and we'll tell you which regional pack covers it, usually a single file. No GPX? Open the picker and you can see all 26 regions on a swisstopo basemap and download the one you need.</p>
+          <p data-i18n="pick.gpx_desc">Drop a tour file (from SchweizMobil, Komoot, Strava, etc.) and we'll tell you which regional pack covers it, usually a single file. No GPX? Open the picker and you can see all 31 regions on a swisstopo basemap and download the one you need.</p>
         </div>
       </a>
       <a class="pick" href="tile_picker.html" style="display:grid; grid-template-columns: auto 1fr; gap: 1rem; align-items: start;">
@@ -681,15 +683,16 @@
       "what.winter_body": "LK25 Winter base, with a 4-class slope-shading overlay and SAC ski tours coloured by difficulty (blue, red, black).",
       "what.summer_title": "Summer",
       "what.summer_body": "LK25 Summer base, with the slope overlay and the Wanderwege network coloured by category (yellow, red, blue).",
-      "zones.heading": "Switzerland is split into 26 regions",
+      "zones.heading": "Switzerland is split into 31 regions",
       "zones.lead": "A Garmin watch can hold one regional pack at a time. Pick the region that covers your trips, copy it across, and use it as long as your trips fall inside it. Swap only when you move to a different region.",
-      "zones.svg_title": "Map of Switzerland divided into 26 regional packs",
+      "zones.svg_title": "Map of Switzerland divided into 31 regional packs",
       "zones.legend_winter": "Winter and summer regions (1 to 20)",
-      "zones.legend_summer": "Summer-only regions (21 to 26)",
+      "zones.legend_summer": "Summer-only regions (21 to 31)",
+      "zones.legend_gap": "No pre-built pack — use the custom-area picker",
       "pick.heading": "Two ways to find the right pack",
-      "pick.lead": "Not sure which of the 26 regions covers your destination? Pick the workflow that fits.",
+      "pick.lead": "Not sure which of the 31 regions covers your destination? Pick the workflow that fits.",
       "pick.gpx_title": "Drop your GPX (or browse the map)",
-      "pick.gpx_desc": "Drop a tour file (from SchweizMobil, Komoot, Strava, etc.) and we'll tell you which regional pack covers it, usually a single file. No GPX? Open the picker and you can see all 26 regions on a swisstopo basemap and download the one you need.",
+      "pick.gpx_desc": "Drop a tour file (from SchweizMobil, Komoot, Strava, etc.) and we'll tell you which regional pack covers it, usually a single file. No GPX? Open the picker and you can see all 31 regions on a swisstopo basemap and download the one you need.",
       "pick.custom_title": "Paint a custom area",
       "pick.custom_desc": "Going somewhere that crosses two regions, or want a single pack focused on the spots you actually visit? Draw the area you need. We build a custom pack and email it to you, usually within an hour, occasionally longer when the build queue is busy.",
       "pc.heading": "Advantages and limitations",
@@ -744,15 +747,16 @@
       "what.winter_body": "LK25 Winter als Basis, dazu ein 4-stufiges Hangneigungs-Overlay und SAC-Skitouren nach Schwierigkeit gefärbt (Blau, Rot, Schwarz).",
       "what.summer_title": "Sommer",
       "what.summer_body": "LK25 Sommer als Basis, dazu das Hangneigungs-Overlay und die Wanderwege nach Kategorie gefärbt (Gelb, Rot, Blau).",
-      "zones.heading": "Die Schweiz ist in 26 Regionen aufgeteilt",
+      "zones.heading": "Die Schweiz ist in 31 Regionen aufgeteilt",
       "zones.lead": "Eine Garmin-Uhr kann ein Regionalpaket aufs Mal aufnehmen. Wähl die Region, die deine Touren abdeckt, kopier sie rüber und nutz sie, solange deine Touren in dieser Region liegen. Wechseln musst du nur, wenn du in eine andere Region gehst.",
-      "zones.svg_title": "Karte der Schweiz, aufgeteilt in 26 Regionalpakete",
+      "zones.svg_title": "Karte der Schweiz, aufgeteilt in 31 Regionalpakete",
       "zones.legend_winter": "Winter- und Sommerregionen (1 bis 20)",
-      "zones.legend_summer": "Reine Sommerregionen (21 bis 26)",
+      "zones.legend_summer": "Reine Sommerregionen (21 bis 31)",
+      "zones.legend_gap": "Kein vorgefertigtes Paket — nutz den Bereichs-Picker",
       "pick.heading": "Zwei Wege, das passende Paket zu finden",
-      "pick.lead": "Du weisst nicht, welche der 26 Regionen dein Ziel abdeckt? Wähl den Weg, der zu dir passt.",
+      "pick.lead": "Du weisst nicht, welche der 31 Regionen dein Ziel abdeckt? Wähl den Weg, der zu dir passt.",
       "pick.gpx_title": "GPX hochladen (oder Karte durchstöbern)",
-      "pick.gpx_desc": "Zieh eine Tourdatei rein (aus SchweizMobil, Komoot, Strava, etc.) und wir sagen dir, welches Regionalpaket sie abdeckt, meistens eine einzige Datei. Kein GPX zur Hand? Im Picker siehst du alle 26 Regionen auf einer swisstopo-Karte und lädst die richtige direkt herunter.",
+      "pick.gpx_desc": "Zieh eine Tourdatei rein (aus SchweizMobil, Komoot, Strava, etc.) und wir sagen dir, welches Regionalpaket sie abdeckt, meistens eine einzige Datei. Kein GPX zur Hand? Im Picker siehst du alle 31 Regionen auf einer swisstopo-Karte und lädst die richtige direkt herunter.",
       "pick.custom_title": "Eigenes Gebiet zeichnen",
       "pick.custom_desc": "Deine Tour liegt zwischen zwei Regionen, oder du willst ein einziges Paket genau für die Orte, an die du wirklich gehst? Zeichne das Gebiet selber. Wir bauen ein eigenes Paket und schicken es dir per Mail, meist innerhalb einer Stunde, bei hoher Auslastung auch etwas länger.",
       "pc.heading": "Vorteile und Einschränkungen",
@@ -807,15 +811,16 @@
       "what.winter_body": "LK25 Hiver comme base, avec un overlay d'ombrage 4 classes et les itinéraires de ski CAS colorés selon la difficulté (bleu, rouge, noir).",
       "what.summer_title": "Été",
       "what.summer_body": "LK25 Été comme base, avec l'overlay d'ombrage et le réseau Wanderwege coloré par catégorie (jaune, rouge, bleu).",
-      "zones.heading": "La Suisse est divisée en 26 régions",
+      "zones.heading": "La Suisse est divisée en 31 régions",
       "zones.lead": "Une montre Garmin peut contenir un seul pack régional à la fois. Choisis la région qui couvre tes sorties, copie-la une fois, et utilise-la tant que tes sorties restent dans cette région. Tu ne changes que si tu passes dans une région différente.",
-      "zones.svg_title": "Carte de la Suisse divisée en 26 packs régionaux",
+      "zones.svg_title": "Carte de la Suisse divisée en 31 packs régionaux",
       "zones.legend_winter": "Régions hiver et été (1 à 20)",
-      "zones.legend_summer": "Régions uniquement été (21 à 26)",
+      "zones.legend_summer": "Régions uniquement été (21 à 31)",
+      "zones.legend_gap": "Pas de pack pré-construit — utilise le sélecteur personnalisé",
       "pick.heading": "Deux façons de trouver le bon pack",
-      "pick.lead": "Tu ne sais pas laquelle des 26 régions couvre ta destination ? Choisis la méthode qui te convient.",
+      "pick.lead": "Tu ne sais pas laquelle des 31 régions couvre ta destination ? Choisis la méthode qui te convient.",
       "pick.gpx_title": "Déposer ton GPX (ou parcourir la carte)",
-      "pick.gpx_desc": "Dépose un fichier de tour (SuisseMobile, Komoot, Strava, etc.) et on te dit quel pack régional le couvre, en général un seul fichier. Pas de GPX ? Ouvre le sélecteur, tu verras les 26 régions sur fond swisstopo et tu télécharges celle qu'il te faut.",
+      "pick.gpx_desc": "Dépose un fichier de tour (SuisseMobile, Komoot, Strava, etc.) et on te dit quel pack régional le couvre, en général un seul fichier. Pas de GPX ? Ouvre le sélecteur, tu verras les 31 régions sur fond swisstopo et tu télécharges celle qu'il te faut.",
       "pick.custom_title": "Dessiner une zone sur mesure",
       "pick.custom_desc": "Ta sortie est à cheval sur deux régions, ou tu veux un seul pack centré sur les lieux que tu fréquentes vraiment ? Dessine ta zone. On construit un pack personnalisé et on te l'envoie par mail, généralement en moins d'une heure, parfois davantage quand la file d'attente est chargée.",
       "pc.heading": "Avantages et limites",
@@ -866,15 +871,16 @@
       "what.winter_body": "LK25 Inverno come base, con un overlay di ombreggiatura in 4 classi e itinerari sci CAS colorati per difficoltà (blu, rosso, nero).",
       "what.summer_title": "Estate",
       "what.summer_body": "LK25 Estate come base, con l'overlay di ombreggiatura e la rete dei sentieri colorata per categoria (giallo, rosso, blu).",
-      "zones.heading": "La Svizzera è divisa in 26 regioni",
+      "zones.heading": "La Svizzera è divisa in 31 regioni",
       "zones.lead": "Un orologio Garmin può contenere un solo pacchetto regionale alla volta. Scegli la regione che copre i tuoi giri, copiala una volta e usala finché i tuoi giri restano in quella regione. Cambi solo quando ti sposti in una regione diversa.",
-      "zones.svg_title": "Mappa della Svizzera divisa in 26 pacchetti regionali",
+      "zones.svg_title": "Mappa della Svizzera divisa in 31 pacchetti regionali",
       "zones.legend_winter": "Regioni inverno ed estate (1 a 20)",
-      "zones.legend_summer": "Regioni solo estate (21 a 26)",
+      "zones.legend_summer": "Regioni solo estate (21 a 31)",
+      "zones.legend_gap": "Nessun pacchetto pre-costruito — usa il selettore personalizzato",
       "pick.heading": "Due modi per trovare il pacchetto giusto",
-      "pick.lead": "Non sai quale delle 26 regioni copre la tua destinazione? Scegli il metodo che preferisci.",
+      "pick.lead": "Non sai quale delle 31 regioni copre la tua destinazione? Scegli il metodo che preferisci.",
       "pick.gpx_title": "Carica il tuo GPX (o sfoglia la mappa)",
-      "pick.gpx_desc": "Trascina un file del giro (SvizzeraMobile, Komoot, Strava, ecc.) e ti diciamo quale pacchetto regionale lo copre, di solito un solo file. Niente GPX? Apri il selettore: vedi tutte le 26 regioni su base swisstopo e scarichi quella che ti serve.",
+      "pick.gpx_desc": "Trascina un file del giro (SvizzeraMobile, Komoot, Strava, ecc.) e ti diciamo quale pacchetto regionale lo copre, di solito un solo file. Niente GPX? Apri il selettore: vedi tutte le 31 regioni su base swisstopo e scarichi quella che ti serve.",
       "pick.custom_title": "Disegna un'area su misura",
       "pick.custom_desc": "Il tuo giro è a cavallo tra due regioni, o vuoi un pacchetto unico centrato sui posti che frequenti davvero? Disegna la zona che ti serve. Costruiamo un pacchetto personalizzato e te lo inviamo via mail, di solito entro un'ora, a volte di più nei momenti di code lunghe.",
       "pc.heading": "Vantaggi e limiti",
@@ -945,34 +951,45 @@
     return [lonNorm * 100 / 36, latNorm * 100 / 36];
   }
 
-  // ───────────── 26-zone overview map ─────────────
+  // ───────────── Zone overview map ─────────────
+  // 2026-06-16 subdivision: 20 alpine zones (winter+summer) + 10 summer-only
+  // lowland zones (21 Zurich/Limmattal, 22-30 lac_leman through basel_juranord).
+  // Alpine bboxes extended to absorb Andermatt/Susten/Lukmanier/Müstair/
+  // Hasliberg/Chur/Misox seams; new lowland zones 27-30 fill Mittelland-FR/VD,
+  // Aargau, Winterthur-SH and Basel. Voronoi is "honest": pixels outside
+  // every zone bbox stay grey instead of being painted by extrapolation.
   const ZONES = [
-    {n:1,  bbox:[2540000,1110000,2590000,1160000], name:"Waadtländer Alpen",      season:"both"},
-    {n:2,  bbox:[2575000,1080000,2625000,1130000], name:"Wallis West",            season:"both"},
-    {n:3,  bbox:[2600000,1100000,2645000,1145000], name:"Wallis Zentral",         season:"both"},
-    {n:4,  bbox:[2620000,1085000,2660000,1125000], name:"Mattertal / Saastal",    season:"both"},
-    {n:5,  bbox:[2640000,1130000,2685000,1170000], name:"Goms / Aletsch",         season:"both"},
-    {n:6,  bbox:[2580000,1140000,2625000,1180000], name:"Berner Oberland West",   season:"both"},
-    {n:7,  bbox:[2625000,1150000,2670000,1185000], name:"Jungfrau Region",        season:"both"},
-    {n:8,  bbox:[2675000,1180000,2720000,1220000], name:"Zentralschweiz",         season:"both"},
-    {n:9,  bbox:[2700000,1170000,2745000,1210000], name:"Glarus / Surselva",      season:"both"},
-    {n:10, bbox:[2770000,1180000,2810000,1215000], name:"Davos / Klosters",       season:"both"},
-    {n:11, bbox:[2780000,1140000,2820000,1180000], name:"Engadin",                season:"both"},
-    {n:12, bbox:[2680000,1095000,2730000,1145000], name:"Tessin / Gotthard",      season:"both"},
-    {n:13, bbox:[2720000,1220000,2770000,1255000], name:"Alpstein / Toggenburg",  season:"both"},
-    {n:14, bbox:[2615000,1175000,2660000,1210000], name:"Berner Voralpen",        season:"both"},
-    {n:15, bbox:[2580000,1170000,2615000,1195000], name:"Fribourger Voralpen",   season:"both"},
-    {n:16, bbox:[2730000,1200000,2770000,1230000], name:"Glarner Voralpen",       season:"both"},
-    {n:17, bbox:[2745000,1140000,2780000,1175000], name:"Splügen / Hinterrhein",  season:"both"},
-    {n:18, bbox:[2800000,1170000,2830000,1200000], name:"Münstertal / Ofenpass",  season:"both"},
-    {n:19, bbox:[2510000,1175000,2570000,1220000], name:"Jura West",              season:"both"},
-    {n:20, bbox:[2580000,1220000,2620000,1250000], name:"Jura Ost",               season:"both"},
-    {n:21, bbox:[2640000,1225000,2710000,1273000], name:"Zürich / Villigen",      season:"summer"},
-    {n:22, bbox:[2495000,1115000,2555000,1165000], name:"Lac Léman",              season:"summer"},
-    {n:23, bbox:[2580000,1195000,2625000,1230000], name:"Mittelland West",        season:"summer"},
-    {n:24, bbox:[2640000,1205000,2685000,1245000], name:"Mittelland Zentral",     season:"summer"},
-    {n:25, bbox:[2715000,1255000,2765000,1290000], name:"Ostschweiz / Thurgau",   season:"summer"},
-    {n:26, bbox:[2700000,1075000,2750000,1115000], name:"Sottoceneri",            season:"summer"}
+    {n:1,  bbox:[2540000,1094000,2587000,1160000], name:"Waadtländer Alpen",         season:"both"},
+    {n:2,  bbox:[2565000,1080000,2625000,1130000], name:"Wallis West",               season:"both"},
+    {n:3,  bbox:[2587000,1100000,2645000,1150000], name:"Wallis Zentral",            season:"both"},
+    {n:4,  bbox:[2620000,1085000,2660000,1130000], name:"Mattertal / Saastal",       season:"both"},
+    {n:5,  bbox:[2640000,1125000,2700000,1170000], name:"Goms / Aletsch / Urseren",  season:"both"},
+    {n:6,  bbox:[2580000,1140000,2625000,1180000], name:"Berner Oberland West",      season:"both"},
+    {n:7,  bbox:[2625000,1150000,2670000,1185000], name:"Jungfrau Region",           season:"both"},
+    {n:8,  bbox:[2670000,1170000,2725000,1220000], name:"Zentralschweiz",            season:"both"},
+    {n:9,  bbox:[2700000,1145000,2745000,1210000], name:"Glarus / Surselva",         season:"both"},
+    {n:10, bbox:[2770000,1180000,2810000,1215000], name:"Davos / Klosters",          season:"both"},
+    {n:11, bbox:[2780000,1122000,2832000,1180000], name:"Engadin / Val Müstair",     season:"both"},
+    {n:12, bbox:[2675000,1095000,2730000,1145000], name:"Tessin / Gotthard",         season:"both"},
+    {n:13, bbox:[2715000,1220000,2770000,1255000], name:"Alpstein / Toggenburg",     season:"both"},
+    {n:14, bbox:[2615000,1175000,2670000,1210000], name:"Berner Voralpen",           season:"both"},
+    {n:15, bbox:[2580000,1170000,2615000,1195000], name:"Fribourger Voralpen",       season:"both"},
+    {n:16, bbox:[2725000,1175000,2780000,1230000], name:"Glarner Voralpen / Chur",   season:"both"},
+    {n:17, bbox:[2730000,1115000,2780000,1175000], name:"Splügen / Misox",           season:"both"},
+    {n:18, bbox:[2800000,1170000,2830000,1208000], name:"Münstertal / Ofenpass",     season:"both"},
+    {n:19, bbox:[2510000,1170000,2570000,1220000], name:"Jura West",                 season:"both"},
+    {n:20, bbox:[2540000,1220000,2615000,1260000], name:"Jura Ost",                  season:"both"},
+    {n:21, bbox:[2660000,1220000,2715000,1273000], name:"Zürich / Limmattal",        season:"summer"},
+    {n:22, bbox:[2485000,1112000,2540000,1170000], name:"Lac Léman",                 season:"summer"},
+    {n:23, bbox:[2570000,1195000,2630000,1232000], name:"Mittelland West",           season:"summer"},
+    {n:24, bbox:[2630000,1205000,2685000,1245000], name:"Mittelland Zentral",        season:"summer"},
+    {n:25, bbox:[2715000,1252000,2770000,1295000], name:"Ostschweiz / Thurgau",      season:"summer"},
+    {n:26, bbox:[2700000,1075000,2750000,1115000], name:"Sottoceneri",               season:"summer"},
+    {n:27, bbox:[2540000,1155000,2598000,1198000], name:"Mittelland Fribourg",       season:"summer"},
+    {n:28, bbox:[2615000,1230000,2680000,1275000], name:"Mittelland Aargau",         season:"summer"},
+    {n:29, bbox:[2670000,1255000,2720000,1296000], name:"Winterthur / Schaffhausen", season:"summer"},
+    {n:30, bbox:[2570000,1252000,2640000,1295000], name:"Basel / Jura Nord",         season:"summer"},
+    {n:31, bbox:[2485000,1108000,2510000,1138000], name:"Genève Sud",                season:"summer"}
   ];
 
   // Pre-rendered Voronoi zone-id grid (200x129) — base64 bytes, one byte per
